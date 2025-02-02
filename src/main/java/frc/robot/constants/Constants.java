@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.geometry.Transform3d;
@@ -35,6 +36,8 @@ public final class Constants {
     public static class CAN_IDS {
         public static final String SYSTEM_CAN_NAME = "system"; // CANBUS for system.
         public static final String DRIVETRAIN_CAN_NAME = "drivetrain"; // CANBUS for drivetrain.
+        public static final CANBus DrivetrainAndClimbBus = new CANBus("CAN-2", "./logs/example.hoot");
+
 
         public static final int SYSTEM_CAN_ID = 21;
 

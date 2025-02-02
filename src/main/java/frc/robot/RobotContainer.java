@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -16,9 +17,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Coral_Hopper;
+import frc.robot.subsystems.ElevatorTesting;
+import frc.robot.subsystems.Hopper;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -37,16 +41,19 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController Pilot = new CommandXboxController(0);
+    private final CommandXboxController test = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final Coral_Hopper mCoral_Hopper = new Coral_Hopper();
+    public final Hopper mCoral_Hopper = new Hopper();
+    public final Algae m_algae = new Algae();
+    public final ElevatorTesting m_elevator = new ElevatorTesting();
 
     public RobotContainer() {
-        configureBindings();
+      configureBindings();
     }
 
-    private void configureBindings() {
+    public void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -80,6 +87,12 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
+    }
+
+    public void configureTestBindings() {
+      // Elevator Test Bindings
+      test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
+      test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
     }
 
 

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 
 public class ElevatorTesting extends SubsystemBase {
     private TalonFX master; // RIGHT SIDE MOTOR
@@ -39,8 +40,8 @@ public class ElevatorTesting extends SubsystemBase {
     public ElevatorTesting() {
 
         // Motors
-        follower = new TalonFX(0); // left SIDE MOTOR
-        master = new TalonFX(0); // RIGHT SIDE MOTOR
+        follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
+        master = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_MASTER, "CAN-2"); // RIGHT SIDE MOTOR
 
         // Elevator Speed/Target Configs 
         mostRecentTarget = Units.Inches.of(0); // configure units before testing - get in terms of encoder positions
@@ -63,11 +64,12 @@ public class ElevatorTesting extends SubsystemBase {
         masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
 
 
+
         master.getConfigurator().apply(masterConfig);
         follower.getConfigurator().apply(masterConfig);
         follower.setControl(new Follower(master.getDeviceID(), true));
-        leftLimit = new DigitalInput(0);
-        rightLimit = new DigitalInput(0);
+      //  leftLimit = new DigitalInput(0);
+      //rightLimit = new DigitalInput(0);
         
         master.setPosition(0); // resets elevator encoders to 0
     }
