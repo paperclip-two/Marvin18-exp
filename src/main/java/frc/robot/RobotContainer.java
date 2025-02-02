@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Coral_Hopper;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -38,6 +39,8 @@ public class RobotContainer {
     private final CommandXboxController Pilot = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private final Coral_Hopper mCoral_Hopper = new Coral_Hopper();
 
     public RobotContainer() {
         configureBindings();
@@ -71,6 +74,8 @@ public class RobotContainer {
         Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
     }
 
     public Command getAutonomousCommand() {
