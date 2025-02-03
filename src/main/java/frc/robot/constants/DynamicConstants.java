@@ -20,12 +20,52 @@ public final class DynamicConstants {
     public static class Example{
         public static double exampleConstant = 0;
     }
-    public static class Testing {
+    public static class Intake{
         //voltage of certain movements
-        public static double testElevatorVoltage = 0;
-        public static double algaePercentOUt = 0;
-        public static double testCoralIntakeVoltage = 0;
-        public static double globalTestPercentOut = 0;
+        public static double intakeVoltage = 8;
+        public static double outtakeVoltage = -9;
+        public static double trapOuttakeVoltage = -9;
+        public static double intakeAmpPivotVoltage = 1;
+        public static double intakeAmpOuttakeVoltage = -5;
+
+        //voltage threshold for note detection
+        public static double irSensorThresholdIntake = 1.5;
+        public static double irSensorThresholdShoot = 1.5;
+
+        //Setpoints in rotations from zero
+        public static double pivotIntakePosition = 0.3;
+        public static double pivotAmpPosition = 0.3;
+        public static double pivotUprightPosition = 0.09;
+        public static double pivotStowPosition = 0;
+        public static double pivotTrapPosition = 0.38;
+        public static double pivotIntakeAmpPosition = 0.065;
+    }
+
+    public static class ShooterFlywheel{
+        public static double testVelocity = 3000;
+        public static double idleVelocity = 3500;
+    }
+    public static class ThePivot{
+        //Setpoints in rotations from zero
+        public static double uprightPosition = 0.325;
+        public static double ampPosition = 0.22;
+        public static double zeroPosition = 0;
+        public static double testPosition = 0.1;
+        public static double climbPosition = 0.251; 
+
+        public static double shootOffset = 0.018;
+
+        // setpoints for trap
+        public static double trapPosition = 0.251;
+
+        //in volts
+        public static double secondSegmentFeedforwardConstant = 0.5;
+
+        //velocity threshold
+        public static double shootVelocityThreshold = 0.005;
+    }
+    public static class Climber{
+        public static double uprightPosition = 4.8;
     }
 
 
@@ -39,7 +79,7 @@ public final class DynamicConstants {
         entries = new HashMap<>();
 
         //add all .class values of the static classes above
-        Class<?>[] subsystems = {Testing.class};
+        Class<?>[] subsystems = {Intake.class, ThePivot.class, ShooterFlywheel.class, Climber.class};
         
         for(Class<?> subsystem : subsystems){
             Field[] fields = subsystem.getDeclaredFields();

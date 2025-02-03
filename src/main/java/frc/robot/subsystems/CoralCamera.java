@@ -75,11 +75,11 @@ public class CoralCamera extends SubsystemBase {
         return heading;
     }
 
-    public Translation3d getCoralCamX() {
+    public Translation3d getCoralCamTransform3d() {
         return new Translation3d(
             coralCam.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getX(),
-            0,
-            0
+            coralCam.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getY(),
+            coralCam.getLatestResult().getBestTarget().getBestCameraToTarget().getTranslation().getZ()
         );
     }
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
