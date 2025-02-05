@@ -18,7 +18,7 @@ public class Algae extends SubsystemBase {
     private DigitalInput coralBeamBreak;
 
     TalonSRX algae = new TalonSRX(Constants.CAN_IDS.ALGAE_MECHANISM.ALGAE_MECH_MC);
-  /** Creates a new Coral_Hopper. */
+  /** Creates a new Algae object. */
   public Algae() {
     algae.configFactoryDefault();
   }

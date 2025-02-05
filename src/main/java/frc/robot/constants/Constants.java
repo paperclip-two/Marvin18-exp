@@ -15,6 +15,20 @@ public final class Constants {
         public static final double INPUT_MULT = 0.8; // Reduce maximum applied speed for better driveability.
     }
 
+    public static class PathPlannerAuto {
+        public static final double holonomicXkP = 5;
+        public static final double holonomicXkI = 0;
+        public static final double holonomicXkD = 0;
+        public static final double holonomicYkP = 5;
+        public static final double holonomicYkI = 0;
+        public static final double holonomicYkD = 0;
+        public static final double holonomicOkP = 3.0;
+        public static final double holonomicOkI = 0.0;
+        public static final double holonomicOkD = 0.0;
+        public static final double holonomicOMaxVelocity = 5;
+        public static final double holonomicOMaxAcceleration = 5;
+    }
+
     public static class DIO_IDS {
         public static final int CLIMB_RIGHT_LIMIT = 0;
         public static final int LEFT_RIGHT_LIMIT = 4;
@@ -90,6 +104,11 @@ public final class Constants {
         public static final Transform3d REEF_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
         // Record actual transform in a comment here (readable by a human)
         public static final Transform3d LIMELIGHT_TRANSFORM = new Transform3d(null, null, null, null);//Find later
+
+        public static final double REEF_APRILTAG_HEIGHT = 6.875; // feet? figure out units
+        public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875;
+        public static final double CORAL_APRILTAG_HEIGHT = 53.25;
+
       }
     
     public static class FieldConstants {
