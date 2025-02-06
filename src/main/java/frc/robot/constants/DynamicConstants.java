@@ -17,8 +17,8 @@ public final class DynamicConstants {
      * WARNING: Dynamic constants from the RIO may be read after initialization. Ensure functionality 
      * of any constants that are only read on startup.
      */
-    public static class Example{
-        public static double exampleConstant = 0;
+    public static class Globaltester {
+        public static double GlobalTestVoltage = 0;
     }
     public static class Intake{
         //voltage of certain movements
@@ -79,7 +79,7 @@ public final class DynamicConstants {
         entries = new HashMap<>();
 
         //add all .class values of the static classes above
-        Class<?>[] subsystems = {Intake.class, ThePivot.class, ShooterFlywheel.class, Climber.class};
+        Class<?>[] subsystems = {Globaltester.class, Intake.class, ThePivot.class, ShooterFlywheel.class, Climber.class};
         
         for(Class<?> subsystem : subsystems){
             Field[] fields = subsystem.getDeclaredFields();

@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -91,8 +92,12 @@ public class RobotContainer {
 
     public void configureTestBindings() {
       // Elevator Test Bindings
-      test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
-      test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
+    //  test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
+    //  test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
+      test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
+      test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
+      test.x().whileTrue(m_elevator.resetSelectedSensorPosition());
+
     }
 
 

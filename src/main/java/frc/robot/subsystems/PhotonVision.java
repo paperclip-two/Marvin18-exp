@@ -92,17 +92,21 @@ public class PhotonVision extends SubsystemBase {
             PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
         // make another state machine that enables flashing led when target is not found 
             tagPitch = latestTag.getBestTarget().getPitch();
+            Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
+            camToTarget.getMeasureX();
         } else {
             return 0.0;
         }
         
         // make state machine that tells this what thte current tag heigh is - when we want to make this work
         // make another state machine that enables flashing led when target is not found 
+        if (mRobotToCam.getZ() - Constants.VisionConstants.CORAL_APRILTAG_HEIGHT > 0.05) { // tune this value. This could be the ideal value for height
+
+        }
         return PhotonUtils.calculateDistanceToTargetMeters(mRobotToCam.getZ(), Constants.VisionConstants.CORAL_APRILTAG_HEIGHT, 0, tagPitch);
     }
 
     public double getCoralYaw() {
-        Pose2d dtcurr = dt.getState().Pose;
         double tagYaw = 0;
         
         List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
@@ -113,14 +117,13 @@ public class PhotonVision extends SubsystemBase {
             return 0.0;
         }
         
-        // make state machine that tells this what thte current tag heigh is - when we want to make this work
+        // make state machine that tells this what thte current tag heigh is - when we want to make this work for other heights
         return tagYaw;
     }    
 
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
         return photonPoseEstimator.update(camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1));
-    
     }
 
  

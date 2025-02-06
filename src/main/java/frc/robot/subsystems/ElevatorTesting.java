@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Inches;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -8,6 +9,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.Units;
@@ -36,42 +39,48 @@ public class ElevatorTesting extends SubsystemBase {
 
     public Distance currentElevatorRightPos;
     public Distance currentElevatorLeftPos;
+    public Distance elevatorRotationsInInchesMulti;
 
     public ElevatorTesting() {
 
         // Motors
         follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
         master = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_MASTER, "CAN-2"); // RIGHT SIDE MOTOR
-
         // Elevator Speed/Target Configs 
         mostRecentTarget = Units.Inches.of(0); // configure units before testing - get in terms of encoder positions
         VoltageOut voltageRequest = new VoltageOut(0);
         
         currentElevatorLeftPos = Inches.of(0); // Follower
         currentElevatorRightPos = Inches.of(0); // Master
-
+        elevatorRotationsInInchesMulti = Units.Inches.of(0); // find
         TalonFXConfiguration masterConfig = new TalonFXConfiguration();
 
         masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0;
-        masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+      //  masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    //    masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0;
+      //  masterConfig.\SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+          masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
+          masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
+     //   masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         masterConfig.CurrentLimits.SupplyCurrentLimit = 20;
         masterConfig.CurrentLimits.StatorCurrentLimit =  60;
+
+       // masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
         masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
 
 
 
         master.getConfigurator().apply(masterConfig);
         follower.getConfigurator().apply(masterConfig);
-        follower.setControl(new Follower(master.getDeviceID(), true));
+       follower.setControl(new Follower(master.getDeviceID(), true));
       //  leftLimit = new DigitalInput(0);
       //rightLimit = new DigitalInput(0);
         
-        master.setPosition(0); // resets elevator encoders to 0
+        master.setPosition(0.0); // resets elevator encoders to 0
+        follower.setPosition(0.0);
     }
 
 
@@ -114,15 +123,21 @@ public class ElevatorTesting extends SubsystemBase {
     follower.setControl(new Follower(master.getDeviceID(), true));
   }
 
+
   public Command runVoltage(double voltage) {
         return runEnd(() -> {
             master.setVoltage(voltage);
-            follower.setVoltage(voltage);
         }, () -> {
             master.set(0);
-            follower.set(0);
         });
     }
+
+    public Command resetSelectedSensorPosition() {
+      return runEnd(() -> {
+          master.setPosition(0);
+      }, () -> 
+      master.setPosition(0));
+  }
 
   public void setSoftwareLimits(boolean reverseLimitEnable, boolean forwardLimitEnable) {
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
@@ -149,10 +164,12 @@ public class ElevatorTesting extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Left/Output", follower.get());
     SmartDashboard.putNumber("Elevator/Left/Inverted", follower.getAppliedRotorPolarity().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Left/Current", follower.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator/Left/AdjustedPosition", follower.getPosition().getValueAsDouble() * positionCoefficient);
 
     SmartDashboard.putNumber("Elevator/Right/CLO", master.getClosedLoopOutput().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Right/Output", master.get());
     SmartDashboard.putNumber("Elevator/Right/Inverted", master.getAppliedRotorPolarity().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Right/Current", master.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator/Right/AdjustedPosition", follower.getPosition().getValueAsDouble() * positionCoefficient);
   }
 }
