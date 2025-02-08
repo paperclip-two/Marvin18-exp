@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Algae extends SubsystemBase {
     private DigitalInput bucketBeamBreak;
-    private DigitalInput coralBeamBreak;
+    private DigitalInput coralIR;
 
     TalonSRX algae = new TalonSRX(Constants.CAN_IDS.ALGAE_MECHANISM.ALGAE_MECH_MC);
   /** Creates a new Algae object. */

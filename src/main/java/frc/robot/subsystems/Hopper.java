@@ -7,6 +7,7 @@ import frc.robot.constants.Constants;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,8 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Hopper extends SubsystemBase {
-    private DigitalInput bucketBeamBreak;
-    private DigitalInput coralBeamBreak;
+    private AnalogInput bucketIR = new AnalogInput(1);
+    private AnalogInput coralIR = new AnalogInput(0);
 
     TalonSRX agitator = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
     TalonSRX coralIntake = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE);
@@ -23,13 +24,11 @@ public class Hopper extends SubsystemBase {
   public Hopper() {
     coralIntake.configFactoryDefault();
     agitator.configFactoryDefault();
-    bucketBeamBreak = new DigitalInput(Constants.DIO_IDS.BUCKET_BEAMBREAK);
-    coralBeamBreak = new DigitalInput(Constants.DIO_IDS.INTAKE_BEAMBREAK);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("CoralBreak", coralBeamBreak.get());
+    SmartDashboard.putBoolean("CoralBreak", coralIR.get());
     //SmartDashboard.putBoolean("", getBucketBreakReading());
   }
 
@@ -39,7 +38,7 @@ public class Hopper extends SubsystemBase {
 }
 
 public boolean getCoralBreakReading(){
-    return coralBeamBreak.get(); 
+    return coralIR.get(); 
  }
 
  public boolean getBucketBreakReading(){
