@@ -17,12 +17,12 @@ public class Hopper extends SubsystemBase {
     private DigitalInput bucketBeamBreak;
     private DigitalInput coralBeamBreak;
 
-    TalonSRX coralIntakeMotor = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE_MC);
-    TalonSRX bucketMotor = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_HOLDER_MC);
+    TalonSRX agitator = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
+    TalonSRX coralIntake = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE);
   /** Creates a new Coral_Hopper. */
   public Hopper() {
-    bucketMotor.configFactoryDefault();
-    coralIntakeMotor.configFactoryDefault();
+    coralIntake.configFactoryDefault();
+    agitator.configFactoryDefault();
     bucketBeamBreak = new DigitalInput(Constants.DIO_IDS.BUCKET_BEAMBREAK);
     coralBeamBreak = new DigitalInput(Constants.DIO_IDS.INTAKE_BEAMBREAK);
   }
@@ -34,8 +34,8 @@ public class Hopper extends SubsystemBase {
   }
 
   public void setDutyCycle(double dc) {
-    bucketMotor.set(TalonSRXControlMode.PercentOutput, dc);
-    coralIntakeMotor.set(TalonSRXControlMode.PercentOutput, dc);
+    coralIntake.set(TalonSRXControlMode.PercentOutput, dc);
+    agitator.set(TalonSRXControlMode.PercentOutput, dc);
 }
 
 public boolean getCoralBreakReading(){
@@ -45,7 +45,7 @@ public boolean getCoralBreakReading(){
  public boolean getBucketBreakReading(){
     return bucketBeamBreak.get();
  }
-  
+ /* 
   public Command runVoltageUntilIRReading(double voltage) {
     return runEnd(() -> {
         if(getBucketBreakReading() == true){
@@ -58,20 +58,23 @@ public boolean getCoralBreakReading(){
     () -> {
         bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
     });
-}
+} */
 
-public Command runAgitator(double voltage) {
+public Command runCoralAgitator(double percentOut) {
     return runEnd(() -> {
-        if(getCoralBreakReading() == false){
-            bucketMotor.set(TalonSRXControlMode.PercentOutput, voltage);
-        }
-        else{
-            new WaitCommand(2.0);
-            bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
-        }
+        agitator.set(TalonSRXControlMode.PercentOutput, percentOut);
     },
     () -> {
-        bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
+        agitator.set(TalonSRXControlMode.PercentOutput, 0);
+    });
+}
+
+public Command runIntake(double percentOut) {
+    return runEnd(() -> {
+     coralIntake.set(TalonSRXControlMode.PercentOutput, percentOut);
+    },
+    () -> {
+        coralIntake.set(TalonSRXControlMode.PercentOutput, 0);
     });
 }
 }

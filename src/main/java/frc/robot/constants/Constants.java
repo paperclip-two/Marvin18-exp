@@ -17,6 +17,21 @@ public final class Constants {
         public static final double INPUT_MULT = 0.8; // Reduce maximum applied speed for better driveability.
     }
 
+    public static class ElevatorSetpointConfigs {
+        public static final double ELEVATOR_DEADZONE_DIST = 1;
+        public static final double INCHES_PER_ROTATION = 3; // in testing the chassis moves 3 inches per full rotation.
+        public static final double ELEVATOR_FORWARD_LIMIT = 0; // for master.
+        public static final double ELEVATOR_REVERSE_LIMIT = 0; // for master.
+        public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.5;
+
+        // write setpoints, in adjusted rotations, here.
+    }
+
+    public static class ArmSetpointConfigs {
+        public static final double ARM_FORWARD_LIMIT = 0;
+        public static final double ARM_REVERSE_LIMIT = 0;
+    }   
+
     public static class PathPlannerAuto {
         public static final double holonomicXkP = 5;
         public static final double holonomicXkI = 0;
@@ -59,8 +74,8 @@ public final class Constants {
 
         public static class CORAL_MECHANISM {
             public static final int CORAL_BUCKET_ROTATE = 1;
-            public static final int CORAL_HOLDER_MC = 12;
-            public static final int CORAL_INTAKE_MC = 13;
+            public static final int AGITATOR = 13;
+            public static final int CORAL_INTAKE = 12;
         }      
         
         public static class ALGAE_MECHANISM {
@@ -82,8 +97,8 @@ public final class Constants {
         }
 
         public static final class ELEVATOR {
-            public static final int ELEVATOR_MASTER = 18; // Right
-            public static final int ELEVATOR_FOLLOWER = 19; // Left
+            public static final int ELEVATOR_MASTER = 18; // right
+            public static final int ELEVATOR_FOLLOWER = 19; // left
         }
         
     }

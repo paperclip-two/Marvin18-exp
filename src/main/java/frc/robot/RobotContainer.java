@@ -22,6 +22,7 @@ import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralArm;
 import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.Hopper;
 
@@ -49,6 +50,7 @@ public class RobotContainer {
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
     public final ElevatorTesting m_elevator = new ElevatorTesting();
+    public final CoralArm m_coralArm = new CoralArm();
 
     public RobotContainer() {
       configureBindings();
@@ -60,30 +62,40 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                robotDrive.withVelocityX(-Pilot.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-Pilot.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-Pilot.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                robotDrive.withVelocityX(deadband((-Pilot.getLeftY() * 0.5) * MaxSpeed, 0.1)) // Drive forward with negative Y (forward)
+                    .withVelocityY(deadband(-Pilot.getLeftX() * 0.5 * MaxSpeed, 0.1)) // Drive left with negative X (left)
+                    .withRotationalRate(deadband((-Pilot.getRightX() * 0.5) * MaxAngularRate, 0.1)) // Drive counterclockwise with negative X (left)
             )
         );
 
-        Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        Pilot.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
-        ));
+        Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
+        Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
+        Pilot.leftBumper().whileTrue(m_coralArm.runArmVoltage(0.5));
+        Pilot.rightBumper().whileTrue(m_coralArm.runArmVoltage(-0.5));
+  
+        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.1));
+        Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
+        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
+        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
+
+      //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
+     //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->
+     //       point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
+     //   ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        Pilot.back().and(Pilot.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        Pilot.back().and(Pilot.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        Pilot.start().and(Pilot.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        Pilot.start().and(Pilot.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+     //   Pilot.back().and(Pilot.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+     //   Pilot.back().and(Pilot.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+      //  Pilot.start().and(Pilot.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+      //  Pilot.start().and(Pilot.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+       // Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
+      //  Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
     }
 
     public Command getAutonomousCommand() {
@@ -96,7 +108,13 @@ public class RobotContainer {
     //  test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
       test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
       test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
-      test.x().whileTrue(m_elevator.resetSelectedSensorPosition());
+      test.leftBumper().whileTrue(m_coralArm.runArmVoltage(0.5));
+      test.rightBumper().whileTrue(m_coralArm.runArmVoltage(-0.5));
+
+      test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
+      test.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
+      test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
+      test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
     }
 
