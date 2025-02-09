@@ -4,18 +4,15 @@
 
 package frc.robot.subsystems;
 import frc.robot.constants.Constants;
+import frc.robot.constants.DynamicConstants;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 
 public class Algae extends SubsystemBase {
-    private DigitalInput bucketBeamBreak;
-    private DigitalInput coralIR;
+    
 
     TalonSRX algae = new TalonSRX(Constants.CAN_IDS.ALGAE_MECHANISM.ALGAE_MECH_MC);
   /** Creates a new Algae object. */
@@ -28,17 +25,28 @@ public class Algae extends SubsystemBase {
     //SmartDashboard.putBoolean("", getBucketBreakReading());
   }
 
-  public void setDutyCycle(double dc) {
-    algae.set(TalonSRXControlMode.PercentOutput, dc);
+  public void setPercentage(double percent) {
+    algae.set(TalonSRXControlMode.PercentOutput, percent);
 }
 
-public Command runAlgaeWheels(double percent) {
+public Command intake() {
     return runEnd(() -> {
-        setDutyCycle(percent);
+        algae.set(TalonSRXControlMode.PercentOutput, DynamicConstants.Algae.intakePercent);
 
     },
     () -> {
-        setDutyCycle(0);
+        algae.set(TalonSRXControlMode.PercentOutput, 0); 
     });
 }
+
+public Command outtake() {
+  return runEnd(() -> {
+      algae.set(TalonSRXControlMode.PercentOutput, DynamicConstants.Algae.outtakePercent);
+
+  },
+  () -> {
+      algae.set(TalonSRXControlMode.PercentOutput, 0);
+  });
 }
+}
+
