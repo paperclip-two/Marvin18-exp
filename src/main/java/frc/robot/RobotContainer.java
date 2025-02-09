@@ -116,6 +116,9 @@ public class RobotContainer {
       test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
       test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
+      test.povLeft().whileTrue(m_algae.intake());
+
+      test.povRight().whileTrue(m_algae.outtake());
     }
 
 
