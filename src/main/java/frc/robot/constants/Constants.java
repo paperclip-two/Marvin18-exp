@@ -87,8 +87,8 @@ public final class Constants {
 
         public static class CORAL_MECHANISM {
             public static final int CORAL_BUCKET_ROTATE = 1;
-            public static final int AGITATOR = 13;
-            public static final int CORAL_INTAKE = 12;
+            public static final int AGITATOR = 13; 
+            public static final int CORAL_INTAKE = 12; 
         }      
         
         public static class ALGAE_MECHANISM {
