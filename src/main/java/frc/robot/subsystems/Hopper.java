@@ -18,15 +18,26 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Hopper extends SubsystemBase {
-    private AnalogInput bucketIR = new AnalogInput(1);
-    private AnalogInput coralIR = new AnalogInput(0);
+    private AnalogInput bucketIR;
+    private AnalogInput coralIR;
 
-    TalonSRX agitator = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
-    TalonSRX coralIntake = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE);
+    TalonSRX agitator;
+    TalonSRX coralIntake;
   /** Creates a new Coral_Hopper. */
   public Hopper() {
+    bucketIR = new AnalogInput(1);
+    coralIR = new AnalogInput(2);
+    agitator = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
+    coralIntake = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE);
+
     coralIntake.configFactoryDefault();
     agitator.configFactoryDefault();
+    coralIR.setAverageBits(4);
+    coralIR.setOversampleBits(4);
+    bucketIR.setOversampleBits(4);
+    bucketIR.setAverageBits(4);
+
+
   }
 
   @Override
@@ -42,17 +53,17 @@ public class Hopper extends SubsystemBase {
     agitator.set(TalonSRXControlMode.PercentOutput, dc);
 }
 
-public int getCoralIRReading(){
-    return coralIR.getValue(); 
+public double getCoralIRReading(){
+    return coralIR.getAverageVoltage();
  }
 
- public int getBucketIRReading(){
-    return bucketIR.getValue();
+ public double getBucketIRReading(){
+    return bucketIR.getAverageVoltage();
  }
  
   public Command runIntakeUntilIRReading(double voltage) {
     return runEnd(() -> {
-        if(getBucketIRReading() > DynamicConstants.Hopper.irSensorThresholdBucket){
+        if(getBucketIRReading() > DynamicConstants.IRThresholds.bucketIRthreshold){
             coralIntake.set(TalonSRXControlMode.PercentOutput, voltage);
         }
     },
@@ -63,7 +74,7 @@ public int getCoralIRReading(){
 
 public Command runAgitatorWhenReading(double voltage) {
     return runEnd(() -> {
-        if(getCoralIRReading() < DynamicConstants.Hopper.irSensorThresholdCoral){
+        if(getCoralIRReading() < DynamicConstants.IRThresholds.bucketIRthreshold){
             agitator.set(TalonSRXControlMode.PercentOutput, voltage);
         }
         else{

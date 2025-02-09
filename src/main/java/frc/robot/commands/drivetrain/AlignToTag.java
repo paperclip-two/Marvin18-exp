@@ -77,7 +77,7 @@ public class AlignToTag extends Command {
 
         double rotationOutput = aimController.calculate(tx);
 
-        Translation2d translation = new Translation2d(0, rangeOutput);
+        Translation2d translation = new Translation2d(rangeOutput, 0);
                 
         m_Swerve.setControl(m_alignRequest
             .withVelocityX(translation.getX())
