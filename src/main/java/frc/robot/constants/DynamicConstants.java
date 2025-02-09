@@ -20,6 +20,11 @@ public final class DynamicConstants {
     public static class Globaltester {
         public static double GlobalTestVoltage = 0;
     }
+    public static class Hopper {
+        public static double irSensorThresholdBucket = 1.5;
+        public static double irSensorThresholdCoral = 1.5;
+        
+    }
     public static class Intake{
         //voltage of certain movements
         public static double intakeVoltage = 8;

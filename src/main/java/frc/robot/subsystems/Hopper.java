@@ -4,9 +4,12 @@
 
 package frc.robot.subsystems;
 import frc.robot.constants.Constants;
+import frc.robot.constants.DynamicConstants;
+
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +31,10 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("CoralBreak", coralIR.get());
-    //SmartDashboard.putBoolean("", getBucketBreakReading());
+    SmartDashboard.putNumber("CoralIR", getCoralIRReading());
+    SmartDashboard.putNumber("BucketIR", getBucketIRReading());
+    runAgitatorWhenReading(1);
+    //SmartDashboard.putBoolean("", getBucketIRReading());
   }
 
   public void setDutyCycle(double dc) {
@@ -37,27 +42,39 @@ public class Hopper extends SubsystemBase {
     agitator.set(TalonSRXControlMode.PercentOutput, dc);
 }
 
-public boolean getCoralBreakReading(){
-    return coralIR.get(); 
+public int getCoralIRReading(){
+    return coralIR.getValue(); 
  }
 
- public boolean getBucketBreakReading(){
-    return bucketBeamBreak.get();
+ public int getBucketIRReading(){
+    return bucketIR.getValue();
  }
- /* 
-  public Command runVoltageUntilIRReading(double voltage) {
+ 
+  public Command runIntakeUntilIRReading(double voltage) {
     return runEnd(() -> {
-        if(getBucketBreakReading() == true){
-            bucketMotor.set(TalonSRXControlMode.PercentOutput, voltage);
-        }
-        else{
-            bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
+        if(getBucketIRReading() > DynamicConstants.Hopper.irSensorThresholdBucket){
+            coralIntake.set(TalonSRXControlMode.PercentOutput, voltage);
         }
     },
     () -> {
-        bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
+        coralIntake.set(TalonSRXControlMode.PercentOutput, 0);
     });
-} */
+} 
+
+public Command runAgitatorWhenReading(double voltage) {
+    return runEnd(() -> {
+        if(getCoralIRReading() < DynamicConstants.Hopper.irSensorThresholdCoral){
+            agitator.set(TalonSRXControlMode.PercentOutput, voltage);
+        }
+        else{
+            new WaitCommand(2.0);
+            agitator.set(TalonSRXControlMode.PercentOutput, 0);
+        }
+    },
+    () -> {
+        agitator.set(TalonSRXControlMode.PercentOutput, 0);
+    });
+}
 
 public Command runCoralAgitator(double percentOut) {
     return runEnd(() -> {
@@ -67,6 +84,7 @@ public Command runCoralAgitator(double percentOut) {
         agitator.set(TalonSRXControlMode.PercentOutput, 0);
     });
 }
+
 
 public Command runIntake(double percentOut) {
     return runEnd(() -> {
