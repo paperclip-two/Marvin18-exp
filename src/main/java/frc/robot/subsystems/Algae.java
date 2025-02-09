@@ -31,21 +31,21 @@ public class Algae extends SubsystemBase {
 
 public Command intake() {
     return runEnd(() -> {
-        algae.set(TalonSRXControlMode.PercentOutput, DynamicConstants.Algae.intakePercent);
+        setPercentage(DynamicConstants.Algae.intakePercent);
 
     },
     () -> {
-        algae.set(TalonSRXControlMode.PercentOutput, 0); 
+      setPercentage(0);
+ 
     });
 }
 
 public Command outtake() {
   return runEnd(() -> {
-      algae.set(TalonSRXControlMode.PercentOutput, DynamicConstants.Algae.outtakePercent);
-
+    setPercentage(DynamicConstants.Algae.outtakePercent);
   },
   () -> {
-      algae.set(TalonSRXControlMode.PercentOutput, 0);
+    setPercentage(0);
   });
 }
 }

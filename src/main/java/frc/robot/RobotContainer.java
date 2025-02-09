@@ -6,6 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import org.opencv.video.TrackerDaSiamRPN_Params;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -13,18 +16,23 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralArm;
+import frc.robot.subsystems.CoralCamera;
+import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.PhotonVision;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -51,6 +59,10 @@ public class RobotContainer {
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
+    public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
+
+    public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
+    public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
 
     public RobotContainer() {
       configureBindings();
@@ -112,8 +124,8 @@ public class RobotContainer {
       test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
 
     //  test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-      test.x().whileTrue(m_algae.runAlgaeWheels(0.9));
-      test.y().whileTrue(m_algae.runAlgaeWheels(-0.8));
+      test.x().whileTrue(m_algae.intake());
+      test.y().whileTrue(m_algae.outtake());
      // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
       test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 

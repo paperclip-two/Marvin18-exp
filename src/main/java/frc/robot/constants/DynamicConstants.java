@@ -36,6 +36,11 @@ public final class DynamicConstants {
         public static double elevClimb = 0;
     }
 
+    public static class Algae {
+        public static double intakePercent = 0.2;
+        public static double outtakePercent = -0.1;
+    } 
+
     public static class TestVoltages {
         public static double bucketTestOut = 0;
         public static double agitatorTestOut = 0;
@@ -58,7 +63,7 @@ public final class DynamicConstants {
         entries = new HashMap<>();
 
         //add all .class values of the static classes above
-        Class<?>[] subsystems = {ArmSetpoints.class, ElevatorSetpoints.class, TestVoltages.class};
+        Class<?>[] subsystems = {ArmSetpoints.class, ElevatorSetpoints.class, TestVoltages.class, Algae.class};
         
         for(Class<?> subsystem : subsystems) {
             Field[] fields = subsystem.getDeclaredFields();

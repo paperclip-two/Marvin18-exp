@@ -29,6 +29,7 @@ public final class Constants {
         public static final double ELEVATOR_L3_SETPOINT = 0;
         public static final double ELEVATOR_L2_SETPOINT = 0;
         public static final double ELEVATOR_L1_SETPOINT = 0;
+        public static final double ELEVATOR_ARM_CLEAR_SETPOINT = 0;
         public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 0;
         public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 0;
         public static final double ELEVATOR_CLIMB_SETPOINT = 0;
@@ -61,7 +62,7 @@ public final class Constants {
 
     public static class DIO_IDS {
         public static final int CLIMB_RIGHT_LIMIT = 0;
-        public static final int LEFT_RIGHT_LIMIT = 4;
+        public static final int CLIMB_LEFT_LIMIT = 4;
         public static final int CORAL_ARM_LIMIT = 3;
 
         public static final int BUCKET_BEAMBREAK = 1;
@@ -127,8 +128,8 @@ public final class Constants {
   
     }    
     public static class VisionConstants {
-        public static final String CORAL_CAM_NAME = "coral";
-        public static final String REEF_CAM_NAME = "reef";
+        public static final String CORAL_CAM_NAME = "feeder_cam";
+        public static final String REEF_CAM_NAME = "reef_cam";
         public static final Transform3d CORAL_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
         // Record actual transform in a comment here (readable by a human)
         public static final Transform3d REEF_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find

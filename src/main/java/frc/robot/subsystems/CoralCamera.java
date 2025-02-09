@@ -26,9 +26,9 @@ public class CoralCamera extends SubsystemBase {
     private PoseStrategy strat;
     private Transform3d mRobotToCam;
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-    public CoralCamera(CommandSwerveDrivetrain drive, String cameraName, PoseStrategy realStrat, Transform3d rbtc){
+    public CoralCamera(CommandSwerveDrivetrain drive, PoseStrategy realStrat, Transform3d rbtc){
         dt = drive;
-        coralCam = new PhotonCamera(cameraName);
+        coralCam = new PhotonCamera("reef");
         strat = realStrat;
         mRobotToCam = rbtc;
         // Construct PhotonPoseEstimator

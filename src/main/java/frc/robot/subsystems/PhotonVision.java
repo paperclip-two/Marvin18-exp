@@ -1,4 +1,6 @@
 package frc.robot.subsystems;
+import static edu.wpi.first.units.Units.Meter;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -54,12 +56,38 @@ public class PhotonVision extends SubsystemBase {
             && trackedTarget.getBestCameraToTarget() != null
             && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
             || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
-            )){
+            )) {
                 if (!rejectPose()) {
                     double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
                     dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
                     dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
                     lastPose = pose.get();
+                }
+            }
+        }
+    }
+
+    
+    public void resetPoseFixed(){
+        Optional<EstimatedRobotPose> pose = getEstimatedGlobalPose(dt.getState().Pose);
+        var results = camera.getAllUnreadResults();
+        if(!results.isEmpty()){
+            var latestResult = results.get(results.size() - 1);
+            if (latestResult.hasTargets()) {
+                PhotonTrackedTarget trackedTarget = latestResult.getBestTarget();
+                if(pose.isPresent() && trackedTarget != null
+                && trackedTarget.getBestCameraToTarget() != null
+                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
+                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
+                )) {
+                    if (!rejectPose()) {
+                        if (pose != null) {
+                            double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
+                            dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
+                            dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
+                            lastPose = pose.get();
+                        }
+                    }
                 }
             }
         }
@@ -84,7 +112,8 @@ public class PhotonVision extends SubsystemBase {
         if(lastPose != null){
             heading = lastPose.estimatedPose.getRotation().toRotation2d().getDegrees();
         }
-        PhotonPipelineResult plresult = camera.getLatestResult();
+        var plresults = camera.getAllUnreadResults();
+        PhotonPipelineResult plresult = plresults.get(plresults.size() - 1);
         if(plresult.getBestTarget() != null && plresult.hasTargets()){
             PhotonTrackedTarget trackedTarget = plresult.getBestTarget();
             if(trackedTarget != null && trackedTarget.getBestCameraToTarget() != null && aprilTagFieldLayout.getTagPose(trackedTarget.getFiducialId()).isPresent()){
@@ -94,7 +123,7 @@ public class PhotonVision extends SubsystemBase {
         return heading;
     }
 
-    public double getCoralTagDist() {
+    public double getTagXDist() {
         double tagPitch = 0;
         
         List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
@@ -103,20 +132,37 @@ public class PhotonVision extends SubsystemBase {
         // make another state machine that enables flashing led when target is not found 
             tagPitch = latestTag.getBestTarget().getPitch();
             Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
-            camToTarget.getMeasureX();
+            return camToTarget.getMeasureX().in(Meter);
         } else {
             return 0.0;
         }
-        
-        // make state machine that tells this what thte current tag heigh is - when we want to make this work
-        // make another state machine that enables flashing led when target is not found 
-        if (mRobotToCam.getZ() - Constants.VisionConstants.CORAL_APRILTAG_HEIGHT > 0.05) { // tune this value. This could be the ideal value for height
 
-        }
-        return PhotonUtils.calculateDistanceToTargetMeters(mRobotToCam.getZ(), Constants.VisionConstants.CORAL_APRILTAG_HEIGHT, 0, tagPitch);
     }
 
-    public double getCoralYaw() {
+    public double getTagYDist() {
+        double tagPitch = 0;
+        
+        List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
+        if (!currentUnreadPipeline.isEmpty()) {
+            PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
+        // make another state machine that enables flashing led when target is not found 
+            tagPitch = latestTag.getBestTarget().getPitch();
+            Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
+            return camToTarget.getMeasureY().in(Meter);
+        } else {
+            return 0.0;
+        }
+
+    }
+        // make state machine that tells this what thte current tag heigh is - when we want to make this work
+        // make another state machine that enables flashing led when target is not found 
+    //    if (mRobotToCam.getZ() - Constants.VisionConstants.CORAL_APRILTAG_HEIGHT > 0.05) { // tune this value. This could be the ideal value for height
+//
+   //     }
+     //   return PhotonUtils.calculateDistanceToTargetMeters(mRobotToCam.getZ(), Constants.VisionConstants.CORAL_APRILTAG_HEIGHT, 0, tagPitch);
+  
+
+    public double getTagYaw() {
         double tagYaw = 0;
         
         List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
@@ -132,8 +178,14 @@ public class PhotonVision extends SubsystemBase {
     }    
 
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
+        PhotonPipelineResult result = new PhotonPipelineResult();
         photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update(camera.getAllUnreadResults().get(camera.getAllUnreadResults().size() - 1));
+        var results = camera.getAllUnreadResults();
+        if (!results.isEmpty()) {
+            return photonPoseEstimator.update(results.get(results.size() - 1));
+        } else {
+            return photonPoseEstimator.update(result);
+        }
     }
 
  

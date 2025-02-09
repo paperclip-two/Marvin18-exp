@@ -19,21 +19,21 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Hopper extends SubsystemBase {
     private AnalogInput bucketIR;
-    private AnalogInput coralIR;
+    private AnalogInput stuckIR;
 
     TalonSRX agitator;
     TalonSRX coralIntake;
   /** Creates a new Coral_Hopper. */
   public Hopper() {
     bucketIR = new AnalogInput(1);
-    coralIR = new AnalogInput(2);
+    stuckIR = new AnalogInput(2);
     agitator = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
     coralIntake = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE);
 
     coralIntake.configFactoryDefault();
     agitator.configFactoryDefault();
-    coralIR.setAverageBits(4);
-    coralIR.setOversampleBits(4);
+    stuckIR.setAverageBits(4);
+    stuckIR.setOversampleBits(4);
     bucketIR.setOversampleBits(4);
     bucketIR.setAverageBits(4);
 
@@ -42,7 +42,7 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("CoralIR", getCoralIRReading());
+    SmartDashboard.putNumber("CoralIR", getStuckIRreading());
     SmartDashboard.putNumber("BucketIR", getBucketIRReading());
   //  runAgitatorWhenReading(1);
     //SmartDashboard.putBoolean("", getBucketIRReading());
@@ -55,8 +55,8 @@ public class Hopper extends SubsystemBase {
     agitator.set(TalonSRXControlMode.PercentOutput, dc);
 }
 
-public double getCoralIRReading(){
-    return coralIR.getAverageVoltage();
+public double getStuckIRreading(){
+    return stuckIR.getAverageVoltage();
  }
 
  public double getBucketIRReading(){
@@ -76,7 +76,7 @@ public boolean hasCoral() {
 
 public Command runAgitatorWhenReading(double voltage) {
     return runEnd(() -> {
-        if(getCoralIRReading() < DynamicConstants.IRThresholds.bucketIRthreshold){
+        if(getStuckIRreading() < DynamicConstants.IRThresholds.bucketIRthreshold){
             agitator.set(TalonSRXControlMode.PercentOutput, voltage);
         }
         else{

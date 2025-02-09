@@ -88,6 +88,9 @@ public class CoralArm extends SubsystemBase {
     SmartDashboard.putNumber("Arm/Current", arm.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Arm/AdjustedPosition", arm.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Arm/TruePosition", arm.getPosition().getValueAsDouble());
+
+    SmartDashboard.putBoolean("Arm/DIO", armlimit.get());
+
   }
 
 }

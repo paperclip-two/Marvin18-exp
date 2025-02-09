@@ -32,7 +32,8 @@ public class Elevator extends SubsystemBase {
     private TalonFX follower; // left SIDE MOTOR
     private double positionCoefficient = 1.0/12.0;
     private boolean softLimitEnabled;
-    private DigitalInput elevatorLimitSwitch;
+    private DigitalInput leftLimitSwitch;
+    private DigitalInput rightLimitSwitch;
     private double mostRecentTarget; // in rotations, converted using position coefficient.
     
 
@@ -52,7 +53,8 @@ public class Elevator extends SubsystemBase {
         // Motors
         follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
         master = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_MASTER, "CAN-2"); // RIGHT SIDE MOTOR
-        elevatorLimitSwitch = new DigitalInput(Constants.DIO_IDS.LEFT_RIGHT_LIMIT);
+        leftLimitSwitch = new DigitalInput(4);
+        rightLimitSwitch = new DigitalInput(0);
         // Elevator Speed/Target Configs 
         mostRecentTarget = 0; // configure units before testing - get in terms of encoder positions
         voltageRequest = new VoltageOut(0);
@@ -72,6 +74,8 @@ public class Elevator extends SubsystemBase {
         masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         masterConfig.CurrentLimits.SupplyCurrentLimit = 20;
         masterConfig.CurrentLimits.StatorCurrentLimit =  60;
+        masterConfig.Voltage.PeakForwardVoltage = 4;
+        masterConfig.Voltage.PeakReverseVoltage = -4;
 
         masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
@@ -99,6 +103,14 @@ public class Elevator extends SubsystemBase {
 
     public double getAdjustedRotations() {
     return master.getPosition().getValueAsDouble() * positionCoefficient;
+  }
+
+  public boolean getLeftLimit() {
+    return !leftLimitSwitch.get();
+  }
+
+  public boolean getRightLimit() {
+    return !rightLimitSwitch.get();
   }
 
   public boolean isAtSetpoint() {
@@ -164,10 +176,10 @@ public class Elevator extends SubsystemBase {
         return runEnd(() -> {
           setMotionMagicPosition(0);
         }, () -> {
-          if (elevatorLimitSwitch.get()) {
+          if (leftLimitSwitch.get() || rightLimitSwitch.get()) {
             master.set(0);
           }
-        }).until(() -> elevatorLimitSwitch.get());
+        }).until(() -> leftLimitSwitch.get() || rightLimitSwitch.get());
     }
 
     public boolean isPosNearZero() {
@@ -206,5 +218,8 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/Current", master.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/AdjustedPosition", master.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
+    SmartDashboard.putBoolean("Elevator/LeftLimitDIO", getLeftLimit());
+    SmartDashboard.putBoolean("Elevator/RightLimitDIO", getRightLimit());
+
   }
 }
