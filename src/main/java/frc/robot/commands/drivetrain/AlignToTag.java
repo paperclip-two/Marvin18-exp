@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.drivetrain;
 
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PhotonVision;
@@ -73,7 +73,6 @@ public class AlignToTag extends Command {
     public void execute() {
         double tx = m_Vision.getCoralYaw();
         double currCoralDist = m_Vision.getCoralTagDist();
-        double currentDistance = m_Vision.getCoralTagDist();
         double rangeOutput = rangeController.calculate(currCoralDist);
 
         double rotationOutput = aimController.calculate(tx);

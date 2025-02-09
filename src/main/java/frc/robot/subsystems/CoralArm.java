@@ -6,11 +6,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,11 +23,15 @@ public class CoralArm extends SubsystemBase {
     private TalonFX arm;
     private TalonSRX bucketMotor;
     private double positionCoefficient = 1/12;
+    PositionVoltage positionVoltageRequest = new PositionVoltage(0);
+    VoltageOut voltageRequest = new VoltageOut(0);
+    private DigitalInput armlimit;
 
 
     public CoralArm() {
         arm = new TalonFX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_BUCKET_ROTATE);
         bucketMotor = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
+        armlimit = new DigitalInput(Constants.DIO_IDS.CORAL_ARM_LIMIT);
 
         TalonFXConfiguration armConfig = new TalonFXConfiguration();
         bucketMotor.configFactoryDefault();
@@ -40,22 +47,34 @@ public class CoralArm extends SubsystemBase {
         armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         armConfig.CurrentLimits.SupplyCurrentLimit = 20;
         armConfig.CurrentLimits.StatorCurrentLimit =  60;
-
+        armConfig.Voltage.PeakForwardVoltage = 2;
+        armConfig.Voltage.PeakReverseVoltage = -2;
         armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        armConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
-
+        armConfig.Slot0 = new Slot0Configs().withKP(1.35).withKI(4).withKD(0.01).withKS(0.001).withKG(1.1);
         arm.getConfigurator().apply(armConfig);
     }
 
 
-
-    public Command runArmVoltage(double voltage) {
+    public Command ArmPosVoltage(double position) {
         return runEnd(() -> {
-            arm.setVoltage(voltage);
+            arm.setControl(positionVoltageRequest.withPosition(position));
+        }, () -> {
+            arm.set(0);
+        }).until(() -> armlimit.get());
+    }
+
+    public double getPosition() {
+        return arm.getPosition().getValueAsDouble();
+    }
+
+    public Command runVoltage(double voltage) {
+        return runEnd(() -> {
+            arm.setControl(voltageRequest.withOutput(0));
         }, () -> {
             arm.set(0);
         });
     }
+
 
   @Override
   public void periodic() {

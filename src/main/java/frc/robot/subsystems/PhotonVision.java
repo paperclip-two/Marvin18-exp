@@ -49,19 +49,29 @@ public class PhotonVision extends SubsystemBase {
         if(latestResult.hasTargets()){
             PhotonTrackedTarget trackedTarget = latestResult.getBestTarget();
             
+            
             if(pose.isPresent() && trackedTarget != null
             && trackedTarget.getBestCameraToTarget() != null
             && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
             || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
             )){
-                double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
-                dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
-                dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
-                lastPose = pose.get();
+                if (!rejectPose()) {
+                    double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
+                    dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
+                    dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
+                    lastPose = pose.get();
+                }
             }
         }
     }
 
+    public boolean rejectPose() {
+        if (dt.getState().Speeds.omegaRadiansPerSecond > 360) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
     @Override

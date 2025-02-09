@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 
-public class ElevatorTesting extends SubsystemBase {
+public class Elevator extends SubsystemBase {
     private TalonFX master; // right SIDE MOTOR
     private TalonFX follower; // left SIDE MOTOR
     private double positionCoefficient = 1.0/12.0;
@@ -40,13 +40,14 @@ public class ElevatorTesting extends SubsystemBase {
     public boolean elevatorZeroed = false;
     public double deadzoneDist = 1.0 / Constants.ElevatorSetpointConfigs.INCHES_PER_ROTATION; // the deadzone distance, in adjusted motor rotations 
     VoltageOut voltageRequest;
+    PositionVoltage positionVoltageRequest;
     MotionMagicVoltage motionRequest;
 
     public Angle currentElevatorRightPos;
     public Angle currentElevatorLeftPos;
     public Distance elevatorRotationsInInchesMulti;
 
-    public ElevatorTesting() {
+    public Elevator() {
 
         // Motors
         follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
@@ -56,6 +57,7 @@ public class ElevatorTesting extends SubsystemBase {
         mostRecentTarget = 0; // configure units before testing - get in terms of encoder positions
         voltageRequest = new VoltageOut(0);
         motionRequest = new MotionMagicVoltage(0);
+        positionVoltageRequest = new PositionVoltage(0);
         currentElevatorLeftPos = Rotations.of(0); // Follower
         currentElevatorRightPos = Rotations.of(0); // Master
         TalonFXConfiguration masterConfig = new TalonFXConfiguration();
@@ -117,6 +119,14 @@ public class ElevatorTesting extends SubsystemBase {
     return master.getRotorVelocity().getValue();
   }
 
+  public Command elevatorPositionVoltage(double position) {
+    return runEnd(() -> {
+      master.setControl(positionVoltageRequest.withPosition(0));
+    }, () -> {
+      master.set(0);
+    });
+  }
+
   public boolean isStopped() {
     return getSpinVelocity().isNear(Units.RotationsPerSecond.zero(), 0.01);
   }
@@ -133,6 +143,14 @@ public class ElevatorTesting extends SubsystemBase {
             master.set(0);
         });
     }
+
+    public Command runVoltageRequest(double voltage) {
+      return runEnd(() -> {
+          master.setControl(voltageRequest.withOutput(0));
+      }, () -> {
+        master.set(0);
+      });
+  }
 
     public Command resetPositions(double position) {
       return runEnd(() -> {

@@ -25,11 +25,24 @@ public final class Constants {
         public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.5;
 
         // write setpoints, in adjusted rotations, here.
+        public static final double ELEVATOR_L4_SETPOINT = 0;
+        public static final double ELEVATOR_L3_SETPOINT = 0;
+        public static final double ELEVATOR_L2_SETPOINT = 0;
+        public static final double ELEVATOR_L1_SETPOINT = 0;
+        public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 0;
+        public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 0;
+        public static final double ELEVATOR_CLIMB_SETPOINT = 0;
     }
 
     public static class ArmSetpointConfigs {
         public static final double ARM_FORWARD_LIMIT = 0;
         public static final double ARM_REVERSE_LIMIT = 0;
+
+        public static final double L4_SCORING_POS = 0; // fix
+        public static final double L3_SCORING_POS = 0; // fix
+        public static final double L2_SCORING_POS = 0; // fix
+        public static final double L1_SCORING_POS = 0; // fix
+
     }   
 
     public static class PathPlannerAuto {
@@ -74,8 +87,8 @@ public final class Constants {
 
         public static class CORAL_MECHANISM {
             public static final int CORAL_BUCKET_ROTATE = 1;
-            public static final int AGITATOR = 13;
-            public static final int CORAL_INTAKE = 12;
+            public static final int AGITATOR = 12;
+            public static final int CORAL_INTAKE = 13;
         }      
         
         public static class ALGAE_MECHANISM {

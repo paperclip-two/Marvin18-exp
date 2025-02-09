@@ -28,7 +28,9 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("CoralBreak", coralIR.get());
+    SmartDashboard.putNumber("Coral/CoralIR", coralIR.getValue());
+    SmartDashboard.putNumber("Bucket/BucketIR", bucketIR.getValue());
+
     //SmartDashboard.putBoolean("", getBucketBreakReading());
   }
 
@@ -36,28 +38,6 @@ public class Hopper extends SubsystemBase {
     coralIntake.set(TalonSRXControlMode.PercentOutput, dc);
     agitator.set(TalonSRXControlMode.PercentOutput, dc);
 }
-
-public boolean getCoralBreakReading(){
-    return coralIR.get(); 
- }
-
- public boolean getBucketBreakReading(){
-    return bucketBeamBreak.get();
- }
- /* 
-  public Command runVoltageUntilIRReading(double voltage) {
-    return runEnd(() -> {
-        if(getBucketBreakReading() == true){
-            bucketMotor.set(TalonSRXControlMode.PercentOutput, voltage);
-        }
-        else{
-            bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
-        }
-    },
-    () -> {
-        bucketMotor.set(TalonSRXControlMode.PercentOutput, 0);
-    });
-} */
 
 public Command runCoralAgitator(double percentOut) {
     return runEnd(() -> {

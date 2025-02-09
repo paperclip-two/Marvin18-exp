@@ -23,7 +23,7 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralArm;
-import frc.robot.subsystems.ElevatorTesting;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
 
 public class RobotContainer {
@@ -49,7 +49,7 @@ public class RobotContainer {
 
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
-    public final ElevatorTesting m_elevator = new ElevatorTesting();
+    public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
 
     public RobotContainer() {
@@ -70,8 +70,8 @@ public class RobotContainer {
 
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
         Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
-        Pilot.leftBumper().whileTrue(m_coralArm.runArmVoltage(0.5));
-        Pilot.rightBumper().whileTrue(m_coralArm.runArmVoltage(-0.5));
+        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+        Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
   
         Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.1));
         Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
@@ -108,8 +108,8 @@ public class RobotContainer {
     //  test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
       test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
       test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
-      test.leftBumper().whileTrue(m_coralArm.runArmVoltage(0.5));
-      test.rightBumper().whileTrue(m_coralArm.runArmVoltage(-0.5));
+      test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+      test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
 
       test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
       test.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
