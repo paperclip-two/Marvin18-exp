@@ -111,9 +111,10 @@ public class RobotContainer {
       test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
       test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
 
-      test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-      test.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
-      test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
+    //  test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
+      test.x().whileTrue(m_algae.runAlgaeWheels(0.9));
+      test.y().whileTrue(m_algae.runAlgaeWheels(-0.8));
+     // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
       test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
     }

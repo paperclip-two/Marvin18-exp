@@ -44,8 +44,10 @@ public class Hopper extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("CoralIR", getCoralIRReading());
     SmartDashboard.putNumber("BucketIR", getBucketIRReading());
-    runAgitatorWhenReading(1);
+  //  runAgitatorWhenReading(1);
     //SmartDashboard.putBoolean("", getBucketIRReading());
+      // assume follower just maintains master values. follower returns position as negative because it is inverted
+      SmartDashboard.putNumber("Bucket/VoltageOut", coralIntake.getMotorOutputVoltage());
   }
 
   public void setDutyCycle(double dc) {
@@ -61,16 +63,16 @@ public double getCoralIRReading(){
     return bucketIR.getAverageVoltage();
  }
  
-  public Command runIntakeUntilIRReading(double voltage) {
-    return runEnd(() -> {
-        if(getBucketIRReading() > DynamicConstants.IRThresholds.bucketIRthreshold){
-            coralIntake.set(TalonSRXControlMode.PercentOutput, voltage);
-        }
-    },
-    () -> {
-        coralIntake.set(TalonSRXControlMode.PercentOutput, 0);
-    });
-} 
+
+private int integ = 0;
+public boolean hasCoral() {
+   if (getBucketIRReading() > DynamicConstants.IRThresholds.bucketIRthreshold) {
+    integ++;
+   } else {
+    integ = 0;
+   }
+   return integ >=5;
+}
 
 public Command runAgitatorWhenReading(double voltage) {
     return runEnd(() -> {
@@ -104,5 +106,15 @@ public Command runIntake(double percentOut) {
     () -> {
         coralIntake.set(TalonSRXControlMode.PercentOutput, 0);
     });
+}
+
+
+public Command runIntakeUntilIR(double percentOut) {
+    return runEnd(() -> {
+     coralIntake.set(TalonSRXControlMode.PercentOutput, percentOut);
+    },
+    () -> {
+        coralIntake.set(TalonSRXControlMode.PercentOutput, 0);
+    }).until(() -> hasCoral());
 }
 }

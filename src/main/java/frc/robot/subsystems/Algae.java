@@ -34,11 +34,11 @@ public class Algae extends SubsystemBase {
 
 public Command runAlgaeWheels(double percent) {
     return runEnd(() -> {
-        algae.set(TalonSRXControlMode.PercentOutput, percent);
+        setDutyCycle(percent);
 
     },
     () -> {
-        algae.set(TalonSRXControlMode.PercentOutput, 0);
+        setDutyCycle(0);
     });
 }
 }
