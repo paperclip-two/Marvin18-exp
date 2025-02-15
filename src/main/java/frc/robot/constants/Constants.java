@@ -20,7 +20,7 @@ public final class Constants {
     public static class ElevatorSetpointConfigs {
         public static final double ELEVATOR_DEADZONE_DIST = 1;
         public static final double INCHES_PER_ROTATION = 3; // in testing the chassis moves 3 inches per full rotation.
-        public static final double ELEVATOR_FORWARD_LIMIT = 0; // for master.
+        public static final double ELEVATOR_FORWARD_LIMIT = 97; // for master.
         public static final double ELEVATOR_REVERSE_LIMIT = 0; // for master.
         public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.5;
 
@@ -36,7 +36,7 @@ public final class Constants {
     }
 
     public static class ArmSetpointConfigs {
-        public static final double ARM_FORWARD_LIMIT = 0;
+        public static final double ARM_FORWARD_LIMIT = 4;
         public static final double ARM_REVERSE_LIMIT = 0;
 
         public static final double L4_SCORING_POS = 0; // fix
