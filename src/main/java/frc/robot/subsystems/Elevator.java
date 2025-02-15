@@ -65,6 +65,7 @@ public class Elevator extends SubsystemBase {
         TalonFXConfiguration masterConfig = new TalonFXConfiguration();
 
         masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_FORWARD_LIMIT;
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_REVERSE_LIMIT;
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
