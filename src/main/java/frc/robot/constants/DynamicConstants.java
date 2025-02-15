@@ -37,8 +37,8 @@ public final class DynamicConstants {
     }
 
     public static class Algae {
-        public static double intakePercent = 0.2;
-        public static double outtakePercent = -0.1;
+        public static double intakePercent = 0.5;
+        public static double outtakePercent = -0.3;
     } 
 
     public static class TestVoltages {

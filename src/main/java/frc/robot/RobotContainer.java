@@ -74,21 +74,24 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                robotDrive.withVelocityX(deadband((-Pilot.getLeftY() * 0.5) * MaxSpeed, 0.1)) // Drive forward with negative Y (forward)
-                    .withVelocityY(deadband(-Pilot.getLeftX() * 0.5 * MaxSpeed, 0.1)) // Drive left with negative X (left)
-                    .withRotationalRate(deadband((-Pilot.getRightX() * 0.5) * MaxAngularRate, 0.1)) // Drive counterclockwise with negative X (left)
+                robotDrive.withVelocityX(joystickshaping(-Pilot.getLeftY(), 0) * MaxSpeed * 0.5) // Drive forward with negative Y (forward)
+                    .withVelocityY(joystickshaping(-Pilot.getLeftX(), 0) * MaxSpeed * 0.5) // Drive left with negative X (left)
+                    .withRotationalRate(joystickshaping(-Pilot.getRightX(), 0) * MaxSpeed * 0.5) // Drive counterclockwise with negative X (left)
             )
         );
 
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
         Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
-        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-        Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(1));
+        Pilot.rightBumper().whileTrue(m_coralArm.ArmPosVoltage(3));
   
-        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-        Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
-        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
-        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
+        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
+        Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.8));
+        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.5));
+        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
+        Pilot.povLeft().whileTrue(m_algae.intake());
+
+        Pilot.povRight().whileTrue(m_algae.outtake());
 
       //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
      //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->
@@ -141,6 +144,19 @@ public class RobotContainer {
             return (value - deadband) / (1.0 - deadband);
           } else {
             return (value + deadband) / (1.0 - deadband);
+    
+          }
+        } else {
+          return 0.0;
+        }
+      }
+
+    private static double joystickshaping(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+          if (value > 0.0) {
+            return Math.pow(((value - deadband) / (1.0 - deadband)), 2);
+          } else {
+            return -Math.pow(((value + deadband) / (1.0 - deadband)), 2);
     
           }
         } else {

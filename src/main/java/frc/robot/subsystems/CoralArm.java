@@ -47,10 +47,10 @@ public class CoralArm extends SubsystemBase {
         armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         armConfig.CurrentLimits.SupplyCurrentLimit = 20;
         armConfig.CurrentLimits.StatorCurrentLimit =  60;
-        armConfig.Voltage.PeakForwardVoltage = 2;
-        armConfig.Voltage.PeakReverseVoltage = -2;
+        armConfig.Voltage.PeakForwardVoltage = 4;
+        armConfig.Voltage.PeakReverseVoltage = -4;
         armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        armConfig.Slot0 = new Slot0Configs().withKP(1.35).withKI(4).withKD(0.01).withKS(0.001).withKG(1.1);
+        armConfig.Slot0 = new Slot0Configs().withKP(2.35).withKI(4).withKD(0.01).withKS(0.001).withKG(1.1);
         arm.getConfigurator().apply(armConfig);
     }
 
@@ -69,7 +69,7 @@ public class CoralArm extends SubsystemBase {
 
     public Command runVoltage(double voltage) {
         return runEnd(() -> {
-            arm.setControl(voltageRequest.withOutput(0));
+            arm.setControl(voltageRequest.withOutput(voltage));
         }, () -> {
             arm.set(0);
         });

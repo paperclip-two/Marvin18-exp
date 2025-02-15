@@ -36,7 +36,7 @@ public final class Constants {
     }
 
     public static class ArmSetpointConfigs {
-        public static final double ARM_FORWARD_LIMIT = 0;
+        public static final double ARM_FORWARD_LIMIT = 4;
         public static final double ARM_REVERSE_LIMIT = 0;
 
         public static final double L4_SCORING_POS = 0; // fix
