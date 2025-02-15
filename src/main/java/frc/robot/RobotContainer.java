@@ -82,15 +82,14 @@ public class RobotContainer {
 
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
         Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
-        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(1));
+        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(2));
         Pilot.rightBumper().whileTrue(m_coralArm.ArmPosVoltage(3));
   
         Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
-        Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.8));
-        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.5));
-        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
+        Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
+        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(0.5));
+        Pilot.b().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
         Pilot.povLeft().whileTrue(m_algae.intake());
-
         Pilot.povRight().whileTrue(m_algae.outtake());
 
       //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
