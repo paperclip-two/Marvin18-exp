@@ -85,24 +85,24 @@ public class RobotContainer {
         Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(2));
         Pilot.rightBumper().whileTrue(m_coralArm.ArmPosVoltage(3));
   
-        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
-        Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
+      //  Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
+      //  Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
         Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(0.5));
-        Pilot.b().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
-        Pilot.povLeft().whileTrue(m_algae.intake());
+        //Pilot.b().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
+        Pilot.b().whileTrue(m_algae.intake());
         Pilot.povRight().whileTrue(m_algae.outtake());
 
-      //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
-     //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->
-     //       point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
+        //Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        //Pilot.b().whileTrue(drivetrain.applyRequest(() ->
+       //     point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
      //   ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-     //   Pilot.back().and(Pilot.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-     //   Pilot.back().and(Pilot.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-      //  Pilot.start().and(Pilot.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-      //  Pilot.start().and(Pilot.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        Pilot.back().and(Pilot.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        Pilot.back().and(Pilot.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        Pilot.start().and(Pilot.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        Pilot.start().and(Pilot.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
        // Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

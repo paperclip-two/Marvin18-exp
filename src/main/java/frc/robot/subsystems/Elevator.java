@@ -82,7 +82,7 @@ public class Elevator extends SubsystemBase {
         masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
         master.getConfigurator().apply(masterConfig);
         follower.getConfigurator().apply(masterConfig);
-        master.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+       // master.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
         follower.setControl(new Follower(master.getDeviceID(), true));
       //  leftLimit = new DigitalInput(0);
       //rightLimit = new DigitalInput(0);
