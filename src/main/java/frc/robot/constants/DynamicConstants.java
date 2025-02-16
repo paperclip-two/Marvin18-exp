@@ -24,6 +24,8 @@ public final class DynamicConstants {
         public static double armL2 = 0;
         public static double armL1 = 0;
 
+        public static double armTestPos = 0.1;
+
     }
 
     public static class ElevatorSetpoints {
@@ -34,6 +36,8 @@ public final class DynamicConstants {
         public static double elevAlgaeTop = 0;
         public static double elevAlgaeBot = 0;
         public static double elevClimb = 0;
+
+        public static double elevTestPos = 1;
     }
 
     public static class Algae {

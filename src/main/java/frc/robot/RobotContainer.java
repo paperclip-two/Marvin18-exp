@@ -53,6 +53,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController Pilot = new CommandXboxController(0);
+    private final CommandXboxController Copilot = new CommandXboxController(0);
     private final CommandXboxController test = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -61,10 +62,10 @@ public class RobotContainer {
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
-    public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
 
     public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
     public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
+    public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
 
     public RobotContainer() {
       configureBindings();
@@ -94,8 +95,13 @@ public class RobotContainer {
         Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
         Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
         Pilot.a().onTrue(drivetrain.seedCentric());
-        Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
-        Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
+        Pilot.leftBumper().whileTrue(m_algae.intake());
+        Pilot.rightBumper().whileTrue(m_algae.outtake());
+        Copilot.leftTrigger().whileTrue(m_elevator.setMotionMagicPosition(DynamicConstants.ElevatorSetpoints.elevTestPos));
+        Copilot.rightTrigger().whileTrue(m_coralArm.setMotionMagicPosition(DynamicConstants.ArmSetpoints.armTestPos));
+
+      //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
+       // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
 
       //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
      //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->

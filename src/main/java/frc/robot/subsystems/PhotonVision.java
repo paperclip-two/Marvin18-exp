@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -46,46 +47,50 @@ public class PhotonVision extends SubsystemBase {
     }
 
     public void resetPose(){
-        Optional<EstimatedRobotPose> pose = getEstimatedGlobalPose(dt.getState().Pose);
-        PhotonPipelineResult latestResult = camera.getLatestResult();
-        if(latestResult.hasTargets()){
-            PhotonTrackedTarget trackedTarget = latestResult.getBestTarget();
-            
-            
-            if(pose.isPresent() && trackedTarget != null
-            && trackedTarget.getBestCameraToTarget() != null
-            && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
-            || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
-            )) {
-                if (!rejectPose()) {
-                    double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
-                    dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
-                    dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
-                    lastPose = pose.get();
-                }
-            }
-        }
-    }
-
-    
-    public void resetPoseFixed(){
-        Optional<EstimatedRobotPose> pose = getEstimatedGlobalPose(dt.getState().Pose);
-        var results = camera.getAllUnreadResults();
-        if(!results.isEmpty()){
-            var latestResult = results.get(results.size() - 1);
-            if (latestResult.hasTargets()) {
+        if (camera.isConnected()) {
+            Optional<EstimatedRobotPose> pose = getEstimatedGlobalPose(dt.getState().Pose);
+            PhotonPipelineResult latestResult = camera.getLatestResult();
+            if(latestResult.hasTargets()){
                 PhotonTrackedTarget trackedTarget = latestResult.getBestTarget();
+                
+                
                 if(pose.isPresent() && trackedTarget != null
                 && trackedTarget.getBestCameraToTarget() != null
                 && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
                 || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
                 )) {
                     if (!rejectPose()) {
-                        if (pose != null) {
-                            double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
-                            dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
-                            dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
-                            lastPose = pose.get();
+                        double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
+                        dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
+                        dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
+                        lastPose = pose.get();
+                    }
+                }
+            }
+        } 
+    }
+
+    
+    public void resetPoseFixed(){
+        if (camera.isConnected()) {
+            Optional<EstimatedRobotPose> pose = getEstimatedGlobalPose(dt.getState().Pose);
+            var results = camera.getAllUnreadResults();
+            if(!results.isEmpty()){
+                var latestResult = results.get(results.size() - 1);
+                if (latestResult.hasTargets()) {
+                    PhotonTrackedTarget trackedTarget = latestResult.getBestTarget();
+                    if(pose.isPresent() && trackedTarget != null
+                    && trackedTarget.getBestCameraToTarget() != null
+                    && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
+                    || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
+                    )) {
+                        if (!rejectPose()) {
+                            if (pose != null) {
+                                double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
+                                dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
+                                dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
+                                lastPose = pose.get();
+                            }
                         }
                     }
                 }
@@ -104,89 +109,101 @@ public class PhotonVision extends SubsystemBase {
 
     @Override
     public void periodic(){
-        resetPose();
+     //   resetPose();
     }
 
     public double getRobotHeading(){
-        double heading = 0;
-        if(lastPose != null){
-            heading = lastPose.estimatedPose.getRotation().toRotation2d().getDegrees();
-        }
-        var plresults = camera.getAllUnreadResults();
-        PhotonPipelineResult plresult = plresults.get(plresults.size() - 1);
-        if(plresult.getBestTarget() != null && plresult.hasTargets()){
-            PhotonTrackedTarget trackedTarget = plresult.getBestTarget();
-            if(trackedTarget != null && trackedTarget.getBestCameraToTarget() != null && aprilTagFieldLayout.getTagPose(trackedTarget.getFiducialId()).isPresent()){
-                heading = (aprilTagFieldLayout.getTagPose(trackedTarget.getFiducialId()).get().getRotation().toRotation2d().getDegrees() - (trackedTarget.getBestCameraToTarget().getRotation().toRotation2d().getDegrees()));
+        if (camera.isConnected()) {
+            double heading = 0;
+            if(lastPose != null){
+                heading = lastPose.estimatedPose.getRotation().toRotation2d().getDegrees();
             }
+            var plresults = camera.getAllUnreadResults();
+            PhotonPipelineResult plresult = plresults.get(plresults.size() - 1);
+            if(plresult.getBestTarget() != null && plresult.hasTargets()){
+                PhotonTrackedTarget trackedTarget = plresult.getBestTarget();
+                if(trackedTarget != null && trackedTarget.getBestCameraToTarget() != null && aprilTagFieldLayout.getTagPose(trackedTarget.getFiducialId()).isPresent()){
+                    heading = (aprilTagFieldLayout.getTagPose(trackedTarget.getFiducialId()).get().getRotation().toRotation2d().getDegrees() - (trackedTarget.getBestCameraToTarget().getRotation().toRotation2d().getDegrees()));
+                }
+            }
+            return heading;
+        } else {
+            return 0;
         }
-        return heading;
     }
+
+
 
     public double getTagXDist() {
-        double tagPitch = 0;
-        
-        List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
-        if (!currentUnreadPipeline.isEmpty()) {
-            PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
-        // make another state machine that enables flashing led when target is not found 
-            tagPitch = latestTag.getBestTarget().getPitch();
-            Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
-            return camToTarget.getMeasureX().in(Meter);
-        } else {
-            return 0.0;
-        }
-
-    }
+        double tagX = 0;
+        if (camera.isConnected()) {
+            List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
+            if (!currentUnreadPipeline.isEmpty()) {
+                PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
+                if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
+                    Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
+                    tagX = camToTarget.getMeasureX().in(Meter);
+                }
+            }
+         }
+    return tagX;
+  }  
 
     public double getTagYDist() {
-        double tagPitch = 0;
-        
-        List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
-        if (!currentUnreadPipeline.isEmpty()) {
-            PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
-        // make another state machine that enables flashing led when target is not found 
-            tagPitch = latestTag.getBestTarget().getPitch();
-            Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
-            return camToTarget.getMeasureY().in(Meter);
-        } else {
-            return 0.0;
-        }
-
-    }
-        // make state machine that tells this what thte current tag heigh is - when we want to make this work
+        double tagY = 0;
+        if (camera.isConnected()) {
+            List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
+            if (!currentUnreadPipeline.isEmpty()) {
+                PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
+                if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
+                    Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
+                    tagY = camToTarget.getMeasureY().in(Meter);
+                }
+            }
+         }
+    return tagY;
+  }  
+  
+  // make state machine that tells this what thte current tag heigh is - when we want to make this work
         // make another state machine that enables flashing led when target is not found 
     //    if (mRobotToCam.getZ() - Constants.VisionConstants.CORAL_APRILTAG_HEIGHT > 0.05) { // tune this value. This could be the ideal value for height
 //
    //     }
      //   return PhotonUtils.calculateDistanceToTargetMeters(mRobotToCam.getZ(), Constants.VisionConstants.CORAL_APRILTAG_HEIGHT, 0, tagPitch);
   
-
+    public String getName() {
+        if (camera.isConnected()) {
+            return camera.getName();
+        } else {
+            return  "No camera found.";
+        }
+    }
     public double getTagYaw() {
         double tagYaw = 0;
-        
-        List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
-        if (!currentUnreadPipeline.isEmpty()) {
-            PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
-            tagYaw = latestTag.getBestTarget().getYaw();
-        } else {
-            return 0.0;
-        }
-        
-        // make state machine that tells this what thte current tag heigh is - when we want to make this work for other heights
+        if (camera.isConnected()) {
+            List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
+            if (!currentUnreadPipeline.isEmpty()) {
+                PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
+                if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
+                    tagYaw = latestTag.getBestTarget().getYaw();
+                }
+            } 
+        } 
         return tagYaw;
     }    
 
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         PhotonPipelineResult result = new PhotonPipelineResult();
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        var results = camera.getAllUnreadResults();
-        if (!results.isEmpty()) {
-            return photonPoseEstimator.update(results.get(results.size() - 1));
+        if (camera.isConnected()) {
+            photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+            var results = camera.getAllUnreadResults();
+            if (!results.isEmpty()) {
+                return photonPoseEstimator.update(results.get(results.size() - 1));
+            } else {
+                return photonPoseEstimator.update(result);
+            }
         } else {
             return photonPoseEstimator.update(result);
         }
     }
-
- 
 }

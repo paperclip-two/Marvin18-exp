@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -25,6 +26,7 @@ public class CoralArm extends SubsystemBase {
     private double positionCoefficient = 1/12;
     PositionVoltage positionVoltageRequest = new PositionVoltage(0);
     VoltageOut voltageRequest = new VoltageOut(0);
+    MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
     private DigitalInput armlimit;
 
 
@@ -42,16 +44,28 @@ public class CoralArm extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ArmSetpointConfigs.ARM_REVERSE_LIMIT;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
+        
      //   masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         armConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        armConfig.Feedback.SensorToMechanismRatio = 48;
         armConfig.CurrentLimits.SupplyCurrentLimit = 20;
         armConfig.CurrentLimits.StatorCurrentLimit =  60;
-        armConfig.Voltage.PeakForwardVoltage = 4;
-        armConfig.Voltage.PeakReverseVoltage = -4;
-        armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        armConfig.Slot0 = new Slot0Configs().withKP(1.35).withKI(4).withKD(0.01).withKS(0.001).withKG(1.1);
+        armConfig.Voltage.PeakForwardVoltage = 16;
+        armConfig.Voltage.PeakReverseVoltage = -16;
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
+        armConfig.MotionMagic.MotionMagicAcceleration = 3;
+        armConfig.Slot0 = new Slot0Configs().withKP(110).withKI(12).withKD(15).withKS(0).withKG(0);
         arm.getConfigurator().apply(armConfig);
+        arm.setPosition(0);
+    }
+
+    public Command setMotionMagicPosition(double position) {
+        return runEnd(() -> {
+            arm.setControl(motionMagicRequest.withPosition(position));
+        }, () -> {
+            arm.set(0);
+        });
     }
 
 

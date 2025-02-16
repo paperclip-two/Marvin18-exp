@@ -89,8 +89,15 @@ public class Elevator extends SubsystemBase {
         masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         masterConfig.CurrentLimits.SupplyCurrentLimit = 20;
         masterConfig.CurrentLimits.StatorCurrentLimit =  60;
-        masterConfig.Voltage.PeakForwardVoltage = 4;
-        masterConfig.Voltage.PeakReverseVoltage = -4;
+        masterConfig.Feedback.SensorToMechanismRatio = 12;
+        masterConfig.Voltage.PeakForwardVoltage = 16;
+        masterConfig.Voltage.PeakReverseVoltage = -16;
+
+        masterConfig.Slot0.kP = 12;
+        masterConfig.Slot0.kI = 4;
+        masterConfig.Slot0.kD = 2;
+        masterConfig.MotionMagic.MotionMagicCruiseVelocity = 1.5;
+        masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
         masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
@@ -106,11 +113,13 @@ public class Elevator extends SubsystemBase {
 
     }
 
-    public void setMotionMagicPosition(double rotations) {
-      // must pass in a value that is converted to positioncoefficient modified rotations
-      master.setControl(motionRequest.withPosition(rotations)); // Should be a MotionMagicVoltage input, TUNED FROM A CONSTRUCTOR. See SuperNURDs code.
-      follower.setControl(new Follower(master.getDeviceID(), true));
-      mostRecentTarget = rotations * positionCoefficient;
+
+    public Command setMotionMagicPosition(double rotations) {
+      return runEnd(() -> {
+        master.setControl(motionRequest.withPosition(rotations));
+      }, () -> {
+        master.set(0);
+      });
     }
 
     public double getLastDesiredPosition() {
