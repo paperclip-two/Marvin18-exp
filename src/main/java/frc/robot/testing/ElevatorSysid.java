@@ -56,7 +56,7 @@ private final SysIdRoutine m_sysIdRoutine =
          Volts.of(0.1), // Reduce dynamic step voltage to 4 to prevent brownout
          sysIdTimeout,        // Use default timeout (10 s)
                       // Log state with Phoenix SignalLogger class
-         (state) -> SignalLogger.writeString("state", state.toString())
+         (state) -> SignalLogger.writeString("elevatorState", state.toString())
       ),
       new SysIdRoutine.Mechanism(
          (volts) -> m_elevator.runVoltage(volts.in(Volts)),

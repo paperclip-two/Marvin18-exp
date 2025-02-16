@@ -208,6 +208,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param request Function returning the request to apply
      * @return Command to run
      */
+    public Command seedCentric() {
+        return runOnce(() -> this.seedFieldCentric());
+    }
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
@@ -233,6 +236,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
+
+
 
     @Override
     public void periodic() {

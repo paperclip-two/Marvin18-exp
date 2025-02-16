@@ -1,7 +1,11 @@
 package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volt;
+import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -17,13 +21,18 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VelocityUnit;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 
@@ -31,9 +40,14 @@ public class Elevator extends SubsystemBase {
     private TalonFX master; // right SIDE MOTOR
     private TalonFX follower; // left SIDE MOTOR
     private double positionCoefficient = 1.0/12.0;
+    private final VoltageOut sysIdVoltage = new VoltageOut(0);
+    Time sysIdTimeout = Time.ofBaseUnits(5, Units.Second);
+   // Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(1.0, VelocityUnit.combine(Units.Volt.getBaseUnit(), 1.0));
+     Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(0.3, VelocityUnit.combine(Volt, Second));
+
     private boolean softLimitEnabled;
     private DigitalInput leftLimitSwitch;
-    private DigitalInput rightLimitSwitch;
+    private DigitalInput rightLimitSwitch; 
     private double mostRecentTarget; // in rotations, converted using position coefficient.
     
 
@@ -89,6 +103,7 @@ public class Elevator extends SubsystemBase {
         
         master.setPosition(0.0); // resets elevator encoders to 0
         follower.setPosition(0.0);
+
     }
 
     public void setMotionMagicPosition(double rotations) {
@@ -203,6 +218,31 @@ public class Elevator extends SubsystemBase {
     master.setPosition(setpoint.in(Inches));
     follower.setPosition(setpoint.in(Inches));
   }
+
+  
+private final SysIdRoutine m_sysIdRoutine =
+   new SysIdRoutine(
+      new SysIdRoutine.Config(
+         rampRate,        // Use default ramp rate (1 V/s)
+         Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
+         sysIdTimeout,        // Use default timeout (10 s)
+                      // Log state with Phoenix SignalLogger class
+         (state) -> SignalLogger.writeString("elevatorState", state.toString())
+      ),
+      new SysIdRoutine.Mechanism(
+         (volts) -> master.setControl(sysIdVoltage.withOutput(volts.in(Volts))),
+         null,
+         this
+      )
+   );
+
+   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+   return m_sysIdRoutine.quasistatic(direction);
+   }
+
+   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+   return m_sysIdRoutine.dynamic(direction);
+   }
   
 
   @Override

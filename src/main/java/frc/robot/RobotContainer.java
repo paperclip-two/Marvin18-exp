@@ -11,6 +11,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -33,6 +34,7 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PhotonVision;
+import frc.robot.testing.ElevatorSysid;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -68,27 +70,32 @@ public class RobotContainer {
       configureBindings();
     }
 
+
+
     public void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                robotDrive.withVelocityX(deadband((-Pilot.getLeftY() * 0.5) * MaxSpeed, 0.1)) // Drive forward with negative Y (forward)
+                drive.withVelocityX(deadband((-Pilot.getLeftY() * 0.5) * MaxSpeed, 0.1)) // Drive forward with negative Y (forward)
                     .withVelocityY(deadband(-Pilot.getLeftX() * 0.5 * MaxSpeed, 0.1)) // Drive left with negative X (left)
                     .withRotationalRate(deadband((-Pilot.getRightX() * 0.5) * MaxAngularRate, 0.1)) // Drive counterclockwise with negative X (left)
             )
         );
+        
 
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
         Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
-        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-        Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-  
-        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-        Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.1));
-        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
-        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
+       // Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+       // Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+     //  Pilot.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+      // Pilot.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
+        Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
+        Pilot.a().onTrue(drivetrain.seedCentric());
+        Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
+        Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
 
       //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
      //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->
@@ -97,10 +104,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-     Pilot.back().and(Pilot.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-      Pilot.back().and(Pilot.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-      Pilot.start().and(Pilot.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-       Pilot.start().and(Pilot.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+     Pilot.back().and(Pilot.y()).whileTrue(m_elevator.sysIdDynamic(Direction.kForward));
+      Pilot.back().and(Pilot.x()).whileTrue(m_elevator.sysIdDynamic(Direction.kReverse));
+      Pilot.start().and(Pilot.y()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
+       Pilot.start().and(Pilot.x()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
        // Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -132,6 +139,8 @@ public class RobotContainer {
       test.povLeft().whileTrue(m_algae.intake());
 
       test.povRight().whileTrue(m_algae.outtake());
+
+      
     }
 
 
