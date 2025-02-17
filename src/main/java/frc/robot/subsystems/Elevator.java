@@ -41,7 +41,7 @@ import frc.robot.constants.DynamicConstants;
 public class Elevator extends SubsystemBase {
     private TalonFX master; // right SIDE MOTOR
     private TalonFX follower; // left SIDE MOTOR
-    private double positionCoefficient = 1.0/12.0;
+    private double positionCoefficient = 1/12;
     private final VoltageOut sysIdVoltage = new VoltageOut(0);
     Time sysIdTimeout = Time.ofBaseUnits(5, Units.Second);
    // Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(1.0, VelocityUnit.combine(Units.Volt.getBaseUnit(), 1.0));
@@ -113,13 +113,15 @@ public class Elevator extends SubsystemBase {
     }
 
 
-    public Command setMotionMagicPosition(DoubleSupplier rotations) {
+    public Command setMotionMagicPosition(double rotations) {
       return runEnd(() -> {
-        master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
+        master.setControl(motionRequest.withPosition(rotations));
       }, () -> {
         master.set(0);
       });
     }
+
+
 
     public double getLastDesiredPosition() {
       return mostRecentTarget;

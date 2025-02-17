@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralArm;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
@@ -25,8 +26,8 @@ public class IntegratedScoringCommand extends SequentialCommandGroup {
         addRequirements(elev, arm, hop);
 
         addCommands(
-        //   m_Elevator.setMotionMagicPosition(requiredElev),
-      //     m_coralArm.setMotionMagicPosition(requiredArm).andThen(m_CoralHopper.runIntake(-0.5))
+         m_Elevator.setMotionMagicPosition(requiredElev),
+         m_coralArm.setMotionMagicPosition(requiredArm)
         );
     }
 

@@ -11,7 +11,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -34,7 +33,6 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PhotonVision;
-import frc.robot.testing.ElevatorSysid;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -42,18 +40,15 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController Pilot = new CommandXboxController(0);
-    private final CommandXboxController Copilot = new CommandXboxController(1);
     private final CommandXboxController test = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -63,15 +58,14 @@ public class RobotContainer {
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
 
+    //public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry()
+
     public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
     public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
-    public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
 
     public RobotContainer() {
       configureBindings();
     }
-
-
 
     public void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -79,37 +73,21 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(deadband((-Pilot.getLeftY() * 0.5) * MaxSpeed, 0.1)) // Drive forward with negative Y (forward)
-                    .withVelocityY(deadband(-Pilot.getLeftX() * 0.5 * MaxSpeed, 0.1)) // Drive left with negative X (left)
-                    .withRotationalRate(deadband((-Pilot.getRightX() * 0.5) * MaxAngularRate, 0.1)) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(deadband(-Pilot.getLeftY() , 0.1) * 0.5 * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.5 * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-        // OLD DRIVE COMMAND
-        /*
+
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
         Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
-       // Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-       // Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-     //  Pilot.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
-      // Pilot.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+        Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+        Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+  
         Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
-        Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
-        Pilot.a().onTrue(drivetrain.seedCentric());
-        Pilot.leftBumper().whileTrue(m_algae.intake());
-        Pilot.rightBumper().whileTrue(m_algae.outtake());
- */   
-
-        Pilot.leftBumper().whileTrue(m_algae.intake());
-        Pilot.rightBumper().whileTrue(m_algae.outtake());
-        Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(() -> DynamicConstants.ElevatorSetpoints.elevTestPos));
-        Pilot.povRight().whileTrue(m_coralArm.setMotionMagicPosition(() -> DynamicConstants.ArmSetpoints.armTestPos));
-        Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
-        Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
-        Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(0.5));
-        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-0.8));
-
-      //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
-       // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
+        Pilot.b().whileTrue(mCoral_Hopper.runIntake(-0.8));
+        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.5));
+        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
 
       //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
      //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->
@@ -118,13 +96,12 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-     Pilot.back().and(Pilot.y()).whileTrue(m_elevator.sysIdDynamic(Direction.kForward));
-      Pilot.back().and(Pilot.x()).whileTrue(m_elevator.sysIdDynamic(Direction.kReverse));
-      Pilot.start().and(Pilot.y()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
-       Pilot.start().and(Pilot.x()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
-
-        // reset the field-centric heading on left bumper press
-       // Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+     Pilot.back().and(Pilot.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+      Pilot.back().and(Pilot.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+      Pilot.start().and(Pilot.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+       Pilot.start().and(Pilot.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // reset the field-centric heading on start and b button press
+      Pilot.start().and(Pilot.b()).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -139,22 +116,20 @@ public class RobotContainer {
       // Elevator Test Bindings
     //  test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
     //  test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
-      test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
-      test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
-      test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-      test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+      //test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
+      //test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
+      //test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+      //test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
 
     //  test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-      test.x().whileTrue(m_algae.intake());
-      test.y().whileTrue(m_algae.outtake());
+      //test.x().whileTrue(m_algae.intake());
+      //test.y().whileTrue(m_algae.outtake());
      // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
-      test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
+      //test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
-      test.povLeft().whileTrue(m_algae.intake());
+      //test.povLeft().whileTrue(m_algae.intake());
 
-      test.povRight().whileTrue(m_algae.outtake());
-
-      
+      //test.povRight().whileTrue(m_algae.outtake());
     }
 
 
@@ -170,4 +145,6 @@ public class RobotContainer {
           return 0.0;
         }
       }
+
+      
 }

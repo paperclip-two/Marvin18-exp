@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
@@ -21,11 +22,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.subsystems.Elevator;
+import frc.robot.RobotContainer;
 
 public class CoralArm extends SubsystemBase {
     private TalonFX arm;
     private TalonSRX bucketMotor;
-    private double positionCoefficient = 1/12;
+    private double positionCoefficient = 1/48;
     PositionVoltage positionVoltageRequest = new PositionVoltage(0);
     VoltageOut voltageRequest = new VoltageOut(0);
     MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
@@ -39,7 +42,6 @@ public class CoralArm extends SubsystemBase {
 
         TalonFXConfiguration armConfig = new TalonFXConfiguration();
         bucketMotor.configFactoryDefault();
-
 
         armConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.ArmSetpointConfigs.ARM_FORWARD_LIMIT;
@@ -66,14 +68,13 @@ public class CoralArm extends SubsystemBase {
         arm.setPosition(0);
     }
 
-    public Command setMotionMagicPosition(DoubleSupplier position) {
+    public Command setMotionMagicPosition(double position) {
         return runEnd(() -> {
-            arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
+            arm.setControl(motionMagicRequest.withPosition(position));
         }, () -> {
             arm.set(0);
         });
     }
-
 
     public Command ArmPosVoltage(double position) {
         return runEnd(() -> {
