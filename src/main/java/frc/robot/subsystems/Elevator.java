@@ -113,9 +113,9 @@ public class Elevator extends SubsystemBase {
     }
 
 
-    public Command setMotionMagicPosition(double rotations) {
+    public Command setMotionMagicPosition(DoubleSupplier rotations) {
       return runEnd(() -> {
-        master.setControl(motionRequest.withPosition(rotations));
+        master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
       }, () -> {
         master.set(0);
       });

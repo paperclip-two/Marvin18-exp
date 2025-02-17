@@ -68,9 +68,9 @@ public class CoralArm extends SubsystemBase {
         arm.setPosition(0);
     }
 
-    public Command setMotionMagicPosition(double position) {
+    public Command setMotionMagicPosition(DoubleSupplier position) {
         return runEnd(() -> {
-            arm.setControl(motionMagicRequest.withPosition(position));
+            arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
         }, () -> {
             arm.set(0);
         });
