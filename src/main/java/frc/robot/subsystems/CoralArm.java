@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -55,14 +57,18 @@ public class CoralArm extends SubsystemBase {
         armConfig.Voltage.PeakReverseVoltage = -16;
         armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
         armConfig.MotionMagic.MotionMagicAcceleration = 3;
-        armConfig.Slot0 = new Slot0Configs().withKP(110).withKI(12).withKD(15).withKS(0).withKG(0);
+        armConfig.Slot0.kP = 110;
+        armConfig.Slot0.kI = 12;
+        armConfig.Slot0.kD = 15;
+        armConfig.Slot0.kS = 0;
+        armConfig.Slot0.kG = 0;
         arm.getConfigurator().apply(armConfig);
         arm.setPosition(0);
     }
 
-    public Command setMotionMagicPosition(double position) {
+    public Command setMotionMagicPosition(DoubleSupplier position) {
         return runEnd(() -> {
-            arm.setControl(motionMagicRequest.withPosition(position));
+            arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
         }, () -> {
             arm.set(0);
         });
@@ -103,7 +109,7 @@ public class CoralArm extends SubsystemBase {
     SmartDashboard.putNumber("Arm/AdjustedPosition", arm.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Arm/TruePosition", arm.getPosition().getValueAsDouble());
 
-    SmartDashboard.putBoolean("Arm/DIO", armlimit.get());
+    SmartDashboard.putBoolean("Arm/DIO", !armlimit.get());
 
   }
 

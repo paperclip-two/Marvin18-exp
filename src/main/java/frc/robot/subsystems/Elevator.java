@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -46,8 +48,7 @@ public class Elevator extends SubsystemBase {
      Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(0.3, VelocityUnit.combine(Volt, Second));
 
     private boolean softLimitEnabled;
-    private DigitalInput leftLimitSwitch;
-    private DigitalInput rightLimitSwitch; 
+    private DigitalInput climbLimit;
     private double mostRecentTarget; // in rotations, converted using position coefficient.
     
 
@@ -67,8 +68,7 @@ public class Elevator extends SubsystemBase {
         // Motors
         follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
         master = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_MASTER, "CAN-2"); // RIGHT SIDE MOTOR
-        leftLimitSwitch = new DigitalInput(4);
-        rightLimitSwitch = new DigitalInput(0);
+        climbLimit = new DigitalInput(Constants.DIO_IDS.CLIMB_LIMIT);
         // Elevator Speed/Target Configs 
         mostRecentTarget = 0; // configure units before testing - get in terms of encoder positions
         voltageRequest = new VoltageOut(0);
@@ -100,7 +100,6 @@ public class Elevator extends SubsystemBase {
         masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
         masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
         master.getConfigurator().apply(masterConfig);
         follower.getConfigurator().apply(masterConfig);
        // master.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
@@ -114,9 +113,9 @@ public class Elevator extends SubsystemBase {
     }
 
 
-    public Command setMotionMagicPosition(double rotations) {
+    public Command setMotionMagicPosition(DoubleSupplier rotations) {
       return runEnd(() -> {
-        master.setControl(motionRequest.withPosition(rotations));
+        master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
       }, () -> {
         master.set(0);
       });
@@ -130,12 +129,13 @@ public class Elevator extends SubsystemBase {
     return master.getPosition().getValueAsDouble() * positionCoefficient;
   }
 
-  public boolean getLeftLimit() {
-    return !leftLimitSwitch.get();
+  public double getPositionNormal() {
+    return master.getPosition().getValueAsDouble();
   }
 
-  public boolean getRightLimit() {
-    return !rightLimitSwitch.get();
+
+  public boolean getLimit() {
+    return !climbLimit.get();
   }
 
   public boolean isAtSetpoint() {
@@ -196,16 +196,16 @@ public class Elevator extends SubsystemBase {
       }, () -> 
       master.setPosition(position));
   }
-
-    public Command zeroElevatorWithLimit() {
+/*    public Command zeroElevatorWithLimit() {
         return runEnd(() -> {
-          setMotionMagicPosition(0);
+          setMotionMagicPosition(() -> 0.0);
         }, () -> {
           if (leftLimitSwitch.get() || rightLimitSwitch.get()) {
             master.set(0);
           }
         }).until(() -> leftLimitSwitch.get() || rightLimitSwitch.get());
     }
+ */
 
     public boolean isPosNearZero() {
       if (Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE) {
@@ -268,8 +268,7 @@ private final SysIdRoutine m_sysIdRoutine =
     SmartDashboard.putNumber("Elevator/Current", master.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/AdjustedPosition", master.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
-    SmartDashboard.putBoolean("Elevator/LeftLimitDIO", getLeftLimit());
-    SmartDashboard.putBoolean("Elevator/RightLimitDIO", getRightLimit());
+    SmartDashboard.putBoolean("Elevator/LimitDIO", getLimit());
 
   }
 }

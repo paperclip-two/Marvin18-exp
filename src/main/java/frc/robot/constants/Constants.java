@@ -61,9 +61,8 @@ public final class Constants {
     }
 
     public static class DIO_IDS {
-        public static final int CLIMB_RIGHT_LIMIT = 0;
-        public static final int CLIMB_LEFT_LIMIT = 4;
-        public static final int CORAL_ARM_LIMIT = 3;
+        public static final int CLIMB_LIMIT = 0;
+        public static final int CORAL_ARM_LIMIT = 4;
 
         public static final int BUCKET_BEAMBREAK = 1;
         public static final int INTAKE_BEAMBREAK = 2;
