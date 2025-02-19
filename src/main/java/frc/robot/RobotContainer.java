@@ -105,7 +105,11 @@ public class RobotContainer {
         Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
         Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
         Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(0.5));
-        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-0.8));
+        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
+        Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
+        Copilot.leftTrigger().whileTrue(m_elevator.runVoltage(-2));
+        Copilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+        Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
 
       //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
        // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
@@ -123,7 +127,7 @@ public class RobotContainer {
        Pilot.start().and(Pilot.x()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-       // Pilot.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+       Pilot.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

@@ -31,8 +31,10 @@ public final class Constants {
         public static final double ELEVATOR_L2_SETPOINT = 1.68;
         public static final double ELEVATOR_L1_SETPOINT = 0;
         public static final double ELEVATOR_ARM_CLEAR_SETPOINT = 0;
-        public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 0;
-        public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 0;
+        public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 7.55;
+        public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 5.52;
+        public static final double ELEVATOR_ALGAE_TEE_SETPOINT = 2.81;
+        public static final double ELEVATOR_ALGAE_GROUND_SETPOINT = 0.73;
         public static final double ELEVATOR_CLIMB_SETPOINT = 0;
     }
 
