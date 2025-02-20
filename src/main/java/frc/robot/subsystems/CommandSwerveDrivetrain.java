@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -25,6 +26,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -350,5 +355,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     
     public HolonomicDriveController getDrivePathController() {
         return mHolonomicDriveController;
+    }
+
+    public Command driveToPose() {
+        return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)), new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond), LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond), AngularVelocity.ofBaseUnits(360, DegreesPerSecond), AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
     }
 }
