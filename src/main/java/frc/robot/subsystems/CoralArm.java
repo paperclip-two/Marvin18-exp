@@ -59,11 +59,11 @@ public class CoralArm extends SubsystemBase {
         armConfig.Voltage.PeakReverseVoltage = -16;
         armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
         armConfig.MotionMagic.MotionMagicAcceleration = 3;
-        armConfig.Slot0.kP = 110;
-        armConfig.Slot0.kI = 12;
-        armConfig.Slot0.kD = 15;
-        armConfig.Slot0.kS = 0;
-        armConfig.Slot0.kG = 0;
+        armConfig.Slot0.kP = 90;
+        armConfig.Slot0.kI = 0.1;
+        armConfig.Slot0.kD = 8;
+        armConfig.Slot0.kS = 0.05;
+        armConfig.Slot0.kG = 0.3;
         arm.getConfigurator().apply(armConfig);
         arm.setPosition(0);
     }
