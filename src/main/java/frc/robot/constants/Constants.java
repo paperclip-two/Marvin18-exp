@@ -23,7 +23,7 @@ public final class Constants {
         public static final double ELEVATOR_FORWARD_LIMIT = 97; // for master.
         public static final double ELEVATOR_REVERSE_LIMIT = 0; // for master.
         public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.5;
-        public static final double ELEVATOR_SAFE_POSITION = 4;
+        public static final double ELEVATOR_SAFE_POSITION = 6;
 
         // write setpoints, in adjusted rotations, here.
         public static final double ELEVATOR_L4_SETPOINT = 8;
