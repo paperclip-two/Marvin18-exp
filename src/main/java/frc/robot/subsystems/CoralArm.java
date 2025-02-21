@@ -57,18 +57,26 @@ public class CoralArm extends SubsystemBase {
         armConfig.CurrentLimits.StatorCurrentLimit =  60;
         armConfig.Voltage.PeakForwardVoltage = 16;
         armConfig.Voltage.PeakReverseVoltage = -16;
-        armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.3;
         armConfig.MotionMagic.MotionMagicAcceleration = 3;
-        armConfig.Slot0.kP = 110;
-        armConfig.Slot0.kI = 12;
-        armConfig.Slot0.kD = 15;
-        armConfig.Slot0.kS = 0;
-        armConfig.Slot0.kG = 0;
+        armConfig.Slot0.kP = 90;
+        armConfig.Slot0.kI = 0.1;
+        armConfig.Slot0.kD = 8;
+        armConfig.Slot0.kS = 0.05;
+        armConfig.Slot0.kG = 0.3;
         arm.getConfigurator().apply(armConfig);
         arm.setPosition(0);
     }
 
     public Command setMotionMagicPosition(DoubleSupplier position) {
+        return runEnd(() -> {
+            arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
+        }, () -> {
+            arm.set(0);
+        });
+    }
+
+    public Command setPositionSafe(DoubleSupplier position, Elevator elevator) {
         return runEnd(() -> {
             arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
         }, () -> {

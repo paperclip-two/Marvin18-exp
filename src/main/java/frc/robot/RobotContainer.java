@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.Constants;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
+import frc.robot.commands.arm.*;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -57,6 +59,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
@@ -65,6 +68,9 @@ public class RobotContainer {
     public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
     public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
     public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
+
+    public final Command zeroArm = new ZeroArm(m_coralArm);
+
 
     public RobotContainer() {
       configureBindings();
@@ -110,6 +116,7 @@ public class RobotContainer {
         Copilot.leftTrigger().whileTrue(m_elevator.runVoltage(-2));
         Copilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
         Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+        Copilot.a().whileTrue(zeroArm);
 
       //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
        // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
