@@ -131,6 +131,16 @@ public class Elevator extends SubsystemBase {
       });
     }
 
+    public Command SafeHopperReturn(CoralArm coralArm) {
+      return runEnd(() -> {
+        if(coralArm.getPosition() < 0.03)
+        master.setControl(motionRequest.withPosition(0));
+        else master.setControl(motionRequest.withPosition(Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION));
+      }, () -> {
+        master.set(0);
+      });
+    }
+
 
 
     public double getLastDesiredPosition() {
@@ -192,6 +202,15 @@ public class Elevator extends SubsystemBase {
             master.set(0);
         });
     }
+
+    public Command runVoltageSafe(double voltage, CoralArm coralArm) {
+      return runEnd(() -> {
+        if(coralArm.getPosition() < 0.03)
+          master.setControl(voltageRequest.withOutput(voltage));
+      }, () -> {
+          master.set(0);
+      });
+  }
 
     public Command runVoltageRequest(double voltage) {
       return runEnd(() -> {

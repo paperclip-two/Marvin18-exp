@@ -84,6 +84,17 @@ public class CoralArm extends SubsystemBase {
         });
     }
 
+        public Command setMotionMagicPositionSafe(double position, Elevator elevator) {
+        return runEnd(() -> {
+            if(elevator.getPositionNormal() > 6){
+                arm.setControl(motionMagicRequest.withPosition(position));}
+            else return;
+        }, () -> {
+            arm.set(0);
+        });
+    }
+
+
     public Command ArmPosVoltage(double position) {
         return runEnd(() -> {
             arm.setControl(positionVoltageRequest.withPosition(position));
