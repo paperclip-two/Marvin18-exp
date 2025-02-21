@@ -121,6 +121,14 @@ public class Elevator extends SubsystemBase {
       });
     }
 
+    public Command setMotionMagicPositionDB(double rotations) {
+      return runEnd(() -> {
+        master.setControl(motionRequest.withPosition(rotations));
+      }, () -> {
+        master.set(0);
+      });
+    }
+
 
 
     public double getLastDesiredPosition() {

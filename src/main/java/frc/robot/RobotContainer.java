@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.arm.SafeMoveArm;
+import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -43,9 +45,9 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
     private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -57,10 +59,13 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
+    //public final SafeMoveArm m_safeMoveArm = new SafeMoveArm(m_elevator, m_coralArm, 0.3);
+    
 
     public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
     public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
@@ -108,8 +113,9 @@ public class RobotContainer {
         Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
         Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
         Copilot.leftTrigger().whileTrue(m_elevator.runVoltage(-2));
-        Copilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-        Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+        Copilot.leftBumper().whileTrue(m_coralArm.runVoltage(1));
+        Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-1));
+        //Copilot.a().onTrue(Commands.parallel(new SafeMoveArm(m_elevator, m_coralArm, 0.3), m_elevator.setMotionMagicPositionDB(7)));
 
       //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
        // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));

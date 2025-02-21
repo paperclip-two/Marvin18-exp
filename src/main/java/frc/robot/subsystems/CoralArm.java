@@ -76,6 +76,14 @@ public class CoralArm extends SubsystemBase {
         });
     }
 
+    public Command setMotionMagicPositionDB(double position) {
+        return runEnd(() -> {
+            arm.setControl(motionMagicRequest.withPosition(position));
+        }, () -> {
+            arm.set(0);
+        });
+    }
+
     public Command ArmPosVoltage(double position) {
         return runEnd(() -> {
             arm.setControl(positionVoltageRequest.withPosition(position));
