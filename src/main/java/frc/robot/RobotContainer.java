@@ -7,6 +7,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opencv.video.TrackerDaSiamRPN_Params;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -45,6 +48,11 @@ import frc.robot.subsystems.CoralCamera;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.LEDColor;
+import frc.robot.subsystems.LED.LEDSection;
+import frc.robot.subsystems.LED.Rolling;
+import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
@@ -69,6 +77,7 @@ public class RobotContainer {
 
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private final LED LEDController = LED.getInstance();
 
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
@@ -81,6 +90,7 @@ public class RobotContainer {
 
     public RobotContainer() {
       configureBindings();
+      configureLEDTriggers();
     }
 
 
@@ -184,6 +194,10 @@ public class RobotContainer {
 
       
     }
+    
+    private void configureLEDTriggers() {
+      Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
+    }
 
 
     private static double deadband(double value, double deadband) {
@@ -198,4 +212,12 @@ public class RobotContainer {
           return 0.0;
         }
       }
+
+  private Map<LEDSection, State> getRightTriggerColors() {
+    Map<LEDSection, State> map = new HashMap<>();
+    map.put(LEDSection.CORALINTAKEUP, new State(LEDColor.BLUE, Rolling.FORWARD));
+    map.put(LEDSection.CORALINTAKEDOWN, new State(LEDColor.BLUE, Rolling.REVERSE));
+    return map;
+  }
+
 }
