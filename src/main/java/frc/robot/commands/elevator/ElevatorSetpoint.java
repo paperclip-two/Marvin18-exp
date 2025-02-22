@@ -6,20 +6,22 @@ import frc.robot.subsystems.Elevator;
 public class ElevatorSetpoint extends Command {
     Elevator m_Elevator;
     double m_setpoint;
-    public ElevatorSetpoint(Elevator elevator, double setpoint) {
+    boolean mDone;
+    public ElevatorSetpoint(Elevator elevator, double setpoint, boolean done) {
         m_Elevator = elevator;
         m_setpoint = setpoint;
+        mDone = done;
         addRequirements(elevator);
+        
     }
 
     @Override
     public void initialize() {
-        double position = m_Elevator.getAdjustedRotations(); // for future use
     }
 
     @Override
     public void execute() {
-        m_Elevator.elevatorPositionVoltage(m_setpoint);
+        m_Elevator.setMotionMagic(() -> m_setpoint);
     }
 
     @Override
@@ -27,4 +29,8 @@ public class ElevatorSetpoint extends Command {
         m_Elevator.runVoltageRequest(0);
     }
     
+    @Override
+    public boolean isFinished() {
+        return (m_Elevator.isNear(m_setpoint) || m_Elevator.getLimit() || mDone);
+    }
 }

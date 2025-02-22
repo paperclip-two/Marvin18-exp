@@ -22,8 +22,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.ArmSetpointConfigs;
+import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 import frc.robot.subsystems.Elevator;
 import frc.robot.RobotContainer;
+import frc.robot.commands.arm.ArmSetpoint;
 
 public class CoralArm extends SubsystemBase {
     private TalonFX arm;
@@ -72,7 +75,9 @@ public class CoralArm extends SubsystemBase {
             arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
         }, () -> {
             arm.set(0);
-        });
+        }).until(
+            () -> isNear(position.getAsDouble())
+         );
     }
 
     public Command setMotionMagicPositionDB(double position) {
@@ -83,6 +88,25 @@ public class CoralArm extends SubsystemBase {
         });
     }
 
+
+
+  public boolean isNear(double rotations) {
+    boolean targetReached = false;
+    if (Math.abs(getPosition() - rotations) < ArmSetpointConfigs.ARM_DEADZONE_DIST) {
+        targetReached = true;
+    } 
+    return targetReached;
+  }
+
+
+  /*  public boolean isNear(double position) {
+        if (arm.getPosition().getValueAsDouble() > (position - ArmSetpointConfigs.ARM_DEADZONE_DIST) && arm.getPosition().getValueAsDouble() < (position + ArmSetpointConfigs.ARM_DEADZONE_DIST)) {
+         return true;
+         } else {
+            return false;
+         }
+    }
+ */
     public Command setMotionMagicPositionSafe(double position, Elevator elevator) {
         return runEnd(() -> {
             if (elevator.getPositionNormal() > 6) {
@@ -99,7 +123,7 @@ public class CoralArm extends SubsystemBase {
             @Override
             public void execute() {
                 if (elevator.getPositionNormal() > 6) {
-                    arm.setControl(motionMagicRequest.withPosition(position));
+                    arm.setControl(voltageRequest.withOutput(-.8));
                 } else
                     return;
 
@@ -130,7 +154,8 @@ public class CoralArm extends SubsystemBase {
     }
 
     public double getPosition() {
-        return arm.getPosition().getValueAsDouble();
+        return
+         arm.getPosition().getValueAsDouble();
     }
 
     public Command runVoltage(double voltage) {
@@ -139,6 +164,10 @@ public class CoralArm extends SubsystemBase {
         }, () -> {
             arm.set(0);
         });
+    }
+
+    public boolean getLimit() {
+        return !armlimit.get();
     }
 
     @Override

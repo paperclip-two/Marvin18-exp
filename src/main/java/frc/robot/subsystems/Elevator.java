@@ -35,8 +35,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
+import frc.robot.constants.Constants.ArmSetpointConfigs;
+import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
 public class Elevator extends SubsystemBase {
     private TalonFX master; // right SIDE MOTOR
@@ -120,7 +123,13 @@ public class Elevator extends SubsystemBase {
         master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
       }, () -> {
         master.set(0);
-      });
+      }).until(
+         () -> isNear(rotations.getAsDouble())
+      );
+    }
+
+    public void setMotionMagic(DoubleSupplier rotations) {
+      master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
     }
 
     public Command setMotionMagicPositionDB(double rotations) {
@@ -139,6 +148,13 @@ public class Elevator extends SubsystemBase {
       }, () -> {
         master.set(0);
       });
+    }
+
+    public Command ElevatorSetpoint(double rotations) {
+      return runEnd(
+        () -> 
+        master.setControl(motionRequest.withPosition(rotations)),
+      () -> master.set(0));
     }
 
     public Command MoveElevatorOnTrue(double rotations, Elevator elevator) {
@@ -196,6 +212,16 @@ public class Elevator extends SubsystemBase {
       return false;
     }
   }
+
+  public boolean isNear(double rotations) {
+    boolean targetReached = false;
+    if (Math.abs(getPositionNormal() - rotations) < ElevatorSetpointConfigs.ELEVATOR_DEADZONE_DIST) {
+        targetReached = true;
+    } 
+    return targetReached;
+  }
+
+
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();

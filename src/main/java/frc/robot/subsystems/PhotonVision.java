@@ -56,8 +56,8 @@ public class PhotonVision extends SubsystemBase {
                 
                 if(pose.isPresent() && trackedTarget != null
                 && trackedTarget.getBestCameraToTarget() != null
-                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 2 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
-                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 2 && DriverStation.isTeleop())
+                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
+                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1 && DriverStation.isTeleop())
                 )) {
                     if (!rejectPose()) {
                         double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
@@ -180,16 +180,23 @@ public class PhotonVision extends SubsystemBase {
     }
     public double getTagYaw() {
         double tagYaw = 0;
+        double result = 0;
         if (camera.isConnected()) {
             List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
             if (!currentUnreadPipeline.isEmpty()) {
                 PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
                 if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
-                    tagYaw = latestTag.getBestTarget().getYaw();
+                    tagYaw = latestTag.getBestTarget().bestCameraToTarget.getRotation().getZ();
+                    if (tagYaw > 0) {
+                        result = tagYaw - Math.PI;
+                    } 
+                    if (tagYaw < 0) {
+                        result = tagYaw + Math.PI;
+                    }
                 }
             } 
         } 
-        return tagYaw;
+        return result;
     }    
 
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {

@@ -27,6 +27,7 @@ public class IntegratedScoringCommand extends SequentialCommandGroup {
         requiredArm = armPosition;
         addRequirements(elev, arm, hop);
 
+        
         addCommands(
         // m_Elevator.setMotionMagicPosition(requiredElev),
         // m_coralArm.setMotionMagicPosition(requiredArm)

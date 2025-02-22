@@ -14,16 +14,20 @@ public class ArmSetpoint extends Command {
 
     @Override
     public void initialize() {
-        double position = m_arm.getPosition(); // for future use
     }
 
     @Override
     public void execute() {
-        m_arm.ArmPosVoltage(m_setpoint);
+        m_arm.setMotionMagicPosition(() -> m_setpoint);
     }
 
     @Override
     public void end(boolean interrupted) {
         m_arm.runVoltage(0);
+    }
+
+    @Override 
+    public boolean isFinished() {
+        return (m_arm.getLimit() || m_arm.isNear(m_setpoint));
     }
 }
