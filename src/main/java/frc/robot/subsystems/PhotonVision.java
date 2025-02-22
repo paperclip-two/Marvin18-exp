@@ -56,8 +56,8 @@ public class PhotonVision extends SubsystemBase {
                 
                 if(pose.isPresent() && trackedTarget != null
                 && trackedTarget.getBestCameraToTarget() != null
-                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 3.5 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
-                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 6 && DriverStation.isTeleop())
+                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 2 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
+                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 2 && DriverStation.isTeleop())
                 )) {
                     if (!rejectPose()) {
                         double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
@@ -109,7 +109,7 @@ public class PhotonVision extends SubsystemBase {
 
     @Override
     public void periodic(){
-     //   resetPose();
+      resetPose();
     }
 
     public double getRobotHeading(){

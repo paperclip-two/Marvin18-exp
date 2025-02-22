@@ -12,20 +12,29 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathfindThenFollowPath;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.path.PathConstraints;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.arm.SafeMoveArm;
-import frc.robot.commands.elevator.ElevatorSetpoint;
+import frc.robot.auto.PathfindToPose;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -36,6 +45,7 @@ import frc.robot.subsystems.CoralCamera;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
 
@@ -45,9 +55,9 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -57,18 +67,16 @@ public class RobotContainer {
     private final CommandXboxController Copilot = new CommandXboxController(1);
     private final CommandXboxController test = new CommandXboxController(2);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
 
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
-    //public final SafeMoveArm m_safeMoveArm = new SafeMoveArm(m_elevator, m_coralArm, 0.3);
-    
 
-    public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
-    public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
+   public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15), Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
+   //public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48), Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30), Degrees.of(0), Degrees.of(-93))));
     public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
 
     public RobotContainer() {
@@ -104,6 +112,7 @@ public class RobotContainer {
  */   
 
         Pilot.leftBumper().whileTrue(m_algae.intake());
+        Pilot.x().whileTrue(new PathfindToPose(drivetrain));
         Pilot.rightBumper().whileTrue(m_algae.outtake());
         Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(() -> DynamicConstants.ElevatorSetpoints.elevTestPos));
         Pilot.povRight().whileTrue(m_coralArm.setMotionMagicPosition(() -> DynamicConstants.ArmSetpoints.armTestPos));
@@ -147,20 +156,24 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+      return new Command() {
+        
+      };
+      //  return new PathfindingCommand(null, null, null, null, null, null, null, null)
     }
 
     public void configureTestBindings() {
       // Elevator Test Bindings
     //  test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
     //  test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
-      test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
-      test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
-      test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-      test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+     // test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
+    //  test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
+    //  test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
+   //   test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
+      test.x().whileTrue(drivetrain.driveToPose());
 
     //  test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-      test.x().whileTrue(m_algae.intake());
+      //test.x().whileTrue(m_algae.intake());
       test.y().whileTrue(m_algae.outtake());
      // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
       test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
