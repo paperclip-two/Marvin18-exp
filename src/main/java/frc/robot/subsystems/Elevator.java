@@ -96,6 +96,8 @@ public class Elevator extends SubsystemBase {
         masterConfig.Slot0.kP = 12;
         masterConfig.Slot0.kI = 4;
         masterConfig.Slot0.kD = 2;
+        masterConfig.Slot0.kG = 0.3;
+        masterConfig.Slot0.kS = 0.1;
         masterConfig.MotionMagic.MotionMagicCruiseVelocity = 1.5;
         masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
@@ -120,6 +122,47 @@ public class Elevator extends SubsystemBase {
         master.set(0);
       });
     }
+
+    public Command setMotionMagicPositionDB(double rotations) {
+      return runEnd(() -> {
+        master.setControl(motionRequest.withPosition(rotations));
+      }, () -> {
+        master.set(0);
+      });
+    }
+
+    public Command SafeHopperReturn(CoralArm coralArm) {
+      return runEnd(() -> {
+        if(coralArm.getPosition() < 0.03)
+        master.setControl(motionRequest.withPosition(0));
+        else master.setControl(motionRequest.withPosition(Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION));
+      }, () -> {
+        master.set(0);
+      });
+    }
+
+    public Command MoveElevatorOnTrue(double rotations, Elevator elevator) {
+      return new Command() {
+          @Override
+          public void execute() {
+              master.setControl(motionRequest.withPosition(rotations));
+          }
+
+          @Override
+          public void end(boolean interrupted) {
+              master.set(0);
+          }
+
+          @Override
+          public boolean isFinished() {
+              if (elevator.getPositionNormal() > (rotations - 0.1)
+                      && elevator.getPositionNormal() < (rotations + 0.1)) {
+                  return true;
+              }
+              return false;
+          }
+      };
+  }
 
 
 
@@ -182,6 +225,15 @@ public class Elevator extends SubsystemBase {
             master.set(0);
         });
     }
+
+    public Command runVoltageSafe(double voltage, CoralArm coralArm) {
+      return runEnd(() -> {
+        if(coralArm.getPosition() < 0.03)
+          master.setControl(voltageRequest.withOutput(voltage));
+      }, () -> {
+          master.set(0);
+      });
+  }
 
     public Command runVoltageRequest(double voltage) {
       return runEnd(() -> {

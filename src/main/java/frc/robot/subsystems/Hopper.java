@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.CoralArm;
 
 public class Hopper extends SubsystemBase {
     private AnalogInput bucketIR;
@@ -102,6 +103,17 @@ public Command runCoralAgitator(double percentOut) {
 public Command runIntake(double percentOut) {
     return runEnd(() -> {
      coralIntake.set(TalonSRXControlMode.PercentOutput, percentOut);
+    },
+    () -> {
+        coralIntake.set(TalonSRXControlMode.PercentOutput, 0);
+    });
+}
+
+public Command runIntakeSafe(double percentOut, CoralArm coralArm) {
+    return runEnd(() -> {
+        if(coralArm.getPosition() > 0.1)
+            coralIntake.set(TalonSRXControlMode.PercentOutput, percentOut);
+        else return;
     },
     () -> {
         coralIntake.set(TalonSRXControlMode.PercentOutput, 0);

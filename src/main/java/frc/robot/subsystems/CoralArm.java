@@ -28,12 +28,11 @@ import frc.robot.RobotContainer;
 public class CoralArm extends SubsystemBase {
     private TalonFX arm;
     private TalonSRX bucketMotor;
-    private double positionCoefficient = 1/48;
+    private double positionCoefficient = 1 / 48;
     PositionVoltage positionVoltageRequest = new PositionVoltage(0);
     VoltageOut voltageRequest = new VoltageOut(0);
     MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
     private DigitalInput armlimit;
-
 
     public CoralArm() {
         arm = new TalonFX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_BUCKET_ROTATE);
@@ -48,22 +47,22 @@ public class CoralArm extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ArmSetpointConfigs.ARM_REVERSE_LIMIT;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
-        
-     //   masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+
+        // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         armConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         armConfig.Feedback.SensorToMechanismRatio = 48;
         armConfig.CurrentLimits.SupplyCurrentLimit = 20;
-        armConfig.CurrentLimits.StatorCurrentLimit =  60;
+        armConfig.CurrentLimits.StatorCurrentLimit = 60;
         armConfig.Voltage.PeakForwardVoltage = 16;
         armConfig.Voltage.PeakReverseVoltage = -16;
-        armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.3;
         armConfig.MotionMagic.MotionMagicAcceleration = 3;
-        armConfig.Slot0.kP = 110;
-        armConfig.Slot0.kI = 12;
-        armConfig.Slot0.kD = 15;
-        armConfig.Slot0.kS = 0;
-        armConfig.Slot0.kG = 0;
+        armConfig.Slot0.kP = 90;
+        armConfig.Slot0.kI = 0.1;
+        armConfig.Slot0.kD = 8;
+        armConfig.Slot0.kS = 0.05;
+        armConfig.Slot0.kG = 0.3;
         arm.getConfigurator().apply(armConfig);
         arm.setPosition(0);
     }
@@ -74,6 +73,52 @@ public class CoralArm extends SubsystemBase {
         }, () -> {
             arm.set(0);
         });
+    }
+
+    public Command setMotionMagicPositionDB(double position) {
+        return runEnd(() -> {
+            arm.setControl(motionMagicRequest.withPosition(position));
+        }, () -> {
+            arm.set(0);
+        });
+    }
+
+    public Command setMotionMagicPositionSafe(double position, Elevator elevator) {
+        return runEnd(() -> {
+            if (elevator.getPositionNormal() > 6) {
+                arm.setControl(motionMagicRequest.withPosition(position));
+            } else
+                return;
+        }, () -> {
+            arm.set(0);
+        });
+    }
+
+    public Command setTest(double position, Elevator elevator) {
+        return new Command() {
+            @Override
+            public void execute() {
+                if (elevator.getPositionNormal() > 6) {
+                    arm.setControl(motionMagicRequest.withPosition(position));
+                } else
+                    return;
+
+            }
+
+            @Override
+            public void end(boolean interrupted) {
+                arm.set(0);
+            }
+
+            @Override
+            public boolean isFinished() {
+                if (arm.getPosition().getValueAsDouble() > (position - 0.01)
+                        && arm.getPosition().getValueAsDouble() < (position + 0.01)) {
+                    return true;
+                }
+                return false;
+            }
+        };
     }
 
     public Command ArmPosVoltage(double position) {
@@ -96,22 +141,22 @@ public class CoralArm extends SubsystemBase {
         });
     }
 
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+        // assume follower just maintains master values. follower returns position as
+        // negative because it is inverted
 
-    // assume follower just maintains master values. follower returns position as negative because it is inverted
+        SmartDashboard.putNumber("Arm/CLO", arm.getClosedLoopOutput().getValueAsDouble());
+        SmartDashboard.putNumber("Arm/Output", arm.get());
+        SmartDashboard.putNumber("Arm/Inverted", arm.getAppliedRotorPolarity().getValueAsDouble());
+        SmartDashboard.putNumber("Arm/Current", arm.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Arm/AdjustedPosition", arm.getPosition().getValueAsDouble() * positionCoefficient);
+        SmartDashboard.putNumber("Arm/TruePosition", arm.getPosition().getValueAsDouble());
 
-    SmartDashboard.putNumber("Arm/CLO", arm.getClosedLoopOutput().getValueAsDouble());
-    SmartDashboard.putNumber("Arm/Output", arm.get());
-    SmartDashboard.putNumber("Arm/Inverted", arm.getAppliedRotorPolarity().getValueAsDouble());
-    SmartDashboard.putNumber("Arm/Current", arm.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Arm/AdjustedPosition", arm.getPosition().getValueAsDouble() * positionCoefficient);
-    SmartDashboard.putNumber("Arm/TruePosition", arm.getPosition().getValueAsDouble());
+        SmartDashboard.putBoolean("Arm/DIO", !armlimit.get());
 
-    SmartDashboard.putBoolean("Arm/DIO", !armlimit.get());
-
-  }
+    }
 
 }
