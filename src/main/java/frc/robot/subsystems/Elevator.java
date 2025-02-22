@@ -141,6 +141,29 @@ public class Elevator extends SubsystemBase {
       });
     }
 
+    public Command MoveElevatorOnTrue(double rotations, Elevator elevator) {
+      return new Command() {
+          @Override
+          public void execute() {
+              master.setControl(motionRequest.withPosition(rotations));
+          }
+
+          @Override
+          public void end(boolean interrupted) {
+              master.set(0);
+          }
+
+          @Override
+          public boolean isFinished() {
+              if (elevator.getPositionNormal() > (rotations - 0.1)
+                      && elevator.getPositionNormal() < (rotations + 0.1)) {
+                  return true;
+              }
+              return false;
+          }
+      };
+  }
+
 
 
     public double getLastDesiredPosition() {

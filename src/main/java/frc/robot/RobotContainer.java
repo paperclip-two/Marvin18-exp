@@ -110,12 +110,16 @@ public class RobotContainer {
         Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
         Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
         Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntakeSafe(-0.5, m_coralArm));
-        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntakeUntilIR(1).alongWith(mCoral_Hopper.runAgitatorWhenReading(3)));
+        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntakeUntilIR(1));
+        Pilot.y().whileTrue(mCoral_Hopper.runAgitatorWhenReading(-0.5));
+        Pilot.x().whileTrue(mCoral_Hopper.runAgitatorWhenReading(0.5));
         Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
         Copilot.leftTrigger().whileTrue(m_elevator.SafeHopperReturn(m_coralArm).alongWith(m_coralArm.setMotionMagicPositionDB(0)));
         Copilot.leftBumper().whileTrue(m_coralArm.runVoltage(1));
+        
         Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-1));
-        Copilot.a().whileTrue(m_coralArm.setMotionMagicPositionSafe(0.28, m_elevator).alongWith(m_elevator.setMotionMagicPositionDB(8)));
+        Copilot.a().onTrue(m_coralArm.setTest(.28, m_elevator).alongWith(m_elevator.MoveElevatorOnTrue(8, m_elevator)));
+
         Copilot.povDown().whileTrue(m_elevator.runVoltage(-2));
 
       //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
