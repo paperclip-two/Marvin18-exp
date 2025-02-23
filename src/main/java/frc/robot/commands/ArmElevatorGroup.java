@@ -43,9 +43,8 @@ public class ArmElevatorGroup extends SequentialCommandGroup {
     else if (m_Elevator.getPositionNormal() < ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION) {
         addCommands(
             m_Elevator.setMotionMagicPosition(() -> ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION).
-            andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition))
-            .andThen(m_Elevator.setMotionMagicPosition(() -> mTargetElevatorPosition))
-            .andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition))             
+            andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition)).
+            andThen(m_Elevator.setMotionMagicPosition(() -> mTargetElevatorPosition))             
             );
         }
     
