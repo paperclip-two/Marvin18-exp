@@ -118,15 +118,25 @@ public class Elevator extends SubsystemBase {
     }
 
 
-    public Command setMotionMagicPosition(DoubleSupplier rotations) {
+    public Command setMotionMagicPosition(DoubleSupplier rotations, boolean check) {
       return runEnd(() -> {
         master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
       }, () -> {
         master.set(0);
-      }).until(
-         () -> isNear(rotations.getAsDouble())
-      );
+      });
     }
+
+  
+    public Command setMotionMagicCheck(DoubleSupplier position) {
+      return runEnd(() -> {
+          master.setControl(motionRequest.withPosition(position.getAsDouble()));
+      }, () -> {
+          master.set(0);
+      }).until(
+          () -> (isNear(position.getAsDouble()))
+       );
+  }
+
 
     public void setMotionMagic(DoubleSupplier rotations) {
       master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
@@ -349,6 +359,10 @@ private final SysIdRoutine m_sysIdRoutine =
     SmartDashboard.putNumber("Elevator/AdjustedPosition", master.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elevator/LimitDIO", getLimit());
+
+    if (getLimit() && (getPositionNormal() != 0)) {
+      master.setPosition(0);  
+    }
 
   }
 }

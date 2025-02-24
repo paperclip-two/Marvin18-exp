@@ -70,13 +70,21 @@ public class CoralArm extends SubsystemBase {
         arm.setPosition(0);
     }
 
-    public Command setMotionMagicPosition(DoubleSupplier position) {
+    public Command setMotionMagicPosition(DoubleSupplier position, boolean check) {
+        return runEnd(() -> {
+            arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
+        }, () -> {
+            arm.set(0);
+        });
+    }
+
+    public Command setMotionMagicCheck(DoubleSupplier position) {
         return runEnd(() -> {
             arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
         }, () -> {
             arm.set(0);
         }).until(
-            () -> isNear(position.getAsDouble())
+            () -> (isNear(position.getAsDouble()))
          );
     }
 
@@ -185,7 +193,10 @@ public class CoralArm extends SubsystemBase {
         SmartDashboard.putNumber("Arm/TruePosition", arm.getPosition().getValueAsDouble());
 
         SmartDashboard.putBoolean("Arm/DIO", !armlimit.get());
-
+        
+        if (getLimit() && (getPosition() != 0)) {
+            arm.setPosition(0);  
+          }
     }
 
 }

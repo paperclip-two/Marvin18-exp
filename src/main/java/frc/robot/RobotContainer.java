@@ -11,6 +11,7 @@ import org.opencv.video.TrackerDaSiamRPN_Params;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -57,9 +58,13 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withSteerRequestType(
+              SteerRequestType.MotionMagicExpo
+            ); // Use open-loop control for drive motors
     private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withSteerRequestType(
+              SteerRequestType.MotionMagicExpo
+            ); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -78,8 +83,9 @@ public class RobotContainer {
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
+//   public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15), Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
 
-   public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15), Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
+   public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
    //public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48), Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30), Degrees.of(0), Degrees.of(-93))));
     public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
 
@@ -121,21 +127,30 @@ public class RobotContainer {
         Pilot.povDown().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 0.77, 0.3));
       //  Pilot.x().whileTrue(new PathfindToPose(drivetrain));
         Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
-        Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
+        Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntakeUntilIR(1));
         Pilot.povRight().whileTrue(m_elevator.runVoltage(2));
         Pilot.povLeft().whileTrue(m_elevator.runVoltage(-2));
         Pilot.x().whileTrue(m_coralArm.runVoltage(-0.5));
         Pilot.y().whileTrue(m_coralArm.runVoltage(0.5));
         Pilot.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        Pilot.b().whileTrue(AutoBuilder.pathfindToPose(
-          new Pose2d(13.4, 2.87, Rotation2d.fromDegrees(26.15)),
+        Copilot.b().whileTrue(AutoBuilder.pathfindToPose(
+          new Pose2d(3, 6.5, Rotation2d.fromDegrees(-150)),
           new PathConstraints(
             1.0, 1.0,
             edu.wpi.first.math.util.Units.degreesToRadians(360), edu.wpi.first.math.util.Units.degreesToRadians(540)
           ),
           0
         ));
+ 
+        Pilot.b().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 0, 0));
+        //Copilot.b().toggleOnTrue(m_coralArm.setMotionMagicPosition(() -> DynamicConstants.ArmSetpoints.armTestPos, false));
+        
+      Copilot.a().whileTrue(new PathPlannerAuto(("AutoTest")));
+        
+
+
+
 
 /*
         Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(()-> 3));
@@ -174,9 +189,11 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-      return new Command() {
-        
-      };
+
+      return new PathPlannerAuto("AutoTest");
+     // return new Command() {
+     //   
+     // };
       //  return new PathfindingCommand(null, null, null, null, null, null, null, null)
     }
 

@@ -35,18 +35,25 @@ public class ArmElevatorGroup extends SequentialCommandGroup {
     
     if (m_Elevator.getPositionNormal() > ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION) {
         addCommands(
-            m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition).
-            andThen(m_Elevator.setMotionMagicPosition(() -> mTargetElevatorPosition))
+            m_CoralArm.setMotionMagicCheck(() -> mTargetArmPosition).
+            andThen(m_Elevator.setMotionMagicCheck(() -> mTargetElevatorPosition)).
+            andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition, false))
             );
         }
 
-    else if (m_Elevator.getPositionNormal() < ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION) {
+    else if (m_Elevator.getPositionNormal() < ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION && m_CoralArm.getPosition() < 0.2) {
         addCommands(
-            m_Elevator.setMotionMagicPosition(() -> ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION).
-            andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition)).
-            andThen(m_Elevator.setMotionMagicPosition(() -> mTargetElevatorPosition))             
+            m_Elevator.setMotionMagicCheck(() -> ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION).
+            andThen(m_CoralArm.setMotionMagicCheck(() -> mTargetArmPosition)).
+            andThen(m_Elevator.setMotionMagicCheck(() -> mTargetElevatorPosition)).
+            andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition, true))             
             );
         }
+    else if (m_Elevator.getPositionNormal() < ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION && m_CoralArm.getPosition() > 0.2) {
+      m_CoralArm.setMotionMagicCheck(() -> mTargetArmPosition).
+      andThen(m_Elevator.setMotionMagicCheck(() -> mTargetElevatorPosition))
+      .andThen(m_CoralArm.setMotionMagicPosition(() -> mTargetArmPosition, false));      
+    }
     
   }
 /*
