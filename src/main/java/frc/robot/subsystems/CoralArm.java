@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -23,10 +22,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ArmSetpointConfigs;
-import frc.robot.constants.Constants.ElevatorSetpointConfigs;
-import frc.robot.subsystems.Elevator;
-import frc.robot.RobotContainer;
-import frc.robot.commands.arm.ArmSetpoint;
 
 public class CoralArm extends SubsystemBase {
     private TalonFX arm;
@@ -51,7 +46,6 @@ public class CoralArm extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
 
-        // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         armConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         armConfig.Feedback.SensorToMechanismRatio = 48;
@@ -61,97 +55,90 @@ public class CoralArm extends SubsystemBase {
         armConfig.Voltage.PeakReverseVoltage = -16;
         armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.3;
         armConfig.MotionMagic.MotionMagicAcceleration = 3;
-        armConfig.Slot0.kP = 90;
-        armConfig.Slot0.kI = 0.1;
+        armConfig.Slot0.kP = 120;
+        armConfig.Slot0.kI = 0.5;
         armConfig.Slot0.kD = 8;
-        armConfig.Slot0.kS = 0.05;
+        armConfig.Slot0.kS = 0;
         armConfig.Slot0.kG = 0.3;
         arm.getConfigurator().apply(armConfig);
         arm.setPosition(0);
     }
 
-    public Command setMotionMagicPosition(DoubleSupplier position, boolean check) {
-        return runEnd(() -> {
-            arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
-        }, () -> {
-            arm.set(0);
-        });
+    /// Methods
+
+    public void setPosition(double position) {
+        arm.setControl(motionMagicRequest.withPosition(position));
     }
 
-    public Command setMotionMagicCheck(DoubleSupplier position) {
+
+    /// Methods to Stop motors
+    public void stopMotorHold() {
+        arm.setControl(motionMagicRequest.withPosition(arm.getPosition().getValueAsDouble()));
+    }
+
+    public void stopMotor() {
+        arm.set(0);
+    }
+    
+
+    /// Methods to Run motors
+    public void runVolt(double voltage) {
+        arm.setControl(voltageRequest.withOutput(voltage));
+    }
+
+
+    public void advancePosition(double rotations) {
+        arm.setControl(motionMagicRequest.withPosition(getPosition() + rotations));
+    }
+    /// Methods to check if the arm positions
+    public boolean isSafe() {
+        if (arm.getPosition().getValueAsDouble() > ArmSetpointConfigs.ARM_SAFE_POSITION) {
+            return true;
+        } else if (arm.getPosition().getValueAsDouble() < ArmSetpointConfigs.ARM_DEADZONE_DIST) {
+            return true;
+        } else
+            return false;
+    }
+
+    public boolean isForward() {
+        return (arm.getPosition().getValueAsDouble() > ArmSetpointConfigs.ARM_SAFE_POSITION);
+    }
+
+    public boolean isNear(double rotations) {
+        boolean targetReached = false;
+        if (Math.abs(getPosition() - rotations) < ArmSetpointConfigs.ARM_DEADZONE_DIST) {
+            targetReached = true;
+        }
+        return targetReached;
+    }
+
+    public boolean isZero() {
+        return (arm.getPosition().getValueAsDouble() < ArmSetpointConfigs.ARM_DEADZONE_DIST);
+    }
+
+    public boolean getLimit() {
+        return !armlimit.get();
+    }
+
+    public double getPosition() {
+        return arm.getPosition().getValueAsDouble();
+    }
+
+    /// Commands
+    public Command setMotionMagicPosition(DoubleSupplier position) {
         return runEnd(() -> {
             arm.setControl(motionMagicRequest.withPosition(position.getAsDouble()));
         }, () -> {
             arm.set(0);
         }).until(
-            () -> (isNear(position.getAsDouble()))
-         );
+                () -> isNear(position.getAsDouble()));
     }
 
     public Command setMotionMagicPositionDB(double position) {
         return runEnd(() -> {
             arm.setControl(motionMagicRequest.withPosition(position));
-        }, () -> {
-            arm.set(0);
-        });
-    }
-
-
-
-  public boolean isNear(double rotations) {
-    boolean targetReached = false;
-    if (Math.abs(getPosition() - rotations) < ArmSetpointConfigs.ARM_DEADZONE_DIST) {
-        targetReached = true;
-    } 
-    return targetReached;
-  }
-
-
-  /*  public boolean isNear(double position) {
-        if (arm.getPosition().getValueAsDouble() > (position - ArmSetpointConfigs.ARM_DEADZONE_DIST) && arm.getPosition().getValueAsDouble() < (position + ArmSetpointConfigs.ARM_DEADZONE_DIST)) {
-         return true;
-         } else {
-            return false;
-         }
-    }
- */
-    public Command setMotionMagicPositionSafe(double position, Elevator elevator) {
-        return runEnd(() -> {
-            if (elevator.getPositionNormal() > 6) {
-                arm.setControl(motionMagicRequest.withPosition(position));
-            } else
-                return;
-        }, () -> {
-            arm.set(0);
-        });
-    }
-
-    public Command setTest(double position, Elevator elevator) {
-        return new Command() {
-            @Override
-            public void execute() {
-                if (elevator.getPositionNormal() > 6) {
-                    arm.setControl(voltageRequest.withOutput(-.8));
-                } else
-                    return;
-
-            }
-
-            @Override
-            public void end(boolean interrupted) {
-                arm.set(0);
-            }
-
-            @Override
-            public boolean isFinished() {
-                if (arm.getPosition().getValueAsDouble() > (position - 0.01)
-                        && arm.getPosition().getValueAsDouble() < (position + 0.01)) {
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
+        }, () -> arm.set(0));
+    };
 
     public Command ArmPosVoltage(double position) {
         return runEnd(() -> {
@@ -161,10 +148,11 @@ public class CoralArm extends SubsystemBase {
         });
     }
 
-    public double getPosition() {
-        return
-         arm.getPosition().getValueAsDouble();
+    public Command advancePositionCommand(double position) {
+        return runOnce(
+               () -> advancePosition(position));
     }
+
 
     public Command runVoltage(double voltage) {
         return runEnd(() -> {
@@ -174,10 +162,10 @@ public class CoralArm extends SubsystemBase {
         });
     }
 
-    public boolean getLimit() {
-        return !armlimit.get();
-    }
 
+
+    /// Overrides
+    /// DashBoard
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -193,10 +181,9 @@ public class CoralArm extends SubsystemBase {
         SmartDashboard.putNumber("Arm/TruePosition", arm.getPosition().getValueAsDouble());
 
         SmartDashboard.putBoolean("Arm/DIO", !armlimit.get());
-        
         if (getLimit() && (getPosition() != 0)) {
-            arm.setPosition(0);  
-          }
+            arm.setPosition(0);
+        }
     }
 
 }

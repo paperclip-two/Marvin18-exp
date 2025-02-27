@@ -66,7 +66,7 @@ public class RobotCentricAlign extends Command {
 
        // create a state machine that stores the position of each tag on the field?
        rangeController.reset(m_Vision.getTagXDist()); //Init dist
-       horizontalController.reset(m_Vision.getTagYDist());
+       horizontalController.reset(0);
 
         aimController.reset(0);
         
@@ -79,7 +79,7 @@ public class RobotCentricAlign extends Command {
     public void execute() {
         double tx = m_Vision.getTagYaw();
         double currCoralXDist = m_Vision.getTagXDist();
-        double currCoralYDist = m_Vision.getTagYDist();
+        double currCoralYDist = 0;
 
         double rangeOutput = rangeController.calculate(currCoralXDist);
         double horizontalOutput = horizontalController.calculate(currCoralYDist);

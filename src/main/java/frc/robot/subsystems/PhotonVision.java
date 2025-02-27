@@ -54,16 +54,20 @@ public class PhotonVision extends SubsystemBase {
                 PhotonTrackedTarget trackedTarget = latestResult.getBestTarget();
                 
                 
+                
                 if(pose.isPresent() && trackedTarget != null
                 && trackedTarget.getBestCameraToTarget() != null
                 && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
                 || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1 && DriverStation.isTeleop())
                 )) {
                     if (!rejectPose()) {
-                        double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
-                        dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, 0.5));
-                        dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
-                        lastPose = pose.get();
+                        if (trackedTarget.getPoseAmbiguity() < .2) {
+                            double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();
+                            double rotStdev = Math.max(0.5, 0.1 * trackedTarget.getBestCameraToTarget().getRotation().getAngle());
+                            dt.setVisionMeasurementStdDevs(VecBuilder.fill(stdev, stdev, rotStdev));
+                            dt.addVisionMeasurement(pose.get().estimatedPose.toPose2d(), pose.get().timestampSeconds);
+                            lastPose = pose.get();
+                        }
                     }
                 }
             }
@@ -110,6 +114,17 @@ public class PhotonVision extends SubsystemBase {
     @Override
     public void periodic(){
       resetPose();
+      if (getTagY() != 0) {
+        SmartDashboard.putNumber((getName() + "Tag Y:" ), getTagY());
+      }
+      if (getTagXDist() != 0) {
+        SmartDashboard.putNumber((getName() + "Tag X:" ), getTagXDist());
+      }
+      if (getTagYaw() != 0) {
+        SmartDashboard.putNumber((getName() + "Tag Yaw:"), getTagYaw());
+
+      }
+
     }
 
     public double getRobotHeading(){
@@ -138,8 +153,9 @@ public class PhotonVision extends SubsystemBase {
         double tagX = 0;
         if (camera.isConnected()) {
             List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
-            if (!currentUnreadPipeline.isEmpty()) {
-                PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
+            PhotonPipelineResult latestRes = camera.getLatestResult();
+            if (latestRes.getBestTarget() != null) {
+                PhotonPipelineResult latestTag = latestRes;
                 if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
                     Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
                     tagX = camToTarget.getMeasureX().in(Meter);
@@ -149,20 +165,21 @@ public class PhotonVision extends SubsystemBase {
     return tagX;
   }  
 
-    public double getTagYDist() {
-        double tagY = 0;
-        if (camera.isConnected()) {
-            List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
-            if (!currentUnreadPipeline.isEmpty()) {
-                PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
-                if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
-                    Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
-                    tagY = camToTarget.getMeasureY().in(Meter);
-                }
+  public double getTagY() {
+    double tagY = 0;
+    if (camera.isConnected()) {
+        List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
+        PhotonPipelineResult latestRes = camera.getLatestResult();
+        if (latestRes.getBestTarget() != null) {
+            PhotonPipelineResult latestTag = latestRes;
+            if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
+                Transform3d camToTarget = latestTag.getBestTarget().bestCameraToTarget;
+                tagY = camToTarget.getMeasureY().in(Meter);
             }
-         }
-    return tagY;
-  }  
+        }
+     }
+return tagY;
+}  
   
   // make state machine that tells this what thte current tag heigh is - when we want to make this work
         // make another state machine that enables flashing led when target is not found 
@@ -183,15 +200,17 @@ public class PhotonVision extends SubsystemBase {
         double result = 0;
         if (camera.isConnected()) {
             List<PhotonPipelineResult> currentUnreadPipeline = camera.getAllUnreadResults();
-            if (!currentUnreadPipeline.isEmpty()) {
-                PhotonPipelineResult latestTag = currentUnreadPipeline.get(currentUnreadPipeline.size() - 1);
-                if (latestTag.hasTargets() || latestTag.getBestTarget() != null) {
-                    tagYaw = latestTag.getBestTarget().bestCameraToTarget.getRotation().getZ();
-                    if (tagYaw > 0) {
-                        result = tagYaw - Math.PI;
-                    } 
-                    if (tagYaw < 0) {
-                        result = tagYaw + Math.PI;
+            PhotonPipelineResult latestRes = camera.getLatestResult();
+            if (latestRes != null) {
+                if (latestRes.getBestTarget() != null) {
+                    if (latestRes.hasTargets() || latestRes.getBestTarget() != null) {
+                        tagYaw = latestRes.getBestTarget().bestCameraToTarget.getRotation().getZ();
+                        if (tagYaw > 0) {
+                            result = tagYaw - Math.PI;
+                        } 
+                        if (tagYaw < 0) {
+                            result = tagYaw + Math.PI;
+                        }
                     }
                 }
             } 
@@ -213,4 +232,5 @@ public class PhotonVision extends SubsystemBase {
             return photonPoseEstimator.update(result);
         }
     }
+    
 }

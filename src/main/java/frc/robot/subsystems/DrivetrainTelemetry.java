@@ -39,7 +39,8 @@ public class DrivetrainTelemetry extends SubsystemBase {
         SmartDashboard.putNumber("DrivetrainStates/PoseY", dt.getState().Pose.getMeasureY().baseUnitMagnitude());
         SmartDashboard.putNumber("DrivetrainStates/RotationDegrees", dt.getState().Pose.getRotation().getDegrees());
         SmartDashboard.putNumber("DrivetrainStates/RotationRadians", dt.getState().Pose.getRotation().getRadians());
-        SmartDashboard.putNumber("TagYaw", m_reef.getTagYaw());
+
+
         publisher.set(dt.getState().Pose);
         arrayPublisher.set(new Pose2d[] {dt.getState().Pose});
     }

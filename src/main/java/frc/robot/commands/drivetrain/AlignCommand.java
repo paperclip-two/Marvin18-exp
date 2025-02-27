@@ -65,7 +65,7 @@ public class AlignCommand extends Command {
     public void execute() {
         double tx = m_Vision.getTagYaw();
         double currCoralXDist = m_Vision.getTagXDist();
-        double currCoralYDist = m_Vision.getTagYDist();
+        double currCoralYDist = m_Vision.getTagY();
 
 
 
@@ -73,7 +73,7 @@ public class AlignCommand extends Command {
         m_Swerve.setControl(
             mChassisSpeed.withSpeeds(
                 new ChassisSpeeds(
-                    m_Vision.getTagYDist(), 
+                    m_Vision.getTagY(), 
                     0,
                     m_Vision.getTagYaw())
             )
