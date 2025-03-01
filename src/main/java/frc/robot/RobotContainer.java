@@ -7,6 +7,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opencv.video.TrackerDaSiamRPN_Params;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -50,6 +53,12 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.CoralCamera;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.LEDColor;
+import frc.robot.subsystems.LED.LEDSection;
+import frc.robot.subsystems.LED.Rolling;
+import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
@@ -78,9 +87,12 @@ public class RobotContainer {
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  public final Algae m_algae = new Algae();
-  public final Elevator m_elevator = new Elevator();
-  public final Coral m_coral = new Coral();
+    private final LED LEDController = LED.getInstance();
+
+    public final Hopper mCoral_Hopper = new Hopper();
+    public final Algae m_algae = new Algae();
+    public final Elevator m_elevator = new Elevator();
+    public final CoralArm m_coralArm = new CoralArm();
 
   // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
   // PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15),
@@ -96,9 +108,12 @@ public class RobotContainer {
   // Degrees.of(0), Degrees.of(-93))));
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
 
-  public RobotContainer() {
-    configureBindings();
-  }
+    public RobotContainer() {
+      configureBindings();
+      configureLEDTriggers();
+    }
+
+
 
   public void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
@@ -114,7 +129,7 @@ public class RobotContainer {
             .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.5 * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
-        ));
+        )); 
     // Bumper and Trigger Controls
     Pilot.leftBumper().whileTrue(m_algae.intake());
     Pilot.rightBumper().whileTrue(m_algae.outtake());
@@ -258,17 +273,29 @@ public class RobotContainer {
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));
 
   }
-
-  private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-
-      }
-    } else {
-      return 0.0;
+    
+    private void configureLEDTriggers() {
+      Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
     }
+
+    private static double deadband(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+          if (value > 0.0) {
+            return (value - deadband) / (1.0 - deadband);
+          } else {
+            return (value + deadband) / (1.0 - deadband);
+    
+          }
+        } else {
+          return 0.0;
+        }
+      }
+
+  private Map<LEDSection, State> getRightTriggerColors() {
+    Map<LEDSection, State> map = new HashMap<>();
+    map.put(LEDSection.CORALINTAKEUP, new State(LEDColor.BLUE, Rolling.FORWARD));
+    map.put(LEDSection.CORALINTAKEDOWN, new State(LEDColor.BLUE, Rolling.REVERSE));
+    return map;
   }
+
 }
