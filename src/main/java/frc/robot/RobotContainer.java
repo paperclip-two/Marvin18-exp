@@ -41,7 +41,6 @@ import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.Alignment;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.ArmSetpointConfigs;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -157,7 +156,7 @@ public class RobotContainer {
     // Copilot.leftTrigger().onTrue(); // Save for reef selection
     // Copilot.rightTrigger().onTrue(); // Save for reef selection
 
-    Copilot.start().whileTrue(m_elevator.setServo(45).andThen(m_elevator.runVoltage(6)));
+    Copilot.start().whileTrue(m_elevator.setServo(45).andThen(m_elevator.climbingCommand(6)));
     Copilot.back().whileTrue(m_elevator.setServo(0));
 
     // Make sure to use copilot's left stick for reef side selection

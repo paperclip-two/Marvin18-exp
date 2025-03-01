@@ -187,6 +187,15 @@ public class Elevator extends SubsystemBase {
     return targetReached;
   }
 
+  public Command climbingCommand(double voltage) {
+    return runEnd(() -> {
+      master.setControl(voltageRequest.withOutput(voltage));
+    }, () -> {
+      stopMotor();
+    }).until(
+        () -> getLimit());
+  }
+
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();

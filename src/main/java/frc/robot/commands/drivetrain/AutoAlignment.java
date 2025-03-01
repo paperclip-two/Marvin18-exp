@@ -33,7 +33,7 @@ public class AutoAlignment extends SequentialCommandGroup {
             Pose2d targetPose
     ) {
         /* tolerance for the precise approach */
-        holonomicDriveController.setTolerance(new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(1));
+        holonomicDriveController.setTolerance(new Pose2d(0.05, 0.05, Rotation2d.fromDegrees(1)));
         final Command
                 pathFindToTargetRough = AutoBuilder.pathfindToPose(targetPose, constraints, 0.5),
                 preciseAlignment = new FunctionalCommand(
