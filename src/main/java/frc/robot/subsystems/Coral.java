@@ -8,20 +8,30 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.google.flatbuffers.Constants;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Coral extends SubsystemBase {
   TalonSRX coral = new TalonSRX(12);
+  private AnalogInput IR = new AnalogInput(1);
   /** Creates a new Intake. */
   public Coral() {
     coral.configFactoryDefault();
+    IR.setOversampleBits(4);
+    IR.setAverageBits(4);
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("IR", getIRReading());
     // This method will be called once per scheduler run
   }
+
+  public double getIRReading(){
+    return IR.getAverageVoltage();
+ }
 
 public Command runIntake(double percentOut) {
     return runEnd(() -> {

@@ -118,7 +118,7 @@ public class RobotContainer {
     // Bumper and Trigger Controls
     Pilot.leftBumper().onTrue(m_algae.intake());
     Pilot.rightBumper().whileTrue(m_algae.outtake());
-    Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.1));
+    Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
 
     // Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
@@ -134,8 +134,6 @@ public class RobotContainer {
     Pilot.povDown()
         .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.02 * MaxSpeed).withVelocityX(0)));
 
-    Pilot.povUp().and(Pilot.a()).whileTrue(m_elevator.advanceRotationsCommand(0.1));
-    Pilot.povDown().and(Pilot.a()).whileTrue(m_elevator.advanceRotationsCommand(-0.1));
 
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -143,6 +141,8 @@ public class RobotContainer {
     // Pilot.b().whileTrue(); // Save for pose driving.
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
+    Pilot.b().whileTrue(m_elevator.runVoltage(2));
+    Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
 
     /// Copilot
     /// Elevator and drive controls
