@@ -18,15 +18,6 @@ public final class DynamicConstants {
      * of any constants that are only read on startup.
      */
 
-    public static class ArmSetpoints {
-        public static double armL4 = 0;
-        public static double armL3 = 0;
-        public static double armL2 = 0;
-        public static double armL1 = 0;
-
-        public static double armTestPos = 0.1;
-
-    }
 
     public static class ElevatorSetpoints {
         public static double elevL4 = 0;
@@ -35,6 +26,8 @@ public final class DynamicConstants {
         public static double elevL1 = 0;
         public static double elevAlgaeTop = 0;
         public static double elevAlgaeBot = 0;
+        public static double elevAlgaeTee = 0;
+        public static double elevAlgaeGround = 0;
         public static double elevClimb = 0;
 
         public static double elevTestPos = 1;
@@ -67,7 +60,7 @@ public final class DynamicConstants {
         entries = new HashMap<>();
 
         //add all .class values of the static classes above
-        Class<?>[] subsystems = {ArmSetpoints.class, ElevatorSetpoints.class, TestVoltages.class, Algae.class};
+        Class<?>[] subsystems = {ElevatorSetpoints.class, TestVoltages.class, Algae.class};
         
         for(Class<?> subsystem : subsystems) {
             Field[] fields = subsystem.getDeclaredFields();

@@ -25,17 +25,6 @@ public final class Constants {
         public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.1;
         public static final double ELEVATOR_SAFE_POSITION = 5.5;
         public static final double ELEVATOR_SCORE_POSITION = 6;
-
-        // write setpoints, in adjusted rotations, here.
-        public static final double ELEVATOR_L4_SETPOINT = 7.50;
-        public static final double ELEVATOR_L3_SETPOINT = 4.08;
-        public static final double ELEVATOR_L2_SETPOINT = 1.68;
-        public static final double ELEVATOR_L1_SETPOINT = 0;
-        public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 7.50;
-        public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 5.52;
-        public static final double ELEVATOR_ALGAE_TEE_SETPOINT = 2.81;
-        public static final double ELEVATOR_ALGAE_GROUND_SETPOINT = 0.73;
-        public static final double ELEVATOR_CLIMB_SETPOINT = 0;
     }
 
 
