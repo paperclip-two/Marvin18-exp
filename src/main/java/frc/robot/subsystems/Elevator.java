@@ -128,7 +128,7 @@ public class Elevator extends SubsystemBase {
 
   public Command setServo(int value) {
     return runOnce(() -> {
-      servo.set(value);
+      servo.setAngle(value);
     });
   }
 
