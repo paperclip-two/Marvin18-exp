@@ -141,6 +141,7 @@ public class Elevator extends SubsystemBase {
     master.set(0);
   }
 
+  ///Methods to get positions/states
   public double getLastDesiredPosition() {
     return mostRecentTarget;
   }
@@ -178,12 +179,6 @@ public class Elevator extends SubsystemBase {
     return targetReached;
   }
 
-  public boolean isSafe() {
-    if (master.getPosition().getValueAsDouble() > Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION) {
-      return true;
-    } else
-      return false;
-  }
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();
@@ -219,6 +214,8 @@ public class Elevator extends SubsystemBase {
     follower.setPosition(setpoint.in(Inches));
   }
 
+  ///// Commands
+
   public Command ElevatorSetpoint(double rotations) {
     return runEnd(
         () -> master.setControl(motionRequest.withPosition(rotations)),
@@ -239,12 +236,13 @@ public class Elevator extends SubsystemBase {
         () -> isNear(rotations.getAsDouble()));
   }
 
-  public Command setMotionMagicPositionDB(double rotations) {
+  public Command setMotionMagicPositionCommand(double rotations) {
     return runEnd(() -> {
-      master.setControl(motionRequest.withPosition(rotations));
+      setRotations(rotations);
     }, () -> {
-      master.set(0);
-    });
+      stopMotorHold();
+    }).until(
+        () -> isNear(rotations));
   }
 
   public Command elevatorPositionVoltage(double position) {
