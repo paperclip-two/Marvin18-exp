@@ -53,7 +53,6 @@ import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.CoralCamera;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LED.LEDColor;
 import frc.robot.subsystems.LED.LEDSection;
@@ -89,10 +88,9 @@ public class RobotContainer {
 
     private final LED LEDController = LED.getInstance();
 
-    public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
-    public final CoralArm m_coralArm = new CoralArm();
+    public final Coral m_coral = new Coral();
 
   // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
   // PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15),
