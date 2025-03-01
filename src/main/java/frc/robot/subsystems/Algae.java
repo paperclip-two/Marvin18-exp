@@ -35,7 +35,7 @@ public Command intake() {
         algae.set(TalonSRXControlMode.PercentOutput, 1);
     },
     () -> {
-      setPercentage(0);
+      setPercentage(0.5);
  
     });
 }

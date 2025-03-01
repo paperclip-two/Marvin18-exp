@@ -116,7 +116,7 @@ public class RobotContainer {
                                                                                     // negative X (left)
         ));
     // Bumper and Trigger Controls
-    Pilot.leftBumper().onTrue(m_algae.intake());
+    Pilot.leftBumper().whileTrue(m_algae.intake());
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
