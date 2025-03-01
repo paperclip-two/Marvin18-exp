@@ -157,8 +157,8 @@ public class RobotContainer {
     // Copilot.leftTrigger().onTrue(); // Save for reef selection
     // Copilot.rightTrigger().onTrue(); // Save for reef selection
 
-    Copilot.back().onTrue(m_elevator.setServo(1).andThen(m_elevator.runVoltage(12))); // Save for climbing
-    Copilot.start().onTrue(m_elevator.setServo(0));
+    Copilot.start().whileTrue(m_elevator.setServo(1).andThen(m_elevator.runVoltage(12)));
+    Copilot.back().whileTrue(m_elevator.setServo(0));
 
     // Make sure to use copilot's left stick for reef side selection
 
