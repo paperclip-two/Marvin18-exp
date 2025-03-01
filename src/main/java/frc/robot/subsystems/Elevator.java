@@ -39,11 +39,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
 public class Elevator extends SubsystemBase {
   private TalonFX master; // right SIDE MOTOR
   private TalonFX follower; // left SIDE MOTOR
+  Servo servo = new Servo(Constants.PWM_IDS.SERVO);
   private double positionCoefficient = 1 / 12;
   private final VoltageOut sysIdVoltage = new VoltageOut(0);
   Time sysIdTimeout = Time.ofBaseUnits(5, Units.Second);
@@ -124,6 +126,12 @@ public class Elevator extends SubsystemBase {
     master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
   }
 
+  public Command setServo(int value) {
+    return runOnce(() -> {
+      servo.set(value);
+    });
+  }
+
   public void setRotations(Double rotations) {
     master.setControl(motionRequest.withPosition(rotations));
   }
@@ -141,6 +149,7 @@ public class Elevator extends SubsystemBase {
     master.set(0);
   }
 
+  ///Methods to get positions/states
   public double getLastDesiredPosition() {
     return mostRecentTarget;
   }
@@ -178,12 +187,6 @@ public class Elevator extends SubsystemBase {
     return targetReached;
   }
 
-  public boolean isSafe() {
-    if (master.getPosition().getValueAsDouble() > Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION) {
-      return true;
-    } else
-      return false;
-  }
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();
@@ -219,6 +222,8 @@ public class Elevator extends SubsystemBase {
     follower.setPosition(setpoint.in(Inches));
   }
 
+  ///// Commands
+
   public Command ElevatorSetpoint(double rotations) {
     return runEnd(
         () -> master.setControl(motionRequest.withPosition(rotations)),
@@ -239,12 +244,13 @@ public class Elevator extends SubsystemBase {
         () -> isNear(rotations.getAsDouble()));
   }
 
-  public Command setMotionMagicPositionDB(double rotations) {
+  public Command setMotionMagicPositionCommand(double rotations) {
     return runEnd(() -> {
-      master.setControl(motionRequest.withPosition(rotations));
+      setRotations(rotations);
     }, () -> {
-      master.set(0);
-    });
+      stopMotorHold();
+    }).until(
+        () -> isNear(rotations));
   }
 
   public Command elevatorPositionVoltage(double position) {
