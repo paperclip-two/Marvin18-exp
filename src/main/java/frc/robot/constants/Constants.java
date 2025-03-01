@@ -31,7 +31,6 @@ public final class Constants {
         public static final double ELEVATOR_L3_SETPOINT = 4.08;
         public static final double ELEVATOR_L2_SETPOINT = 1.68;
         public static final double ELEVATOR_L1_SETPOINT = 0;
-        public static final double ELEVATOR_ARM_CLEAR_SETPOINT = 0;
         public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 7.50;
         public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 5.52;
         public static final double ELEVATOR_ALGAE_TEE_SETPOINT = 2.81;
@@ -39,19 +38,6 @@ public final class Constants {
         public static final double ELEVATOR_CLIMB_SETPOINT = 0;
     }
 
-    public static class ArmSetpointConfigs {
-        public static final double ARM_FORWARD_LIMIT = .5;
-        public static final double ARM_REVERSE_LIMIT = 0;
-
-        public static final double L4_SCORING_POS = 0.28; // fixed
-        public static final double L3_SCORING_POS = 0.3; // fixed
-        public static final double L2_SCORING_POS = 0.3; // fixed
-        public static final double L1_SCORING_POS = 0; // fix
-        public static final double ARM_DEADZONE_DIST = 0.005;
-        public static final double ARM_SAFE_POSITION = 0.17;
-        public static final double ARM_SCORE_POSITION = 0.2;
-
-    }   
 
     public static class PathPlannerAuto {
         public static final double holonomicXkP = 5;
