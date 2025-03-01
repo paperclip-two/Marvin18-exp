@@ -159,10 +159,10 @@ public class RobotContainer {
 
     /// Copilot
     /// Elevator and drive controls
-    // Copilot.povUp().onTrue(); // Sve ffor algae selection
-    // Copilot.povDown().onTrue(); // Save for algae selection
-    // Copilot.povUp().onTrue(); // Save for algae selection
-    // Copilot.povDown().onTrue(); // Save for algae selection
+    Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop)); // Save for algae selection
+    Copilot.povDown().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround)); // Save for algae selection
+    Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee)); // Save for algae selection
+    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot)); // Save for algae selection
 
     // Copilot.leftBumper().onTrue(); // Save for feeder selection
     // Copilot.rightBumper().onTrue(); // Save for feeder selection
@@ -178,10 +178,10 @@ public class RobotContainer {
 
     // Face Button Controls Height selection
 
-    // Copilot.a().onTrue(m_elevator.setMotionMagicPositionDB()); // Save for height selection
-    // Copilot.b().onTrue(m_elevator.setMotionMagicPositionDB()); // Save for height selection
-    // Copilot.x().onTrue(m_elevator.setMotionMagicPositionDB()); // Save for height selection
-    // Copilot.y().onTrue(m_elevator.setMotionMagicPositionDB()); // Save for height selection
+    Copilot.a().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1)); // Save for height selection
+    Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for height selection
+    Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for height selection
+    Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for height selection
 
     // Copilot.leftTrigger().whileTrue(
     // AutoBuilder.pathfindToPose(
@@ -263,9 +263,14 @@ public class RobotContainer {
     // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
     // test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
-    test.povLeft().whileTrue(m_algae.intake());
+    test.leftTrigger().whileTrue(m_algae.intake());
 
-    test.povRight().whileTrue(m_algae.outtake());
+    test.rightTrigger().whileTrue(m_algae.outtake());
+
+    test.povUp().whileTrue(m_elevator.setServo(50));
+    test.povRight().whileTrue(m_elevator.setServo(40));
+    test.povLeft().whileTrue(m_elevator.setServo(20));
+    test.povDown().whileTrue(m_elevator.setServo(0));
 
     test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));
