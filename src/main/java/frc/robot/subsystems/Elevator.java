@@ -39,11 +39,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
 public class Elevator extends SubsystemBase {
   private TalonFX master; // right SIDE MOTOR
   private TalonFX follower; // left SIDE MOTOR
+  Servo servo = new Servo(Constants.PWM_IDS.SERVO);
   private double positionCoefficient = 1 / 12;
   private final VoltageOut sysIdVoltage = new VoltageOut(0);
   Time sysIdTimeout = Time.ofBaseUnits(5, Units.Second);
@@ -122,6 +124,12 @@ public class Elevator extends SubsystemBase {
   /// Methods to Move motor
   public void setMotionMagic(DoubleSupplier rotations) {
     master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
+  }
+
+  public Command setServo(int value) {
+    return runOnce(() -> {
+      servo.set(value);
+    });
   }
 
   public void setRotations(Double rotations) {
