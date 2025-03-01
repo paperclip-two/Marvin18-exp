@@ -18,6 +18,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindThenFollowPath;
 import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathConstraints;
+import com.revrobotics.servohub.config.ServoChannelConfig.PulseRange;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
@@ -36,9 +37,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
-import frc.robot.commands.AlgaeArmElevator;
-import frc.robot.commands.CoralArmElevator;
-import frc.robot.commands.HopperReturn;
 import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.Alignment;
 import frc.robot.commands.elevator.ElevatorSetpoint;
@@ -47,14 +45,12 @@ import frc.robot.constants.Constants.ArmSetpointConfigs;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.CoralArm;
+import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.CoralCamera;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
@@ -85,12 +81,10 @@ public class RobotContainer {
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
 
-    public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
-    public final CoralArm m_coralArm = new CoralArm();
+    public final Coral m_coral = new Coral();
 
-    public final Agitator m_Agitator = new Agitator();
 //   public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15), Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
 
    public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
@@ -118,8 +112,11 @@ public class RobotContainer {
         //Bumper and Trigger Controls
         Pilot.leftBumper().onTrue(m_algae.intake());
         Pilot.rightBumper().whileTrue(m_algae.outtake());
-       // Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
-       Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
+        Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.1));
+        Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
+
+
+       //Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
        // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
 
         //POV Controls
@@ -129,8 +126,7 @@ public class RobotContainer {
         Pilot.povDown().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.02 * MaxSpeed).withVelocityX(0)));
 
 
-        Pilot.povLeft().and(Pilot.a()).whileTrue(m_coralArm.advancePositionCommand(-0.01));
-        Pilot.povRight().and(Pilot.a()).whileTrue(m_coralArm.advancePositionCommand(0.01));
+
         Pilot.povUp().and(Pilot.a()).whileTrue(m_elevator.advanceRotationsCommand(0.1));
         Pilot.povDown().and(Pilot.a()).whileTrue(m_elevator.advanceRotationsCommand(-0.1));
 
@@ -143,15 +139,10 @@ public class RobotContainer {
 
         ///Copilot
         /// Elevator and arm controls
-        Copilot.povLeft().whileTrue(m_coralArm.advancePositionCommand(-0.01));
-        Copilot.povRight().whileTrue(m_coralArm.advancePositionCommand(0.01));
-        Copilot.rightTrigger().whileTrue(m_coralArm.runVoltage(-1));
         Copilot.povUp().onTrue(m_elevator.advanceRotationsCommand(0.1));
         Copilot.povDown().onTrue(m_elevator.advanceRotationsCommand(-0.1));
         Copilot.povUp().and(Copilot.leftBumper()).whileTrue(m_elevator.runVoltage(2));
         Copilot.povDown().and(Copilot.leftBumper()).whileTrue(m_elevator.runVoltage(-2));
-        Copilot.povLeft().and(Copilot.leftBumper()).whileTrue(m_coralArm.runVoltage(-1));
-        Copilot.povRight().and(Copilot.leftBumper()).whileTrue(m_coralArm.runVoltage(1));
 
         //Copilot.leftTrigger().onTrue(); // Save for feeder selection
        // Copilot.rightTrigger().onTrue() // Save for feeder selection
@@ -159,15 +150,6 @@ public class RobotContainer {
 
         //Face Button Controls Height selection
 
-
-        Copilot.y().whileTrue(new CoralArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_L4_SETPOINT, ArmSetpointConfigs.L4_SCORING_POS));
-        Copilot.b().whileTrue(new CoralArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_L3_SETPOINT, ArmSetpointConfigs.L3_SCORING_POS));
-        Copilot.x().whileTrue(new CoralArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_L2_SETPOINT, ArmSetpointConfigs.L2_SCORING_POS));
-        Copilot.a().whileTrue(new HopperReturn(m_elevator, m_coralArm));
-        Copilot.y().and(Copilot.rightBumper()).whileTrue(new AlgaeArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_ALGAE_TOP_SETPOINT));
-        Copilot.b().and(Copilot.rightBumper()).whileTrue(new AlgaeArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_ALGAE_BOT_SETPOINT));
-        Copilot.x().and(Copilot.rightBumper()).whileTrue(new AlgaeArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_ALGAE_TEE_SETPOINT));
-        Copilot.a().and(Copilot.rightBumper()).whileTrue(new AlgaeArmElevator(m_elevator, m_coralArm, ElevatorSetpointConfigs.ELEVATOR_ALGAE_GROUND_SETPOINT));
 
       //   Copilot.leftTrigger().whileTrue(
       //     AutoBuilder.pathfindToPose(

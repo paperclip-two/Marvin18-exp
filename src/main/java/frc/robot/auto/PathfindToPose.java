@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralArm;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class PathfindToPose extends Command {
