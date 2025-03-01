@@ -267,10 +267,9 @@ public class RobotContainer {
 
     test.rightTrigger().whileTrue(m_algae.outtake());
 
-    test.povUp().whileTrue(m_elevator.setServo(50));
-    test.povRight().whileTrue(m_elevator.setServo(40));
-    test.povLeft().whileTrue(m_elevator.setServo(20));
-    test.povDown().whileTrue(m_elevator.setServo(0));
+    test.povUp().onTrue(m_elevator.setServo(0.25));
+    test.povLeft().onTrue(m_elevator.setServo(-0.25));
+    test.povDown().onTrue(m_elevator.setServo(0));
 
     test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));

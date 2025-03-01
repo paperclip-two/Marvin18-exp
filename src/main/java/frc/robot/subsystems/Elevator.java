@@ -126,9 +126,9 @@ public class Elevator extends SubsystemBase {
     master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
   }
 
-  public Command setServo(int value) {
+  public Command setServo(double value) {
     return runOnce(() -> {
-      servo.setAngle(value);
+      servo.set(value);
     });
   }
 
@@ -163,7 +163,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean getLimit() {
-    return climbLimit.get();
+    return !climbLimit.get();
   }
 
   public boolean isAtSetpoint() {
