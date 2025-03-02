@@ -45,8 +45,7 @@ public final class DynamicConstants {
     }
 
     public static class IRThresholds {
-        public static double bucketIRthreshold = 1.9;
-        public static double coralIRthreshold = 1.5;
+        public static double IRthreshold = 1.5;
     }
 
 

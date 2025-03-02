@@ -44,6 +44,7 @@ import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.Alignment;
+import frc.robot.commands.drivetrain.DaveAlignTag;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
@@ -69,6 +70,7 @@ public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max
                                                                                     // angular velocity
+
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -162,7 +164,7 @@ public class RobotContainer {
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     Pilot.b().whileTrue(m_elevator.runVoltage(2));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new AlignToTag(drivetrain, mReef));
+    Pilot.x().whileTrue(new DaveAlignTag(drivetrain, mReef));
 
 
     /// Copilot
@@ -263,7 +265,7 @@ public class RobotContainer {
     // test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
     // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-    test.x().whileTrue(drivetrain.driveToPose());
+    test.x().whileTrue(new DaveAlignTag(drivetrain, mReef));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
     // test.x().whileTrue(m_algae.intake());
