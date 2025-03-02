@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.drivetrain.AlignCommand;
+import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.Alignment;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
@@ -157,8 +158,9 @@ public class RobotContainer {
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     Pilot.b().whileTrue(m_elevator.runVoltage(2));
-    Pilot.x().whileTrue(new Alignment(drivetrain, mReef));
-    // Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
+    //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
+    Pilot.x().whileTrue(new AlignToTag(drivetrain, mReef));
+
 
     /// Copilot
     /// Elevator and drive controls
