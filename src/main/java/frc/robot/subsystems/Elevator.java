@@ -127,9 +127,16 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command setServo(double value) {
-    return runOnce(() -> {
+    return runEnd(() -> {
       servo.set(value);
-    });
+    }, () ->{
+      servo.set(value);
+    }
+    );
+  }
+
+  public void ratchetLock(double position) {
+    servo.set(position);
   }
 
   public void setRotations(Double rotations) {
@@ -187,8 +194,9 @@ public class Elevator extends SubsystemBase {
     return targetReached;
   }
 
-  public Command climbingCommand(double voltage) {
+  public Command climbingCommand(double voltage, double position) {
     return runEnd(() -> {
+      ratchetLock(position);
       master.setControl(voltageRequest.withOutput(voltage));
     }, () -> {
       stopMotor();

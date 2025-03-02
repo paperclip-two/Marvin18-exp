@@ -114,6 +114,7 @@ public class RobotContainer {
 
 
   public void configureBindings() {
+    m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
@@ -131,8 +132,8 @@ public class RobotContainer {
     // Bumper and Trigger Controls
     Pilot.leftBumper().whileTrue(m_algae.intake());
     Pilot.rightBumper().whileTrue(m_algae.outtake());
-    Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
-    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
+    // Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
+    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
 
     // Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
@@ -169,7 +170,7 @@ public class RobotContainer {
     // Copilot.leftTrigger().onTrue(); // Save for reef selection
     // Copilot.rightTrigger().onTrue(); // Save for reef selection
 
-    Copilot.start().whileTrue(m_elevator.setServo(45).andThen(m_elevator.climbingCommand(6)));
+    Copilot.start().whileTrue(m_elevator.climbingCommand(6, 0.5));
     Copilot.back().whileTrue(m_elevator.setServo(0));
 
     // Make sure to use copilot's left stick for reef side selection
@@ -267,9 +268,8 @@ public class RobotContainer {
 
     test.rightTrigger().whileTrue(m_algae.outtake());
 
-    test.povUp().onTrue(m_elevator.setServo(0.25));
-    test.povLeft().onTrue(m_elevator.setServo(-0.25));
-    test.povDown().onTrue(m_elevator.setServo(0));
+    test.povDown().whileTrue(m_elevator.setServo(1));
+    test.povUp().whileTrue(m_elevator.setServo(0));
 
     test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));
@@ -277,7 +277,7 @@ public class RobotContainer {
   }
     
     private void configureLEDTriggers() {
-      Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
+      //Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
     }
 
     private static double deadband(double value, double deadband) {

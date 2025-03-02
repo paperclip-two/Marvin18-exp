@@ -25,7 +25,7 @@ public class LED extends SubsystemBase {
 
     private LED() {
         // Initialize the AddressableLED
-        led = new AddressableLED(0);
+        led = new AddressableLED(8);
 
         // Create a buffer to hold the LED color data
         ledBuffer = new AddressableLEDBuffer(82);
