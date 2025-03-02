@@ -51,7 +51,7 @@ public final class Constants {
     }
 
     public static class PWM_IDS {
-        public static final int SERVO = 9;
+        public static final int SERVO = 4;
         public static final int ELEC_BAY_LED = 0;
         public static final int CORAL_INTAKE_LED = 1;
         public static final int RIGHT_CLIMB_LED = 2;

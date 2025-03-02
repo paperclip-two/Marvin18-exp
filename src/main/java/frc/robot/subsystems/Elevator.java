@@ -144,6 +144,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void advanceRotations(double rotations) {
+    if (!getLimit() && (rotations > 0))
     master.setControl(motionRequest.withPosition(getPositionNormal() + rotations));
   }
 
