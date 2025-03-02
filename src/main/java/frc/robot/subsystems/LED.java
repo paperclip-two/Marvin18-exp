@@ -401,7 +401,7 @@ public class LED extends SubsystemBase {
     // public class to hold state information for each led section
     public static class State {
         AddressableLEDBufferView view;
-        LEDColor color = LEDColor.RAINBOW;
+        LEDColor color = LEDColor.RED;
         int iterations = 0;
         int forwardIndex = 0;
         int reverseIndex = 0;
