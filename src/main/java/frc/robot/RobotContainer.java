@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
+import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.Alignment;
@@ -62,6 +63,7 @@ import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
+import edu.wpi.first.wpilibj.Timer;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -73,7 +75,7 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use open-loop control for drive motors
   private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withSteerRequestType(
+      .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -84,8 +86,9 @@ public class RobotContainer {
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
   private final CommandXboxController test = new CommandXboxController(2);
-
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+  public final Timer m_timer = new Timer();
 
     private final LED LEDController = LED.getInstance();
 
@@ -131,24 +134,24 @@ public class RobotContainer {
                                                                                     // negative X (left)
         )); 
     // Bumper and Trigger Controls
-    Pilot.leftBumper().whileTrue(m_algae.intake());
+    Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae, m_timer));
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     // Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
-    Pilot.leftTrigger().whileTrue(m_elevator.zeroElevator(-1.5));
+    Pilot.leftTrigger().onTrue(m_elevator.zeroElevator(-4));
 
     // Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
 
     // POV Controls
     Pilot.povLeft()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(-0.02 * MaxSpeed).withVelocityY(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(-0.04 * MaxSpeed).withVelocityY(0)));
     Pilot.povRight()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(0.02 * MaxSpeed).withVelocityY(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(0.04 * MaxSpeed).withVelocityY(0)));
     Pilot.povUp()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(0.02 * MaxSpeed).withVelocityX(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(0.04 * MaxSpeed).withVelocityX(0)));
     Pilot.povDown()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.02 * MaxSpeed).withVelocityX(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.04 * MaxSpeed).withVelocityX(0)));
 
 
     // Face Button Controls
@@ -174,7 +177,7 @@ public class RobotContainer {
     // Copilot.leftTrigger().onTrue(); // Save for reef selection
     // Copilot.rightTrigger().onTrue(); // Save for reef selection
 
-    Copilot.start().whileTrue(m_elevator.climbingCommand(-3, 0.5));
+    Copilot.start().whileTrue(m_elevator.climbingCommand(-4, 0.5));
     Copilot.back().whileTrue(m_elevator.setServo(0));
 
     // Make sure to use copilot's left stick for reef side selection
@@ -183,7 +186,7 @@ public class RobotContainer {
 
     // Face Button Controls Height selection
 
-    Copilot.a().whileTrue(m_elevator.zeroElevator(-4)); // Save for height selection
+    Copilot.a().onTrue(m_elevator.zeroElevator(-4)); // Save for height selection
     Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for height selection
     Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for height selection
     Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for height selection
@@ -272,8 +275,10 @@ public class RobotContainer {
 
     test.rightTrigger().whileTrue(m_algae.outtake());
 
-    test.povDown().whileTrue(m_elevator.setServo(1));
-    test.povUp().whileTrue(m_elevator.setServo(0));
+    test.povDown().whileTrue(m_elevator.setServo(-45));
+    test.povLeft().whileTrue(m_elevator.setServo(0));
+    test.povUp().whileTrue(m_elevator.setServo(180));
+    test.povRight().whileTrue(m_elevator.setServo(45));
 
     test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));

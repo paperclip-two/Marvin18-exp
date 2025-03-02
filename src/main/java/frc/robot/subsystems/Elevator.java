@@ -42,6 +42,8 @@ import frc.robot.constants.DynamicConstants;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
+
+
 public class Elevator extends SubsystemBase {
   private TalonFX master; // right SIDE MOTOR
   private TalonFX follower; // left SIDE MOTOR
@@ -104,7 +106,7 @@ public class Elevator extends SubsystemBase {
     masterConfig.Slot0.kD = 2;
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;
-    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 1.5;
+    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
     masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
     masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
@@ -126,15 +128,6 @@ public class Elevator extends SubsystemBase {
     master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
   }
 
-  public Command setServo(double value) {
-    return runEnd(() -> {
-      servo.set(value);
-    }, () ->{
-      servo.set(value);
-    }
-    );
-  }
-
   public void ratchetLock(double position) {
     servo.set(position);
   }
@@ -145,7 +138,7 @@ public class Elevator extends SubsystemBase {
 
   public void advanceRotations(double rotations) {
     if (!getLimit() && (rotations > 0))
-    master.setControl(motionRequest.withPosition(getPositionNormal() + rotations));
+      master.setControl(motionRequest.withPosition(getPositionNormal() + rotations));
   }
 
   /// Methods to Stop motor
@@ -157,7 +150,7 @@ public class Elevator extends SubsystemBase {
     master.set(0);
   }
 
-  ///Methods to get positions/states
+  /// Methods to get positions/states
   public double getLastDesiredPosition() {
     return mostRecentTarget;
   }
@@ -170,6 +163,7 @@ public class Elevator extends SubsystemBase {
     return master.getPosition().getValueAsDouble();
   }
 
+  /// Boolean Methods
   public boolean getLimit() {
     return !climbLimit.get();
   }
@@ -194,26 +188,6 @@ public class Elevator extends SubsystemBase {
     }
     return targetReached;
   }
-
-  public Command climbingCommand(double voltage, double position) {
-    return runEnd(() -> {
-      ratchetLock(position);
-      master.setControl(voltageRequest.withOutput(voltage));
-    }, () -> {
-      stopMotor();
-    }).until(
-        () -> getLimit());
-  }
-
-  public Command zeroElevator(double voltage) {
-    return runEnd(() -> {
-      master.setControl(voltageRequest.withOutput(voltage));
-    }, () -> {
-      stopMotor();
-    }).until(
-        () -> getLimit());
-  }
-
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();
@@ -310,6 +284,34 @@ public class Elevator extends SubsystemBase {
       master.setPosition(position);
     }, () -> master.setPosition(position));
   }
+
+  public Command setServo(double degrees) {
+    return runEnd(() -> {
+      servo.setAngle(degrees);
+    }, () -> {
+      servo.setAngle(degrees);
+    });
+  }
+
+  public Command climbingCommand(double voltage, double position) {
+    return runEnd(() -> {
+      ratchetLock(position);
+      master.setControl(voltageRequest.withOutput(voltage));
+    }, () -> {
+      stopMotor();
+    }).until(
+        () -> getLimit());
+  }
+
+  public Command zeroElevator(double voltage) {
+    return runEnd(() -> {
+      master.setControl(voltageRequest.withOutput(voltage));
+    }, () -> {
+      stopMotor();
+    }).until(
+        () -> getLimit());
+  }
+
   /*
    * public Command zeroElevatorWithLimit() {
    * return runEnd(() -> {
@@ -359,6 +361,7 @@ public class Elevator extends SubsystemBase {
         master.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elevator/LimitDIO", getLimit());
+    SmartDashboard.putNumber("Cimb Servo", servo.getPosition());
 
     if (getLimit() && (getPositionNormal() != 0)) {
       master.setPosition(0);

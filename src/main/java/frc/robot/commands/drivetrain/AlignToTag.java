@@ -2,6 +2,8 @@ package frc.robot.commands.drivetrain;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,7 +15,8 @@ import frc.robot.subsystems.PhotonVision;
 
 public class AlignToTag extends Command{
     private final CommandSwerveDrivetrain m_drivetrainSubsystem;
-    private final SwerveRequest.RobotCentric mAltAlign = new SwerveRequest.RobotCentric();
+    private final SwerveRequest.RobotCentric mAltAlign = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
+          SteerRequestType.MotionMagicExpo);
 
     private PhotonVision mCamera;
     
