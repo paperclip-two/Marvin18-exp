@@ -205,6 +205,15 @@ public class Elevator extends SubsystemBase {
         () -> getLimit());
   }
 
+  public Command zeroElevator(double voltage) {
+    return runEnd(() -> {
+      master.setControl(voltageRequest.withOutput(voltage));
+    }, () -> {
+      stopMotor();
+    }).until(
+        () -> getLimit());
+  }
+
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();
@@ -283,7 +292,7 @@ public class Elevator extends SubsystemBase {
     return runEnd(() -> {
       master.setControl(voltageRequest.withOutput(voltage));
     }, () -> {
-      master.set(0);
+      stopMotorHold();
     });
   }
 

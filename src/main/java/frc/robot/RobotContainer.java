@@ -134,6 +134,7 @@ public class RobotContainer {
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     // Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
+    Pilot.leftTrigger().whileTrue(m_elevator.zeroElevator(-1.5));
 
     // Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
@@ -156,14 +157,15 @@ public class RobotContainer {
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     Pilot.b().whileTrue(m_elevator.runVoltage(2));
-    Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
+    Pilot.x().whileTrue(new Alignment(drivetrain, mReef));
+    // Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
 
     /// Copilot
     /// Elevator and drive controls
     Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop)); // Save for algae selection
     Copilot.povDown().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround)); // Save for algae selection
-    Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee)); // Save for algae selection
-    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot)); // Save for algae selection
+    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee)); // Save for algae selection
+    Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot)); // Save for algae selection
 
     // Copilot.leftBumper().onTrue(); // Save for feeder selection
     // Copilot.rightBumper().onTrue(); // Save for feeder selection
@@ -179,7 +181,7 @@ public class RobotContainer {
 
     // Face Button Controls Height selection
 
-    Copilot.a().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1)); // Save for height selection
+    Copilot.a().whileTrue(m_elevator.zeroElevator(-4)); // Save for height selection
     Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for height selection
     Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for height selection
     Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for height selection
