@@ -1,6 +1,5 @@
 package frc.robot.commands.drivetrain;
 
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -26,8 +25,8 @@ public class DaveAlignTag extends Command {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         mCamera = camera;
         mtolerance = new Pose2d(0.03, 0.03, Rotation2d.fromDegrees(1));
-        offset  = horizontal;
-        angle = Math.tan(1/offset)
+        offset = horizontal;
+        angle = Math.tan(1 / offset);
         addRequirements(drivetrainSubsystem);
     }
 
@@ -45,20 +44,23 @@ public class DaveAlignTag extends Command {
         if (Math.abs(mCamera.getTagYaw()) > mtolerance.getRotation().getRadians()) {
             yawoffset = mCamera.getTagYaw();
         }
-        m_drivetrainSubsystem.setControl(mAltAlign.withVelocityX(xoffset*2).withVelocityY(yoffset*2).withRotationalRate(yawoffset*1)); // Drive
-                                                                                                                                
+        m_drivetrainSubsystem.setControl(
+                mAltAlign.withVelocityX(xoffset * 2).withVelocityY(yoffset * 2).withRotationalRate(yawoffset * 1)); // Drive
+
     }
+
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.setControl(mAltAlign.withVelocityX(0).withVelocityY(0).withRotationalRate(0));}
+        m_drivetrainSubsystem.setControl(mAltAlign.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
+    }
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(mCamera.getTagY() - offset) < mtolerance.getX() && (Math.abs(mCamera.getTagXDist()) -1) < mtolerance.getY()
+        if (Math.abs(mCamera.getTagY() - offset) < mtolerance.getX()
+                && (Math.abs(mCamera.getTagXDist()) - 1) < mtolerance.getY()
                 && Math.abs(mCamera.getTagYaw()) < mtolerance.getRotation().getRadians()) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
