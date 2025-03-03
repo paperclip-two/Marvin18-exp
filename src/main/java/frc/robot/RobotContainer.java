@@ -44,7 +44,7 @@ import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.Alignment;
-import frc.robot.commands.drivetrain.DaveAlignTag;
+import frc.robot.commands.drivetrain.AlignTag;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
@@ -162,7 +162,7 @@ public class RobotContainer {
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     Pilot.b().whileTrue(m_elevator.runVoltage(2));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.15));
+    Pilot.x().whileTrue(new AlignTag(drivetrain, mReef, -.15));
 
 
     /// Copilot
@@ -263,7 +263,7 @@ public class RobotContainer {
     // test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
     // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-    test.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.15));
+    test.x().whileTrue(new AlignTag(drivetrain, mReef, -.15));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
     // test.x().whileTrue(m_algae.intake());

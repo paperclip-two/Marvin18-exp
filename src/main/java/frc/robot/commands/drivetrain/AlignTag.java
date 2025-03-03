@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PhotonVision;
 
-public class DaveAlignTag extends Command {
+public class AlignTag extends Command {
     private final CommandSwerveDrivetrain m_drivetrainSubsystem;
     private final SwerveRequest.RobotCentric mAltAlign = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
@@ -21,7 +21,7 @@ public class DaveAlignTag extends Command {
     private double offset;
     private double angle;
 
-    public DaveAlignTag(CommandSwerveDrivetrain drivetrainSubsystem, PhotonVision camera, double horizontal) {
+    public AlignTag(CommandSwerveDrivetrain drivetrainSubsystem, PhotonVision camera, double horizontal) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         mCamera = camera;
         mtolerance = new Pose2d(0.03, 0.03, Rotation2d.fromDegrees(1));
