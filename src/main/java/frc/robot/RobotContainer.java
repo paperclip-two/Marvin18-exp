@@ -162,7 +162,7 @@ public class RobotContainer {
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     Pilot.b().whileTrue(m_elevator.runVoltage(2));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.30));
+    Pilot.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.15));
 
 
     /// Copilot
