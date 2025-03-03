@@ -40,7 +40,7 @@ public class DaveAlignTag extends Command {
             yoffset = mCamera.getTagXDist() - 1;
         }
         if (Math.abs(mCamera.getTagY() - offset) > mtolerance.getY()) {
-            xoffset = -mCamera.getTagY() - offset;
+            xoffset = -(mCamera.getTagY() - offset);
         }
         if (Math.abs(mCamera.getTagYaw()) > mtolerance.getRotation().getRadians()) {
             yawoffset = mCamera.getTagYaw();
