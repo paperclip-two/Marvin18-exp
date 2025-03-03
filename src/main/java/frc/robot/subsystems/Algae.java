@@ -7,6 +7,10 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -14,10 +18,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Algae extends SubsystemBase {
     
 
-    TalonSRX algae = new TalonSRX(Constants.CAN_IDS.ALGAE_MECHANISM.ALGAE_MECH_MC);
+    SparkMax algae = new SparkMax(Constants.CAN_IDS.ALGAE_MECHANISM.ALGAE_MECH_MC, MotorType.kBrushless);
   /** Creates a new Algae object. */
   public Algae() {
-    algae.configFactoryDefault();
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.smartCurrentLimit(40);
+    config.inverted(true);
+    algae.configure(config, null, null);
   }
 
   @Override
@@ -26,13 +33,13 @@ public class Algae extends SubsystemBase {
   }
 
   public void setPercentage(double percent) {
-    algae.set(TalonSRXControlMode.PercentOutput, percent);
+    algae.set(percent);
 }
 
 public Command intake() {
     return runEnd(() -> {
         //setPercentage(DynamicConstants.Algae.intakePercent);
-        algae.set(TalonSRXControlMode.PercentOutput, 1);
+        algae.set(1);
     },
     () -> {
       setPercentage(0.5);
@@ -43,7 +50,7 @@ public Command intake() {
 public Command outtake() {
   return runEnd(() -> {
   //  setPercentage(DynamicConstants.Algae.outtakePercent);
-  algae.set(TalonSRXControlMode.PercentOutput, -1);
+  algae.set(-1);
   },
   () -> {
     setPercentage(0);
