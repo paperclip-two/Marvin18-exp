@@ -285,11 +285,11 @@ public class Elevator extends SubsystemBase {
     }, () -> master.setPosition(position));
   }
 
-  public Command setServo(double degrees) {
+  public Command setServo(double position) {
     return runEnd(() -> {
-      servo.setAngle(degrees);
+      servo.set(position);
     }, () -> {
-      servo.setAngle(degrees);
+      servo.set(position);
     });
   }
 
