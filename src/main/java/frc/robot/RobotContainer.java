@@ -158,13 +158,11 @@ public class RobotContainer {
 
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-    // Pilot.x().whileTrue(); // Save for pose driving.
-    // Pilot.b().whileTrue(); // Save for pose driving.
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     Pilot.b().whileTrue(m_elevator.runVoltage(2));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new DaveAlignTag(drivetrain, mReef));
+    Pilot.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.30));
 
 
     /// Copilot

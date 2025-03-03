@@ -19,11 +19,15 @@ public class DaveAlignTag extends Command {
 
     private PhotonVision mCamera;
     private Pose2d mtolerance;
+    private double offset;
+    private double angle;
 
-    public DaveAlignTag(CommandSwerveDrivetrain drivetrainSubsystem, PhotonVision camera) {
+    public DaveAlignTag(CommandSwerveDrivetrain drivetrainSubsystem, PhotonVision camera, double horizontal) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         mCamera = camera;
         mtolerance = new Pose2d(0.03, 0.03, Rotation2d.fromDegrees(1));
+        offset  = horizontal;
+        angle = Math.tan(1/offset)
         addRequirements(drivetrainSubsystem);
     }
 
@@ -35,8 +39,8 @@ public class DaveAlignTag extends Command {
         if (Math.abs(mCamera.getTagXDist() - 1) > mtolerance.getY()) {
             yoffset = mCamera.getTagXDist() - 1;
         }
-        if (Math.abs(mCamera.getTagY()) > mtolerance.getY()) {
-            xoffset = -mCamera.getTagY();
+        if (Math.abs(mCamera.getTagY() - offset) > mtolerance.getY()) {
+            xoffset = -mCamera.getTagY() - offset;
         }
         if (Math.abs(mCamera.getTagYaw()) > mtolerance.getRotation().getRadians()) {
             yawoffset = mCamera.getTagYaw();
@@ -50,7 +54,7 @@ public class DaveAlignTag extends Command {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(mCamera.getTagY()) < mtolerance.getX() && (Math.abs(mCamera.getTagXDist()) -1) < mtolerance.getY()
+        if (Math.abs(mCamera.getTagY() - offset) < mtolerance.getX() && (Math.abs(mCamera.getTagXDist()) -1) < mtolerance.getY()
                 && Math.abs(mCamera.getTagYaw()) < mtolerance.getRotation().getRadians()) {
             return true;
         }
