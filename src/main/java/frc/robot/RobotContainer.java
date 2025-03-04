@@ -161,6 +161,7 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
+    //Pilot.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
     Pilot.b().whileTrue(m_elevator.runVoltageCommand(2));
     Pilot.x().whileTrue(new AlignTag(drivetrain, mReef, 0));
 
@@ -264,7 +265,7 @@ public class RobotContainer {
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
     // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
     test.x().whileTrue(new AlignTag(drivetrain, mReef, -.15));
-    test.a().whileTrue(new FieldCentricPIDMove(drivetrain, null));
+    test.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
     // test.x().whileTrue(m_algae.intake());

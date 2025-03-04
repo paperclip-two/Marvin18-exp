@@ -63,6 +63,13 @@ public class FieldCentricPIDMove extends Command {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        m_drivetrainSubsystem.setControl(fieldDrive
+                .withVelocityX(0)
+                .withVelocityY(0) );
+    }
+
+    @Override
     public boolean isFinished() {
         return (yController.calculate(currY) < accuracy && xController.calculate(currX) < accuracy);
     }

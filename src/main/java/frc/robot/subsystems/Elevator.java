@@ -41,6 +41,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
+import edu.wpi.first.wpilibj.RobotController;
 
 public class Elevator extends SubsystemBase {
   private TalonFX master; // right SIDE MOTOR
@@ -310,6 +311,9 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elevator/LimitDIO", getLimit());
     SmartDashboard.putNumber("Cimb Servo", servo.getPosition());
+    SmartDashboard.putNumber("Get Voltage5V", RobotController.getVoltage5V());
+    SmartDashboard.putNumber("Get Voltage3V3", RobotController.getVoltage3V3());
+    SmartDashboard.putNumber("Get Voltage6V", RobotController.getVoltage6V());
 
     if (getLimit() && (getPositionNormal() != 0)) {
       master.setPosition(0);
