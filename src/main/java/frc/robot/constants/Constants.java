@@ -1,14 +1,20 @@
 package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 
 public final class Constants {
     public static class AltSwerveConstants {
@@ -99,13 +105,26 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double AUTO_DRIVE_P = 6;
-        public static final double AUTO_DRIVE_I = 0;
-        public static final double AUTO_DRIVE_D = 0;
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-            AUTO_DRIVE_D,
-            AUTO_DRIVE_I,
-            AUTO_DRIVE_D);
+            5,
+            0,
+            0);
+        public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
+            5,
+            0,
+            0);
+        public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
+            AUTO_DRIVE_PID, 
+            AUTO_STEER_PID
+        );
+
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
+        public static final Distance kPositionTolerance = Inches.of(0.4);
+        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
+
+        public static final Time kEndTriggerDebounce = Seconds.of(0.04);
+        public static final PathConstraints kPathConstraints = new PathConstraints(1.25, 1.25, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
   
     }    
     public static class VisionConstants {
