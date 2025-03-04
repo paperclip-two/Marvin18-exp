@@ -21,12 +21,12 @@ public class ElevatorSetpoint extends Command {
 
     @Override
     public void execute() {
-        m_Elevator.setMotionMagic(() -> m_setpoint);
+        //m_Elevator.setMotionMagic(() -> m_setpoint);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_Elevator.runVoltageRequest(0);
+        //m_Elevator.runVoltageRequest(0);
     }
     
     @Override

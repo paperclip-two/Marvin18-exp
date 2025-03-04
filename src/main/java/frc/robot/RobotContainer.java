@@ -44,6 +44,7 @@ import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.Alignment;
+import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 import frc.robot.commands.drivetrain.AlignTag;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
@@ -140,7 +141,7 @@ public class RobotContainer {
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     // Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
-    Pilot.leftTrigger().onTrue(m_elevator.zeroElevator(-4));
+    Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand(-4));
 
     // Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
@@ -160,9 +161,8 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
-    Pilot.b().whileTrue(m_elevator.runVoltage(2));
-    //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new AlignTag(drivetrain, mReef, -.15));
+    Pilot.b().whileTrue(m_elevator.runVoltageCommand(2));
+    Pilot.x().whileTrue(new AlignTag(drivetrain, mReef, 0));
 
 
     /// Copilot
@@ -178,7 +178,7 @@ public class RobotContainer {
     // Copilot.rightTrigger().onTrue(); // Save for reef selection
 
     Copilot.start().whileTrue(m_elevator.climbingCommand(-4, 0.5));
-    Copilot.back().whileTrue(m_elevator.setServo(0));
+    Copilot.back().whileTrue(m_elevator.setServoCommand(0));
 
     // Make sure to use copilot's left stick for reef side selection
 
@@ -186,7 +186,7 @@ public class RobotContainer {
 
     // Face Button Controls Height selection
 
-    Copilot.a().onTrue(m_elevator.zeroElevator(-4)); // Save for height selection
+    Copilot.a().onTrue(m_elevator.zeroElevatorCommand(-4)); // Save for height selection
     Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for height selection
     Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for height selection
     Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for height selection
@@ -264,6 +264,7 @@ public class RobotContainer {
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
     // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
     test.x().whileTrue(new AlignTag(drivetrain, mReef, -.15));
+    test.a().whileTrue(new FieldCentricPIDMove(drivetrain, null));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
     // test.x().whileTrue(m_algae.intake());
@@ -275,9 +276,9 @@ public class RobotContainer {
 
     test.rightTrigger().whileTrue(m_algae.outtake());
 
-    test.povDown().whileTrue(m_elevator.setServo(0));
-    test.povLeft().whileTrue(m_elevator.setServo(0.5)));
-    test.povUp().whileTrue(m_elevator.setServo(1));
+    test.povDown().whileTrue(m_elevator.setServoCommand(0));
+    test.povLeft().whileTrue(m_elevator.setServoCommand(0.5));
+    test.povUp().whileTrue(m_elevator.setServoCommand(1));
     //test.povRight().whileTrue(m_elevator.setServo(45));
 
     test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));

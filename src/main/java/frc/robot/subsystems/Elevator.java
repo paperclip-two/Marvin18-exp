@@ -42,8 +42,6 @@ import frc.robot.constants.DynamicConstants;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
-
-
 public class Elevator extends SubsystemBase {
   private TalonFX master; // right SIDE MOTOR
   private TalonFX follower; // left SIDE MOTOR
@@ -124,9 +122,6 @@ public class Elevator extends SubsystemBase {
   }
 
   /// Methods to Move motor
-  public void setMotionMagic(DoubleSupplier rotations) {
-    master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
-  }
 
   public void ratchetLock(double position) {
     servo.set(position);
@@ -173,7 +168,6 @@ public class Elevator extends SubsystemBase {
     if (offset > 0) {
       return ((offset - deadzoneDist) > 0);
     }
-
     if (offset < 0) {
       return ((offset + deadzoneDist) > 0);
     } else {
@@ -182,11 +176,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isNear(double rotations) {
-    boolean targetReached = false;
-    if (Math.abs(getPositionNormal() - rotations) < ElevatorSetpointConfigs.ELEVATOR_DEADZONE_DIST) {
-      targetReached = true;
-    }
-    return targetReached;
+    return Math.abs(getPositionNormal() - rotations) < ElevatorSetpointConfigs.ELEVATOR_DEADZONE_DIST;
   }
 
   public AngularVelocity getSpinVelocity() {
@@ -203,11 +193,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isPosNearZero() {
-    if (Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE) {
-      return true;
-    } else {
-      return false;
-    }
+    return Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE;
   }
 
   public void setSoftwareLimits(boolean reverseLimitEnable, boolean forwardLimitEnable) {
@@ -225,28 +211,15 @@ public class Elevator extends SubsystemBase {
 
   ///// Commands
 
-  public Command ElevatorSetpoint(double rotations) {
-    return runEnd(
-        () -> master.setControl(motionRequest.withPosition(rotations)),
-        () -> master.set(0));
-  }
-
   public Command advanceRotationsCommand(double rotations) {
-    return runOnce(
-        () -> advanceRotations(rotations));
-  }
-
-  public Command setMotionMagicPosition(DoubleSupplier rotations) {
-    return runEnd(() -> {
-      master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
-    }, () -> {
-      master.set(0);
-    }).until(
-        () -> isNear(rotations.getAsDouble()));
+    return runOnce(() -> {
+        ratchetLock(0);
+        advanceRotations(rotations);});
   }
 
   public Command setMotionMagicPositionCommand(double rotations) {
     return runEnd(() -> {
+      ratchetLock(0);
       setRotations(rotations);
     }, () -> {
       stopMotorHold();
@@ -254,48 +227,33 @@ public class Elevator extends SubsystemBase {
         () -> isNear(rotations));
   }
 
-  public Command elevatorPositionVoltage(double position) {
+  public Command runVoltageCommand(double voltage) {
     return runEnd(() -> {
-      master.setControl(positionVoltageRequest.withPosition(0));
-    }, () -> {
-      master.set(0);
-    });
-  }
-
-  public Command runVoltage(double voltage) {
-    return runEnd(() -> {
+      ratchetLock(0);
       master.setControl(voltageRequest.withOutput(voltage));
     }, () -> {
       stopMotorHold();
     });
   }
 
-  public Command runVoltageRequest(double voltage) {
-    return runEnd(() -> {
-      master.setControl(voltageRequest.withOutput(0));
-    }, () -> {
-      master.set(0);
-    });
-  }
-
-  public Command resetPositions(double position) {
+  public Command resetPositionsCommand(double position) {
     return runEnd(() -> {
       master.setControl(new DutyCycleOut(0));
       master.setPosition(position);
     }, () -> master.setPosition(position));
   }
 
-  public Command setServo(double position) {
+  public Command setServoCommand(double position) {
     return runEnd(() -> {
-      servo.set(position);
+      ratchetLock(position);
     }, () -> {
-      servo.set(position);
+      ratchetLock(position);
     });
   }
 
   public Command climbingCommand(double voltage, double position) {
     return runEnd(() -> {
-      ratchetLock(position);
+      ratchetLock(1);
       master.setControl(voltageRequest.withOutput(voltage));
     }, () -> {
       stopMotor();
@@ -303,26 +261,16 @@ public class Elevator extends SubsystemBase {
         () -> getLimit());
   }
 
-  public Command zeroElevator(double voltage) {
+  public Command zeroElevatorCommand(double voltage) {
     return runEnd(() -> {
+      ratchetLock(0);
       master.setControl(voltageRequest.withOutput(voltage));
     }, () -> {
       stopMotor();
     }).until(
-        () -> getLimit());
+        () -> getLimit()
+        );
   }
-
-  /*
-   * public Command zeroElevatorWithLimit() {
-   * return runEnd(() -> {
-   * setMotionMagicPosition(() -> 0.0);
-   * }, () -> {
-   * if (leftLimitSwitch.get() || rightLimitSwitch.get()) {
-   * master.set(0);
-   * }
-   * }).until(() -> leftLimitSwitch.get() || rightLimitSwitch.get());
-   * }
-   */
 
   private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(

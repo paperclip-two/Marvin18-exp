@@ -59,7 +59,7 @@ private final SysIdRoutine m_sysIdRoutine =
          (state) -> SignalLogger.writeString("elevatorState", state.toString())
       ),
       new SysIdRoutine.Mechanism(
-         (volts) -> m_elevator.runVoltage(volts.in(Volts)),
+         (volts) -> m_elevator.runVoltageCommand(volts.in(Volts)),
          null,
          this
       )
