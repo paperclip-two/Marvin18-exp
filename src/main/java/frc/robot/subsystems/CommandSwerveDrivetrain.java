@@ -22,6 +22,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -362,7 +363,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return mHolonomicDriveController;
     }
 
+    public ChassisSpeeds getFieldRelativeSpeeds() {
+        return ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
+    }
+
     public Command driveToPose() {
         return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)), new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond), LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond), AngularVelocity.ofBaseUnits(360, DegreesPerSecond), AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
+    }
+
+    public double getSpeedAsDouble() {
+        ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
+        return Math.sqrt(fieldVelocity.vxMetersPerSecond * fieldVelocity.vxMetersPerSecond + fieldVelocity.vyMetersPerSecond * fieldVelocity.vyMetersPerSecond);
     }
 }

@@ -31,6 +31,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -41,11 +42,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.ElevatorAlgaeComand;
-import frc.robot.commands.drivetrain.AlignCommand;
-import frc.robot.commands.drivetrain.AlignToTag;
-import frc.robot.commands.drivetrain.Alignment;
-import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 import frc.robot.commands.drivetrain.AlignTag;
+import frc.robot.commands.drivetrain.AlignToTag;
+import frc.robot.commands.drivetrain.FieldCentricPIDMove;
+import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
+import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
@@ -65,6 +66,7 @@ import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
+import frc.robot.util.EnumUtil;
 import edu.wpi.first.wpilibj.Timer;
 
 public class RobotContainer {
@@ -98,6 +100,9 @@ public class RobotContainer {
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final Coral m_coral = new Coral();
+
+   // public final PlannerSetpointGenerator testpoint = new PlannerSetpointGenerator(drivetrain, new Pose2d(),);
+
 
   // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
   // PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15),
@@ -161,9 +166,9 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
-    //Pilot.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
-    Pilot.b().whileTrue(m_elevator.runVoltageCommand(2));
-    Pilot.x().whileTrue(new AlignTag(drivetrain, mReef, 0));
+    //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
+   Pilot.x().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.LEFT));
+   Pilot.b().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.RIGHT));
 
 
     /// Copilot

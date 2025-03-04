@@ -218,6 +218,24 @@ return tagY;
         return result;
     }    
 
+
+    public int getFiducialId(){
+        int res = -1;
+        if (camera.isConnected()) {
+            PhotonPipelineResult latestRes = camera.getLatestResult();
+            if (latestRes != null) {
+                if (latestRes.getBestTarget() != null) {
+                    if (latestRes.hasTargets()) {
+                        res = latestRes.getBestTarget().getFiducialId(); // test.
+                    }
+                }
+            }
+        }
+
+        return res;
+
+    }
+
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
         PhotonPipelineResult result = new PhotonPipelineResult();
         if (camera.isConnected()) {
