@@ -93,7 +93,7 @@ public class AlignToReef {
             return 
             Commands.sequence(
                 Commands.print("start position PID loop"),
-                PlannerSetpointGenerator.generateCommand(mSwerve, waypoint, Seconds.of(0.1)),
+               // PlannerSetpointGenerator.generateCommand(mSwerve, waypoint, Seconds.of(0.1)),
                 Commands.print("end position PID loop")
             );
         }
@@ -109,7 +109,7 @@ public class AlignToReef {
 
         return AutoBuilder.followPath(path).andThen(
             Commands.print("start position PID loop"),
-            PlannerSetpointGenerator.generateCommand(mSwerve, waypoint, Constants.AutoConstants.kAlignmentAdjustmentTimeout),
+          //  PlannerSetpointGenerator.generateCommand(mSwerve, waypoint, Constants.AutoConstants.kAlignmentAdjustmentTimeout),
             Commands.print("end position PID loop")
         );
     }

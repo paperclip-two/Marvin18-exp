@@ -24,17 +24,24 @@ public class PlannerSetpointGenerator extends Command {
     
     public CommandSwerveDrivetrain mSwerve;
     public final Pose2d goalPose;
+    private int currentID;
+    private Pose2d poseToDrive;
+    private boolean flipIt;
+
     private PPHolonomicDriveController mDriveController = Constants.AutoConstants.kDriveController;
 
     private final Trigger endTrigger;
     private final Trigger endTriggerDebounced;
     private final SwerveRequest.ApplyRobotSpeeds mChassisSpeed;
 
+
+
     private final BooleanPublisher endTriggerLogger = NetworkTableInstance.getDefault().getTable("logging").getBooleanTopic("PositionPIDEndTrigger").publish();
 
-    public PlannerSetpointGenerator(CommandSwerveDrivetrain mSwerve, Pose2d goalPose) {
+    public PlannerSetpointGenerator(CommandSwerveDrivetrain mSwerve, Pose2d goalPose, boolean shouldFlip) {
         this.mSwerve = mSwerve;
         this.goalPose = goalPose;
+        flipIt = shouldFlip;
         mChassisSpeed = new SwerveRequest.ApplyRobotSpeeds();
 
         endTrigger = new Trigger(
@@ -58,8 +65,8 @@ public class PlannerSetpointGenerator extends Command {
             endTriggerDebounced = endTrigger.debounce(Constants.AutoConstants.kEndTriggerDebounce.in(Seconds));
     }
 
-    public static Command generateCommand(CommandSwerveDrivetrain swerve, Pose2d goalPose, Time timeout){
-        return new PlannerSetpointGenerator(swerve, goalPose).withTimeout(timeout).finallyDo(() -> {
+    public static Command generateCommand(CommandSwerveDrivetrain swerve, Pose2d goalPose, Time timeout, boolean flipIt){
+        return new PlannerSetpointGenerator(swerve, goalPose, flipIt).withTimeout(timeout).finallyDo(() -> {
             
             swerve.setControl(
                 new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds())
@@ -79,6 +86,9 @@ public class PlannerSetpointGenerator extends Command {
     @Override
     public void execute() {
         PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState();
+        if (flipIt == true) {
+            goalState = goalState.flip();
+        }
         goalState.pose = goalPose;
 
         endTriggerLogger.accept(endTrigger.getAsBoolean());

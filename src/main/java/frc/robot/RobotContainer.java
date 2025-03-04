@@ -42,11 +42,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.ElevatorAlgaeComand;
-import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.commands.drivetrain.AlignToTag;
-import frc.robot.commands.drivetrain.Alignment;
-import frc.robot.commands.drivetrain.DaveAlignTag;
 import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
+import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
@@ -66,6 +64,7 @@ import frc.robot.subsystems.LED.State;
 import frc.robot.subsystems.PathfindingSubsystem;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
+import frc.robot.util.EnumUtil;
 import edu.wpi.first.wpilibj.Timer;
 
 public class RobotContainer {
@@ -100,7 +99,7 @@ public class RobotContainer {
     public final Elevator m_elevator = new Elevator();
     public final Coral m_coral = new Coral();
 
-    public final PlannerSetpointGenerator testpoint = new PlannerSetpointGenerator(drivetrain, new Pose2d());
+   // public final PlannerSetpointGenerator testpoint = new PlannerSetpointGenerator(drivetrain, new Pose2d(),);
 
 
   // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
@@ -165,9 +164,9 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
-    Pilot.b().whileTrue(m_elevator.runVoltage(2));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new PlannerSetpointGenerator(drivetrain, new Pose2d(3.1, 3.95, new Rotation2d(Math.toRadians(-85)))));
+   Pilot.x().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.LEFT));
+   Pilot.b().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.RIGHT));
 
 
     /// Copilot
@@ -268,7 +267,7 @@ public class RobotContainer {
     // test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
     // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-    test.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.15));
+   // test.x().whileTrue(new DaveAlignTag(drivetrain, mReef, -.15));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
     // test.x().whileTrue(m_algae.intake());

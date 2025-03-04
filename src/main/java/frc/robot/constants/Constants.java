@@ -118,12 +118,12 @@ public final class Constants {
             AUTO_STEER_PID
         );
 
-        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2.0);
-        public static final Distance kPositionTolerance = Inches.of(0.4);
-        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.25);
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1.0);
+        public static final Distance kPositionTolerance = Inches.of(0.2);
+        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);
-        public static final PathConstraints kPathConstraints = new PathConstraints(1.25, 1.25, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final PathConstraints kPathConstraints = new PathConstraints(1.00, 0.5, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
   
     }    
