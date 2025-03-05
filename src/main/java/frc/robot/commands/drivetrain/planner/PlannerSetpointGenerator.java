@@ -86,11 +86,10 @@ public class PlannerSetpointGenerator extends Command {
     @Override
     public void execute() {
         PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState();
+        goalState.pose = goalPose;
         if (flipIt == true) {
             goalState = goalState.flip();
         }
-        goalState.pose = goalPose;
-
         endTriggerLogger.accept(endTrigger.getAsBoolean());
 
         mSwerve.setControl(

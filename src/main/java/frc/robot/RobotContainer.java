@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignToTag;
+import frc.robot.commands.drivetrain.planner.NearestAlign;
 import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
 import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
@@ -66,6 +67,8 @@ import frc.robot.subsystems.PhotonVision;
 import frc.robot.testing.ElevatorSysid;
 import frc.robot.util.EnumUtil;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -90,6 +93,8 @@ public class RobotContainer {
   private final CommandXboxController Copilot = new CommandXboxController(1);
   private final CommandXboxController test = new CommandXboxController(2);
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final SendableChooser<Command> autoChooser;
+
 
   public final Timer m_timer = new Timer();
 
@@ -119,6 +124,8 @@ public class RobotContainer {
     public RobotContainer() {
       configureBindings();
       configureLEDTriggers();
+      autoChooser = AutoBuilder.buildAutoChooser();
+      SmartDashboard.putData("auto chooser", autoChooser);
     }
 
 
@@ -165,8 +172,8 @@ public class RobotContainer {
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-   Pilot.x().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.LEFT));
-   Pilot.b().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.RIGHT));
+   Pilot.x().whileTrue(new NearestAlign(mReef, drivetrain, EnumUtil.SIDE.LEFT));
+   Pilot.b().whileTrue(new NearestAlign(mReef, drivetrain, EnumUtil.SIDE.RIGHT));
 
 
     /// Copilot

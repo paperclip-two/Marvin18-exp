@@ -1,9 +1,21 @@
 package frc.robot.util;
+import java.util.List;
+
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.constants.DynamicConstants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EnumUtil {
+    AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+    List <Pose2d> tagPoses = getPoseList(List.of(12,13,14,15,16,17,18,19,20,21));
+    
+    
 public enum POSE_ENUM {
 
     // Blue Coral poses
@@ -57,6 +69,8 @@ public enum POSE_ENUM {
     }
 }
 
+
+
 public static POSE_ENUM getIdEnum(int id) {
     if (id == 17) {
         return POSE_ENUM.ID17;
@@ -79,8 +93,13 @@ public static POSE_ENUM getIdEnum(int id) {
     else {
         return POSE_ENUM.NOT_APPLICABLE;
     }
-
 }
+
+
+
+
+
+
 
 public enum SIDE {
     LEFT,
@@ -135,5 +154,45 @@ public static double getEnumSetpoint(ELEV level) {
         return 0; 
     } // just 0 if this enum doesn't exist
 }
+
+ public List<Pose2d> getPoseList(List<Integer> tagIntegers) {
+    List<Pose2d> tagPoses = new ArrayList<>();
+    for (int i = 0; i < tagIntegers.size(); i++) {
+        int tagInteger = tagIntegers.get(i);
+        Pose2d tagPose = layout.getTagPose(tagInteger).get().toPose2d();
+        tagPoses.add(tagPose);
+    }
+    return tagPoses;
+ }
+
+ public Pose2d getTagPoseFromID(int id) {
+    return layout.getTagPose(id).get().toPose2d();
+ }
+
+ public int getIdFromPose(Pose2d ps) {
+    int idToGet = -1;
+    for (int i = 0; i < tagPoses.size(); i++) {
+        Pose2d currPose = tagPoses.get(i);
+        idToGet = i + 1;
+        if (currPose == ps) {
+            return idToGet;
+        }
+    }
+
+    return idToGet;
+ }
+
+ public POSE_ENUM integratedPoseId(Pose2d currentDrivePose) {
+    Pose2d nearest = getNearest(currentDrivePose);
+    int id = getIdFromPose(nearest);
+    return getIdEnum(id);
+ }
+
+
+ public Pose2d getNearest(Pose2d curr) {
+    return curr.nearest(tagPoses);
+ }
+
+
 
 }
