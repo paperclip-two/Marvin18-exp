@@ -71,7 +71,7 @@ public class DriveCoralScorePose extends Command {
   @Override
   public void end(boolean interrupted) {
     if (interrupted) {
-      PIDmove.cancel();
+      PIDmove.end(true);
     }
   }
 }
