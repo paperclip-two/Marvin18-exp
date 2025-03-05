@@ -90,6 +90,7 @@ public class PlannerSetpointGenerator extends Command {
             goalState = goalState.flip();
         }
         goalState.pose = goalPose;
+        
 
         endTriggerLogger.accept(endTrigger.getAsBoolean());
 

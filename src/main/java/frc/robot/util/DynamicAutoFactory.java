@@ -103,7 +103,7 @@ public class DynamicAutoFactory {
      */
     private Command elevatorPriorityMove(DynamicsSetpoint setpoint){
         return Commands.parallel(
-            elevSub.ElevatorSetpoint(setpoint.heightMeters),
+            elevSub.setMotionMagicPositionCommand(setpoint.heightMeters),
             Commands.waitUntil(() -> isElevAtSetpoint(setpoint.heightMeters)).withTimeout(2).andThen(
                 coralSub.runIntake(-1)
             )

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drivetrain;
+package frc.robot.commands.drivetrain.planner;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -20,11 +20,17 @@ import java.util.List;
 public class DriveCoralScorePose extends Command {
   private static AprilTagFieldLayout fieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
   private List<Pose2d> tagPoses = new ArrayList<>();
+  private CommandSwerveDrivetrain dt;
+  private Pose2d goalPose;
+  private Transform2d trans;
+  private PlannerSetpointGenerator plannerSetpointGenerator;
 
   /** Creates a new DriveCoralScorePose. */
-  
+
   public DriveCoralScorePose(CommandSwerveDrivetrain drivetrain, Transform2d transform) {
-    tagPoses = getPoseList(List.of(11, 12, 13));
+    tagPoses = getPoseList(List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20 ,21, 22));
+    dt = drivetrain;
+    trans = transform;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -40,26 +46,31 @@ public class DriveCoralScorePose extends Command {
     return tagPoses;
   }
 
-  
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
+
+    plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
+
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // No need to call generateCommand here, as the command is already scheduled in
+    // initialize()
+    plannerSetpointGenerator.schedule();
   }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
-
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return plannerSetpointGenerator.isFinished();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    if (interrupted) {
+      plannerSetpointGenerator.cancel();
+    }
   }
 }

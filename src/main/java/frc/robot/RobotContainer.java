@@ -29,6 +29,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -45,6 +46,7 @@ import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignTag;
 import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.FieldCentricPIDMove;
+import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
 import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
@@ -167,8 +169,8 @@ public class RobotContainer {
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-   Pilot.x().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.LEFT));
-   Pilot.b().whileTrue(new TagAssistedAlign(mReef, drivetrain, EnumUtil.SIDE.RIGHT));
+    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45,.05, Rotation2d.fromDegrees(90))));
+   Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .4, Rotation2d.fromDegrees(90))));
 
 
     /// Copilot
