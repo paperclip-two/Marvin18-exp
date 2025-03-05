@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class DriveCoralScorePose extends Command {
   private CommandSwerveDrivetrain dt;
   private Pose2d goalPose;
   private Transform2d trans;
-  private PlannerSetpointGenerator plannerSetpointGenerator;
+  private FieldCentricPIDMove PIDmove;
 
   /** Creates a new DriveCoralScorePose. */
 
@@ -51,7 +52,7 @@ public class DriveCoralScorePose extends Command {
   public void initialize() {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
-    plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
+    PIDmove = new FieldCentricPIDMove(dt, goalPose);
 
   }
 
@@ -59,18 +60,18 @@ public class DriveCoralScorePose extends Command {
   public void execute() {
     // No need to call generateCommand here, as the command is already scheduled in
     // initialize()
-    plannerSetpointGenerator.schedule();
+    PIDmove.schedule();
   }
 
   @Override
   public boolean isFinished() {
-    return plannerSetpointGenerator.isFinished();
+    return PIDmove.isFinished();
   }
 
   @Override
   public void end(boolean interrupted) {
     if (interrupted) {
-      plannerSetpointGenerator.cancel();
+      PIDmove.cancel();
     }
   }
 }
