@@ -61,8 +61,8 @@ public class FieldCentricPIDMove extends Command {
         currRot = m_drivetrainSubsystem.getState().Pose.getRotation();
 
         m_drivetrainSubsystem.setControl(fieldDrive
-                .withVelocityX(xController.calculate(currX))
-                .withVelocityY(yController.calculate(currY))
+                .withVelocityX(-xController.calculate(currX))
+                .withVelocityY(-yController.calculate(currY))
                 .withTargetDirection(initialRot));
     }
 
