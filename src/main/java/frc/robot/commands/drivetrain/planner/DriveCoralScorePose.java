@@ -24,7 +24,7 @@ public class DriveCoralScorePose extends Command {
   private CommandSwerveDrivetrain dt;
   private Pose2d goalPose;
   private Transform2d trans;
-  private FieldCentricPIDMove PIDmove;
+  private PlannerSetpointGenerator plannerSetpointGenerator;
 
   /** Creates a new DriveCoralScorePose. */
 
@@ -52,24 +52,32 @@ public class DriveCoralScorePose extends Command {
   public void initialize() {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
-    PIDmove = new FieldCentricPIDMove(dt, goalPose);
+    plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
 
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     // No need to call generateCommand here, as the command is already scheduled in
     // initialize()
-    PIDmove.schedule();
+    plannerSetpointGenerator.schedule();
   }
 
-  @Override
-  public boolean isFinished() {
-    return PIDmove.isFinished();
-  }
-
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-      PIDmove.end(true);
+  public boolean isFinished() {
+    return plannerSetpointGenerator.isFinished();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  public void end(boolean interrupted) {
+    if (interrupted) {
+      plannerSetpointGenerator.cancel();
+    }
   }
 }
