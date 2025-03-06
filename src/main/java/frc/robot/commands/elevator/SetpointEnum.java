@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
@@ -7,12 +7,10 @@ import frc.robot.util.EnumUtil;
 public class SetpointEnum extends Command {
     private final Elevator mElevator;
     private double setpoint;
-    private boolean mDone;
 
     private final EnumUtil.ELEV elevLevel;
-    public SetpointEnum(Elevator elev, EnumUtil.ELEV elv, boolean done) {
+    public SetpointEnum(Elevator elev, EnumUtil.ELEV elv) {
         mElevator = elev;
-        mDone = done;
         elevLevel = elv;
         addRequirements(mElevator);
     }
@@ -35,6 +33,6 @@ public class SetpointEnum extends Command {
     
     @Override
     public boolean isFinished() {
-        return (mElevator.isNear(setpoint) || mElevator.getLimit() || mDone);
+        return (mElevator.isNear(setpoint));
     }
 }

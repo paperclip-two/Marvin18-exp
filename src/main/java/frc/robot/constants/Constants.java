@@ -106,11 +106,11 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-            5,
+            1.5,
             0,
             0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-            5,
+            1,
             0,
             0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
@@ -124,6 +124,7 @@ public final class Constants {
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);
         public static final PathConstraints kPathConstraints = new PathConstraints(1.00, 0.5, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final PathConstraints kSlowPathConstraints = new PathConstraints(0.3, 0.1, 1/5 * Math.PI, 0.2 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
   
     }    

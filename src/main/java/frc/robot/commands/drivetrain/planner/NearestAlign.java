@@ -20,7 +20,7 @@ public class NearestAlign extends Command {
     private Pose2d poseToDrive;
     private boolean flipBool = false;
     AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    List <Pose2d> tagPoses = getPoseList(List.of(12,13,14,15,16,17,18,19,20,21));
+    List <Pose2d> tagPoses = getPoseList(List.of(7,8,9,10,11,18,19,20,21,22));
 
     private final EnumUtil.SIDE sideToDrive;
     private PlannerSetpointGenerator plannerSetpointGenerator;
@@ -41,10 +41,8 @@ public class NearestAlign extends Command {
     public int getIdFromPose(Pose2d ps) {
     int idToGet = -1;
     for (int i = 0; i < tagPoses.size(); i++) {
-        Pose2d currPose = tagPoses.get(i);
-        idToGet = i + 1;
-        if (currPose == ps) {
-            return idToGet;
+        if(tagPoses.get(i).equals(ps)) {
+            return i + 1;
         }
     }
 
@@ -65,7 +63,13 @@ public class NearestAlign extends Command {
     Pose2d nearest = getNearest(currentDrivePose);
     int id = getIdFromPose(nearest);
     return EnumUtil.getIdEnum(id);
-     }
+    }
+
+    public POSE_ENUM justGetEnumPose(Pose2d pose) {
+        int id = getIdFromPose(pose);
+
+        return EnumUtil.getIdEnum(id);
+    }
 
 
  public Pose2d getNearest(Pose2d curr) {
@@ -76,6 +80,8 @@ public class NearestAlign extends Command {
     public void initialize() {
         //EnumUtil.POSE_ENUM currentPoseEnum = EnumUtil.getIdEnum();
         Pose2d curr = mDrivetrain.getState().Pose;
+        Pose2d closest = curr.nearest(tagPoses);
+
         POSE_ENUM currentPoseEnum  = integratedPoseId(curr);
         flipBool = integratedPoseId(mDrivetrain.getState().Pose).makeRed();
 
@@ -89,7 +95,7 @@ public class NearestAlign extends Command {
             poseToDrive = currentPoseEnum.getPoseAlgae();
         }
 
-        plannerSetpointGenerator = new PlannerSetpointGenerator(mDrivetrain, poseToDrive, flipBool);
+        plannerSetpointGenerator = new PlannerSetpointGenerator(mDrivetrain, closest, flipBool);
 
     }
 
