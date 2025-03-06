@@ -4,22 +4,35 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.subsystems.PhotonVision;
 
 public final class Constants {
     public static class AltSwerveConstants {
-        public static final Distance TRACK_WIDTH = Distance.ofBaseUnits(22.75, Inches); // Distance between Left & Right Wheels
-        public static final Distance WHEELBASE = Distance.ofBaseUnits(22.75, Inches);   // Distance between Front & Back Wheels
+        public static final Distance TRACK_WIDTH = Distance.ofBaseUnits(22.75, Inches); // Distance between Left & Right
+                                                                                        // Wheels
+        public static final Distance WHEELBASE = Distance.ofBaseUnits(22.75, Inches); // Distance between Front & Back
+                                                                                      // Wheels
         public static final double INPUT_MULT = 0.8; // Reduce maximum applied speed for better driveability.
     }
 
@@ -32,7 +45,6 @@ public final class Constants {
         public static final double ELEVATOR_SAFE_POSITION = 5.5;
         public static final double ELEVATOR_SCORE_POSITION = 6;
     }
-
 
     public static class PathPlannerAuto {
         public static final double holonomicXkP = 5;
@@ -64,21 +76,20 @@ public final class Constants {
         public static final int LEFT_CLIMB_LED = 3;
         public static final int TOP_CLIMB_LED = 4;
     }
-    
+
     public static class CAN_IDS {
         public static final String SYSTEM_CAN_NAME = "system"; // CANBUS for system.
         public static final String DRIVETRAIN_CAN_NAME = "drivetrain"; // CANBUS for drivetrain.
         public static final CANBus DrivetrainAndClimbBus = new CANBus("CAN-2", "./logs/example.hoot");
 
-
         public static final int SYSTEM_CAN_ID = 21;
 
         public static class CORAL_MECHANISM {
             public static final int CORAL_BUCKET_ROTATE = 1;
-            public static final int AGITATOR = 13; 
-            public static final int CORAL_INTAKE = 12; 
-        }      
-        
+            public static final int AGITATOR = 13;
+            public static final int CORAL_INTAKE = 12;
+        }
+
         public static class ALGAE_MECHANISM {
             public static final int ALGAE_MECH_MC = 11;
         }
@@ -101,32 +112,33 @@ public final class Constants {
             public static final int ELEVATOR_MASTER = 18; // right
             public static final int ELEVATOR_FOLLOWER = 19; // left
         }
-        
+
     }
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-            2,
-            0,
-            1);
+                2,
+                0,
+                1);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-            5,
-            0,
-            0);
+                5,
+                0,
+                0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
-            AUTO_DRIVE_PID, 
-            AUTO_STEER_PID
-        );
+                AUTO_DRIVE_PID,
+                AUTO_STEER_PID);
 
         public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1.0);
         public static final Distance kPositionTolerance = Inches.of(0.2);
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);
-        public static final PathConstraints kPathConstraints = new PathConstraints(0.5, 0.2, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final PathConstraints kPathConstraints = new PathConstraints(0.5, 0.2, 1 / 2 * Math.PI,
+                1 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
-  
-    }    
+
+    }
+
     public static class VisionConstants {
         public static final String CORAL_CAM_NAME = "feeder_cam";
         public static final String REEF_CAM_NAME = "reef_cam";
@@ -134,14 +146,14 @@ public final class Constants {
         // Record actual transform in a comment here (readable by a human)
         public static final Transform3d REEF_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
         // Record actual transform in a comment here (readable by a human)
-        public static final Transform3d LIMELIGHT_TRANSFORM = new Transform3d(null, null, null, null);//Find later
+        public static final Transform3d LIMELIGHT_TRANSFORM = new Transform3d(null, null, null, null);// Find later
 
         public static final double REEF_APRILTAG_HEIGHT = 6.875; // feet? figure out units
         public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875;
         public static final double CORAL_APRILTAG_HEIGHT = 53.25;
 
-      }
-    
+    }
+
     public static class FieldConstants {
         // tune this
         public static final double FIELD_WIDTH = 16.541;
@@ -193,13 +205,29 @@ public final class Constants {
         public static final int BLUE_B_CORAL_TAG = 21;
         public static final int BLUE_BR_CORAL_TAG = 22;
 
-        public static final int[] RED_CORAL_TAGS = {6, 7, 8, 9, 10, 11};
-        public static final int[] BLUE_CORAL_TAGS = {17, 18, 19, 20, 21, 22};
-        public static final int[] RED_FEEDER_TAGS = {1,2};
-        public static final int[] BLUE_FEEDER_TAGS = {12,13};
-        public static final int[] RED_SIDE_CLIMB_TAGS = {4,5};
-        public static final int[] BLUE_SIDE_CLIMB_TAGS = {14,15};
-        public static final int[] PROCESSOR_TAGS = {1,15};
+        public static final int[] RED_CORAL_TAGS = { 6, 7, 8, 9, 10, 11 };
+        public static final int[] BLUE_CORAL_TAGS = { 17, 18, 19, 20, 21, 22 };
+        public static final int[] RED_FEEDER_TAGS = { 1, 2 };
+        public static final int[] BLUE_FEEDER_TAGS = { 12, 13 };
+        public static final int[] RED_SIDE_CLIMB_TAGS = { 4, 5 };
+        public static final int[] BLUE_SIDE_CLIMB_TAGS = { 14, 15 };
+        public static final int[] PROCESSOR_TAGS = { 1, 15 };
     }
 
+    public static class Vision {
+        public static final String kCameraName = "reef_cam";
+
+        public static final Transform3d kRobotToCam = new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09),
+        new Rotation3d(0, 0, Math.toRadians(90)));
+
+        // The layout of the AprilTags on the field
+        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
+                .loadField(AprilTagFields.kDefaultField);
+
+        // The standard deviations of our vision estimated poses, which affect
+        // correction rate
+        // (Fake values. Experiment and determine estimation noise on an actual robot.)
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    }
 }

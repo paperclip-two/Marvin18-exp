@@ -13,11 +13,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DrivetrainTelemetry extends SubsystemBase {
     private CommandSwerveDrivetrain dt;
-    private PhotonVision m_reef;
 
-    public DrivetrainTelemetry(CommandSwerveDrivetrain thedrivetrain, PhotonVision theReefCam) {
+    public DrivetrainTelemetry(CommandSwerveDrivetrain thedrivetrain)   {
         dt = thedrivetrain;
-        m_reef = theReefCam;
     }
 
     public boolean isRedAlliance(Alliance all) {
@@ -43,6 +41,5 @@ public class DrivetrainTelemetry extends SubsystemBase {
 
         publisher.set(dt.getState().Pose);
         arrayPublisher.set(new Pose2d[] {dt.getState().Pose});
-        SmartDashboard.putNumber("Last Fiducial", m_reef.getFiducialId());
     }
 }

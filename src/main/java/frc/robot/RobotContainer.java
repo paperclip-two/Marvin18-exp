@@ -10,54 +10,27 @@ import static edu.wpi.first.units.Units.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opencv.video.TrackerDaSiamRPN_Params;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.commands.PathfindThenFollowPath;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.path.PathConstraints;
-import com.revrobotics.servohub.config.ServoChannelConfig.PulseRange;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.ElevatorAlgaeComand;
-import frc.robot.commands.drivetrain.AlignTag;
-import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
-import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
-import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.CoralCamera;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LED;
@@ -65,10 +38,6 @@ import frc.robot.subsystems.LED.LEDColor;
 import frc.robot.subsystems.LED.LEDSection;
 import frc.robot.subsystems.LED.Rolling;
 import frc.robot.subsystems.LED.State;
-import frc.robot.subsystems.PathfindingSubsystem;
-import frc.robot.subsystems.PhotonVision;
-import frc.robot.testing.ElevatorSysid;
-import frc.robot.util.EnumUtil;
 import edu.wpi.first.wpilibj.Timer;
 
 public class RobotContainer {
@@ -76,14 +45,13 @@ public class RobotContainer {
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max
                                                                                     // angular velocity
 
-
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use open-loop control for drive motors
   private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
-          SteerRequestType.MotionMagicExpo); // Use open-loop control for drive motors
+          SteerRequestType.MotionMagicExpo); // Use Closed-loop control for drive motors at low speeds
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final SwerveRequest.FieldCentricFacingAngle angle = new SwerveRequest.FieldCentricFacingAngle();
@@ -93,39 +61,40 @@ public class RobotContainer {
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
   private final CommandXboxController test = new CommandXboxController(2);
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   public final Timer m_timer = new Timer();
 
-    private final LED LEDController = LED.getInstance();
+  private final LED LEDController = LED.getInstance();
 
-    public final Algae m_algae = new Algae();
-    public final Elevator m_elevator = new Elevator();
-    public final Coral m_coral = new Coral();
+  public final Algae m_algae = new Algae();
+  public final Elevator m_elevator = new Elevator();
+  public final Coral m_coral = new Coral();
+  public final Vision m_vision = new Vision();
 
-   // public final PlannerSetpointGenerator testpoint = new PlannerSetpointGenerator(drivetrain, new Pose2d(),);
-
+  // public final PlannerSetpointGenerator testpoint = new
+  // PlannerSetpointGenerator(drivetrain, new Pose2d(),);
 
   // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
   // PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15),
   // Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0),
   // Degrees.of(90))));
 
-  public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY,
-      new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09),
-          new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
-  // public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam",
-  // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
-  // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
-  // Degrees.of(0), Degrees.of(-93))));
-  public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain, mReef);
+  // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
+  // PoseStrategy.LOWEST_AMBIGUITY,
+  // new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09),
+  // new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
+  // // public final PhotonVision mCoral = new PhotonVision(drivetrain,
+  // "feeder_cam",
+  // // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
+  // // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
+  // // Degrees.of(0), Degrees.of(-93))));
+  public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
 
-    public RobotContainer() {
-      configureBindings();
-      configureLEDTriggers();
-    }
-
-
+  public RobotContainer() {
+    configureBindings();
+    configureLEDTriggers();
+  }
 
   public void configureBindings() {
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
@@ -142,7 +111,7 @@ public class RobotContainer {
             .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.5 * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
-        )); 
+        ));
     // Bumper and Trigger Controls
     Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae, m_timer));
     Pilot.rightBumper().whileTrue(m_algae.outtake());
@@ -163,22 +132,33 @@ public class RobotContainer {
     Pilot.povDown()
         .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.04 * MaxSpeed).withVelocityX(0)));
 
-
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
-    //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45,.05, Rotation2d.fromDegrees(90))));
-   Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .4, Rotation2d.fromDegrees(90))));
-
+    // Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
+    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
+    Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .4, Rotation2d.fromDegrees(90))));
 
     /// Copilot
     /// Elevator and drive controls
-    Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop)); // Save for algae selection
-    Copilot.povDown().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround)); // Save for algae selection
-    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee)); // Save for algae selection
-    Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot)); // Save for algae selection
+    Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop)); // Save
+                                                                                                                       // for
+                                                                                                                       // algae
+                                                                                                                       // selection
+    Copilot.povDown()
+        .onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround)); // Save
+                                                                                                               // for
+                                                                                                               // algae
+                                                                                                               // selection
+    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee)); // Save
+                                                                                                                         // for
+                                                                                                                         // algae
+                                                                                                                         // selection
+    Copilot.povRight()
+        .onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot)); // Save for
+                                                                                                            // algae
+                                                                                                            // selection
 
     // Copilot.leftBumper().onTrue(); // Save for feeder selection
     // Copilot.rightBumper().onTrue(); // Save for feeder selection
@@ -190,14 +170,18 @@ public class RobotContainer {
 
     // Make sure to use copilot's left stick for reef side selection
 
-
-
     // Face Button Controls Height selection
 
     Copilot.a().onTrue(m_elevator.zeroElevatorCommand(-4)); // Save for height selection
-    Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for height selection
-    Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for height selection
-    Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for height selection
+    Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for
+                                                                                                             // height
+                                                                                                             // selection
+    Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for
+                                                                                                             // height
+                                                                                                             // selection
+    Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for
+                                                                                                             // height
+                                                                                                             // selection
 
     // Copilot.leftTrigger().whileTrue(
     // AutoBuilder.pathfindToPose(
@@ -270,8 +254,7 @@ public class RobotContainer {
     // test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
     // test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-    // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-    test.x().whileTrue(new AlignTag(drivetrain, mReef, -.15));
+    // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));;
     test.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
@@ -287,29 +270,29 @@ public class RobotContainer {
     test.povDown().whileTrue(m_elevator.setServoCommand(0));
     test.povLeft().whileTrue(m_elevator.setServoCommand(0.5));
     test.povUp().whileTrue(m_elevator.setServoCommand(1));
-    //test.povRight().whileTrue(m_elevator.setServo(45));
+    // test.povRight().whileTrue(m_elevator.setServo(45));
 
     test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));
 
   }
-    
-    private void configureLEDTriggers() {
-      //Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
-    }
 
-    private static double deadband(double value, double deadband) {
-        if (Math.abs(value) > deadband) {
-          if (value > 0.0) {
-            return (value - deadband) / (1.0 - deadband);
-          } else {
-            return (value + deadband) / (1.0 - deadband);
-    
-          }
-        } else {
-          return 0.0;
-        }
+  private void configureLEDTriggers() {
+    // Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
+  }
+
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+
       }
+    } else {
+      return 0.0;
+    }
+  }
 
   private Map<LEDSection, State> getRightTriggerColors() {
     Map<LEDSection, State> map = new HashMap<>();
