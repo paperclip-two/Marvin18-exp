@@ -168,8 +168,8 @@ public class RobotContainer {
     Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     //Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
-    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45,.1, Rotation2d.fromDegrees(90))));
-   Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .45, Rotation2d.fromDegrees(90))));
+    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45,.09, Rotation2d.fromDegrees(90))));
+   Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .44, Rotation2d.fromDegrees(90))));
 
 
     /// Copilot
