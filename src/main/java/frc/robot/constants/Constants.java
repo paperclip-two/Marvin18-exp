@@ -108,7 +108,7 @@ public final class Constants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
             2,
             0,
-            1);
+            0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
             5,
             0,
@@ -118,7 +118,7 @@ public final class Constants {
             AUTO_STEER_PID
         );
 
-        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1.0);
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(0.5);
         public static final Distance kPositionTolerance = Inches.of(0.2);
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
