@@ -54,9 +54,9 @@ public class DriveCoralScorePose extends Command {
 
     plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
 
+
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     // No need to call generateCommand here, as the command is already scheduled in
