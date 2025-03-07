@@ -13,19 +13,35 @@ import java.util.Map;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
+import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
+import frc.robot.commands.drivetrain.planner.NearestAlign;
+import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
+import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
+import frc.robot.commands.elevator.SetpointEnum;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -39,7 +55,15 @@ import frc.robot.subsystems.LED.LEDColor;
 import frc.robot.subsystems.LED.LEDSection;
 import frc.robot.subsystems.LED.Rolling;
 import frc.robot.subsystems.LED.State;
+import frc.robot.subsystems.PathfindingSubsystem;
+import frc.robot.subsystems.PhotonVision;
+import frc.robot.testing.ElevatorSysid;
+import frc.robot.util.EnumUtil;
+import frc.robot.util.EnumUtil.ELEV;
+import frc.robot.util.EnumUtil.SIDE;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -62,7 +86,9 @@ public class RobotContainer {
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
   private final CommandXboxController test = new CommandXboxController(2);
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final SendableChooser<Command> autoChooser;
+
 
   public final Timer m_timer = new Timer();
 
@@ -92,11 +118,28 @@ public class RobotContainer {
   // // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
   // // Degrees.of(0), Degrees.of(-93))));
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
+  // public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam",
+  // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
+  // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
+  // Degrees.of(0), Degrees.of(-93))));
 
-  public RobotContainer() {
-    configureBindings();
-    configureLEDTriggers();
-  }
+    public RobotContainer() {
+
+      NamedCommands.registerCommand("Nearest Tag Align Left", new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
+      NamedCommands.registerCommand("Nearest Tag Align Right", new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
+      NamedCommands.registerCommand("Elevator Setpoint L1", new SetpointEnum(m_elevator, ELEV.L1));
+      NamedCommands.registerCommand("Elevator Setpoint L2", new SetpointEnum(m_elevator, ELEV.L2));
+      NamedCommands.registerCommand("Elevator Setpoint L3", new SetpointEnum(m_elevator, ELEV.L3));
+      NamedCommands.registerCommand("Elevator Setpoint L4", new SetpointEnum(m_elevator, ELEV.L4));
+      NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand(-4));
+      NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
+      NamedCommands.registerCommand("Passive Intake", m_coral.runIntake(-0.2).withTimeout(.1));
+
+      configureBindings();
+      configureLEDTriggers();
+      autoChooser = AutoBuilder.buildAutoChooser();
+      SmartDashboard.putData("auto chooser", autoChooser);
+    }
 
   public void configureBindings() {
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
@@ -242,7 +285,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
 
-    return new PathPlannerAuto("AutoTest");
+    return autoChooser.getSelected();
     // return new Command() {
     //
     // };

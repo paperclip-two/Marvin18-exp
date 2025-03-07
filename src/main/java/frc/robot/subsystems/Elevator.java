@@ -105,7 +105,7 @@ public class Elevator extends SubsystemBase {
     masterConfig.Slot0.kD = 2;
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;
-    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 3;
+    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 8;
     masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
     masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;

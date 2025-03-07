@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,6 @@ public class DriveCoralScorePose extends Command {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
     plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
-
 
   }
 
