@@ -10,6 +10,8 @@ import static edu.wpi.first.units.Units.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -36,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.FieldCentricPIDMove;
+import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.drivetrain.planner.NearestAlign;
 import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
@@ -89,7 +92,6 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final SendableChooser<Command> autoChooser;
 
-
   public final Timer m_timer = new Timer();
 
   private final LED LEDController = LED.getInstance();
@@ -123,23 +125,25 @@ public class RobotContainer {
   // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
   // Degrees.of(0), Degrees.of(-93))));
 
-    public RobotContainer() {
+  public RobotContainer() {
 
-      NamedCommands.registerCommand("Nearest Tag Align Left", new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
-      NamedCommands.registerCommand("Nearest Tag Align Right", new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
-      NamedCommands.registerCommand("Elevator Setpoint L1", new SetpointEnum(m_elevator, ELEV.L1));
-      NamedCommands.registerCommand("Elevator Setpoint L2", new SetpointEnum(m_elevator, ELEV.L2));
-      NamedCommands.registerCommand("Elevator Setpoint L3", new SetpointEnum(m_elevator, ELEV.L3));
-      NamedCommands.registerCommand("Elevator Setpoint L4", new SetpointEnum(m_elevator, ELEV.L4));
-      NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand(-4));
-      NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
-      NamedCommands.registerCommand("Passive Intake", m_coral.runIntake(-0.2).withTimeout(.1));
+    NamedCommands.registerCommand("Nearest Tag Align Left",
+        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
+    NamedCommands.registerCommand("Nearest Tag Align Right",
+        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
+    NamedCommands.registerCommand("Elevator Setpoint L1", new SetpointEnum(m_elevator, ELEV.L1));
+    NamedCommands.registerCommand("Elevator Setpoint L2", new SetpointEnum(m_elevator, ELEV.L2));
+    NamedCommands.registerCommand("Elevator Setpoint L3", new SetpointEnum(m_elevator, ELEV.L3));
+    NamedCommands.registerCommand("Elevator Setpoint L4", new SetpointEnum(m_elevator, ELEV.L4));
+    NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand(-4));
+    NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
+    NamedCommands.registerCommand("Passive Intake", m_coral.runIntake(-0.2).withTimeout(.1));
 
-      configureBindings();
-      configureLEDTriggers();
-      autoChooser = AutoBuilder.buildAutoChooser();
-      SmartDashboard.putData("auto chooser", autoChooser);
-    }
+    configureBindings();
+    configureLEDTriggers();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("auto chooser", autoChooser);
+  }
 
   public void configureBindings() {
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
@@ -180,31 +184,19 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))));
-    Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
-    // Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
+    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, new ArrayList<Transform2d>(List.of(new Transform2d(.45, 0, Rotation2d.fromDegrees(-90)), new Transform2d(.45, -.2, Rotation2d.fromDegrees(-90)),
+                new Transform2d(.45, .2, Rotation2d.fromDegrees(-90))))));
+      
+
     Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
     Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
 
     /// Copilot
     /// Elevator and drive controls
-    Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop)); // Save
-                                                                                                                       // for
-                                                                                                                       // algae
-                                                                                                                       // selection
-    Copilot.povDown()
-        .onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround)); // Save
-                                                                                                               // for
-                                                                                                               // algae
-                                                                                                               // selection
-    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee)); // Save
-                                                                                                                         // for
-                                                                                                                         // algae
-                                                                                                                         // selection
-    Copilot.povRight()
-        .onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot)); // Save for
-                                                                                                            // algae
-                                                                                                            // selection
-
+    Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop));
+    Copilot.povDown().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
+    Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
+    Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
     // Copilot.leftBumper().onTrue(); // Save for feeder selection
     // Copilot.rightBumper().onTrue(); // Save for feeder selection
     // Copilot.leftTrigger().onTrue(); // Save for reef selection

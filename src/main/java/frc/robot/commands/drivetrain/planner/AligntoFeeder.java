@@ -17,20 +17,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class DriveCoralScorePose extends Command {
+public class AligntoFeeder extends Command {
+  /** Creates a new AligntoFeeder. */
   private static AprilTagFieldLayout fieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
   private List<Pose2d> tagPoses = new ArrayList<>();
+  private List<Pose2d> slotPoses = new ArrayList<>();
   private CommandSwerveDrivetrain dt;
   private Pose2d goalPose;
-  private Transform2d trans;
+  private List<Transform2d> trans;
   private PlannerSetpointGenerator plannerSetpointGenerator;
 
   /** Creates a new DriveCoralScorePose. */
 
-  public DriveCoralScorePose(CommandSwerveDrivetrain drivetrain, Transform2d transform) {
-    tagPoses = getPoseList(List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20 ,21, 22));
+  public AligntoFeeder(CommandSwerveDrivetrain drivetrain, List<Transform2d> transforms) {
+    tagPoses = getPoseList(List.of(1, 2, 12, 13));
+    slotPoses = createLoadingSlots(tagPoses, transforms);
     dt = drivetrain;
-    trans = transform;
+    trans = transforms;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -45,13 +48,24 @@ public class DriveCoralScorePose extends Command {
     return tags;
   }
 
+  public List<Pose2d> createLoadingSlots(List<Pose2d> tagPoses, List<Transform2d> transform2ds) {
+    List<Pose2d> loadingSlots = new ArrayList<>();
+    for (int i = 0; i < tagPoses.size(); i++) {
+      Pose2d tagPose = tagPoses.get(i);
+      for (int j = 0; j < transform2ds.size(); j++) {
+        Transform2d transform = transform2ds.get(j);
+        Pose2d loadingSlot = tagPose.plus(transform);
+        loadingSlots.add(loadingSlot);
+      }
+    }
+    return loadingSlots;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
-
+    goalPose = dt.getState().Pose.nearest(slotPoses);
     plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
-
   }
 
   @Override
