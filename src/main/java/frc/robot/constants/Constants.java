@@ -224,7 +224,7 @@ public final class Constants {
         Degrees.of(0), Degrees.of(-90)));
 
         public static final Transform3d reefRobotToCam = new Transform3d(Inches.of(.35), Inches.of(9.71), Inches.of(20.48),
-        new Rotation3d(10, 0, Math.toRadians(90)));
+        new Rotation3d(Degrees.of(-10), Degrees.of(0), Degrees.of(90)));
 
 
 
