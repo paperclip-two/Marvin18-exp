@@ -30,6 +30,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -53,11 +54,12 @@ public class Vision {
     private PhotonCameraSim cameraSim;
     private VisionSystemSim visionSim;
 
-    public Vision() {
-        camera = new PhotonCamera(kCameraName);
+    public Vision(String cameraName, Transform3d robotTransform3d) {
+        camera = new PhotonCamera(cameraName);
+        
 
         photonEstimator =
-                new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCam);
+                new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotTransform3d);
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         // ----- Simulation
@@ -77,7 +79,7 @@ public class Vision {
             // targets.
             cameraSim = new PhotonCameraSim(camera, cameraProp);
             // Add the simulated camera to view the targets on this simulated field.
-            visionSim.addCamera(cameraSim, kRobotToCam);
+            visionSim.addCamera(cameraSim, reefRobotToCam);
 
             cameraSim.enableDrawWireframe(true);
         }

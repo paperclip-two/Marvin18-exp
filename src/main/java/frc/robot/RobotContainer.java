@@ -26,6 +26,7 @@ import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.elevator.ElevatorSetpoint;
+import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Algae;
@@ -47,7 +48,7 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage).withSteerRequestType(
+      .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use open-loop control for drive motors
   private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
@@ -70,7 +71,8 @@ public class RobotContainer {
   public final Algae m_algae = new Algae();
   public final Elevator m_elevator = new Elevator();
   public final Coral m_coral = new Coral();
-  public final Vision m_vision = new Vision();
+  public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
+  public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
   // public final PlannerSetpointGenerator testpoint = new
   // PlannerSetpointGenerator(drivetrain, new Pose2d(),);
@@ -134,11 +136,11 @@ public class RobotContainer {
 
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-    Pilot.y().onTrue(m_elevator.advanceRotationsCommand(0.1));
+    Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))));
     Pilot.a().onTrue(m_elevator.advanceRotationsCommand(-0.1));
     // Pilot.x().whileTrue(m_elevator.runVoltage(-0.5));
     Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
-    Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .4, Rotation2d.fromDegrees(90))));
+    Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
 
     /// Copilot
     /// Elevator and drive controls

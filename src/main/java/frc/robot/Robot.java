@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -21,37 +20,50 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
   }
+
   @Override
   public void robotInit() {
     DynamicConstants.init();
     PathfindingCommand.warmupCommand().schedule();
   }
+
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run(); 
+    CommandScheduler.getInstance().run();
     DynamicConstants.periodic();
-    var visionEst = m_robotContainer.m_vision.getEstimatedGlobalPose();
-        visionEst.ifPresent(
-                est -> {
-                    // Change our trust in the measurement based on the tags we can see
-                    var estStdDevs = m_robotContainer.m_vision.getEstimationStdDevs();
+    var reefEst = m_robotContainer.reef_vision.getEstimatedGlobalPose();
+    reefEst.ifPresent(
+        est -> {
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevs = m_robotContainer.reef_vision.getEstimationStdDevs();
 
-                    m_robotContainer.drivetrain.addVisionMeasurement(
-                            est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-                });
+          m_robotContainer.drivetrain.addVisionMeasurement(
+              est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+        });
 
-  
-        }
-  
+    // var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
+    // feederEst.ifPresent(
+    //     est -> {
+    //       // Change our trust in the measurement based on the tags we can see
+    //       var estStdDevs = m_robotContainer.feeder_vision.getEstimationStdDevs();
+
+    //       m_robotContainer.drivetrain.addVisionMeasurement(
+    //           est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+    //     });
+
+  }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -63,10 +75,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -76,10 +90,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -88,11 +104,14 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }

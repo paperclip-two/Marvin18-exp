@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -117,19 +118,19 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                2,
+                2.2,
                 0,
-                1);
+                0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                5,
+                2.2,
                 0,
                 0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
                 AUTO_DRIVE_PID,
                 AUTO_STEER_PID);
 
-        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1.0);
-        public static final Distance kPositionTolerance = Inches.of(0.2);
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(0.5);
+        public static final Distance kPositionTolerance = Inches.of(0.1);
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);
@@ -215,10 +216,17 @@ public final class Constants {
     }
 
     public static class Vision {
-        public static final String kCameraName = "reef_cam";
+        public static final String reefCameraName = "reef_cam";
+        public static final String feederCameraName = "feeder_cam";
 
-        public static final Transform3d kRobotToCam = new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09),
-        new Rotation3d(0, 0, Math.toRadians(90)));
+        public static final Transform3d feederRobotToCam = new Transform3d(Inches.of(1.48),
+        Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
+        Degrees.of(0), Degrees.of(-90)));
+
+        public static final Transform3d reefRobotToCam = new Transform3d(Inches.of(.35), Inches.of(9.71), Inches.of(20.48),
+        new Rotation3d(10, 0, Math.toRadians(90)));
+
+
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -228,6 +236,6 @@ public final class Constants {
         // correction rate
         // (Fake values. Experiment and determine estimation noise on an actual robot.)
         public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2);
     }
 }

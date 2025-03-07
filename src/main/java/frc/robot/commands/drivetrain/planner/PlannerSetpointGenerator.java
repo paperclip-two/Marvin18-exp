@@ -42,7 +42,7 @@ public class PlannerSetpointGenerator extends Command {
         this.mSwerve = mSwerve;
         this.goalPose = goalPose;
         flipIt = shouldFlip;
-        mChassisSpeed = new SwerveRequest.ApplyRobotSpeeds();
+        mChassisSpeed = new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         endTrigger = new Trigger(
             () -> {
