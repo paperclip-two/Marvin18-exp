@@ -23,7 +23,7 @@ public class SetpointEnum extends Command {
 
     @Override
     public void execute() {
-        mElevator.setMotionMagic(() -> setpoint);       
+        mElevator.setRotations(setpoint);       
     }
 
     @Override

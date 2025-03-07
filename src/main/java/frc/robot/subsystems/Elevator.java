@@ -137,6 +137,10 @@ public class Elevator extends SubsystemBase {
       master.setControl(motionRequest.withPosition(getPositionNormal() + rotations));
   }
 
+  public void runVoltageRequest(double voltage) {
+    master.setControl(voltageRequest.withOutput(voltage));
+  }
+
   /// Methods to Stop motor
   public void stopMotorHold() {
     master.setControl(motionRequest.withPosition(master.getPosition().getValueAsDouble()));

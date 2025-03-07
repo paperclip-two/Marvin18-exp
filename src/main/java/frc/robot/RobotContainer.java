@@ -86,7 +86,7 @@ public class RobotContainer {
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
   private final CommandXboxController test = new CommandXboxController(2);
-  private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final SendableChooser<Command> autoChooser;
 
 
