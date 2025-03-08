@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Coral;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -33,13 +34,16 @@ public class AligntoFeeder extends Command {
   private static Transform2d offset = new Transform2d(.45, Inches.of(10.5).in(Meters), Rotation2d.fromDegrees(-90));
   private static Transform2d slotSpacing = new Transform2d(0, Inches.of(8).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
+  private Coral m_coral;
   private PlannerSetpointGenerator plannerSetpointGenerator;
   private List<Pose2d> feederPoses;
 
   /** Creates a new DriveCoralScorePose. */
 
-  public AligntoFeeder(CommandSwerveDrivetrain drivetrain) {
+
+  public AligntoFeeder(CommandSwerveDrivetrain drivetrain, Coral coral) {
     dt = drivetrain;
+    m_coral = coral;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -92,7 +96,7 @@ public class AligntoFeeder extends Command {
 
   @Override
   public boolean isFinished() {
-    return plannerSetpointGenerator.isFinished();
+    return plannerSetpointGenerator.isFinished() || m_coral.hasCoral();
   }
 
   @Override
