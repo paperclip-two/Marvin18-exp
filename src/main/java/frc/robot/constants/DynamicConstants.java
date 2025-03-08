@@ -56,10 +56,8 @@ public final class DynamicConstants {
         public static double CentX = 1;
         public static double CentY = 0;
         public static double CentRot = 90;  
-        public static double slotSpacingX = 0;
-        public static double slotSpacingMagnitude = 8;
         public static double feederX = .45;
-        public static double feederMagnitude = 10.5;
+        public static double feederY = 0.2667;
 
         }
 

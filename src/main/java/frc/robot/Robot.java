@@ -31,15 +31,6 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     DynamicConstants.periodic();
-    var reefEst = m_robotContainer.reef_vision.getEstimatedGlobalPose();
-    reefEst.ifPresent(
-        estR -> {
-          // Change our trust in the measurement based on the tags we can see
-          var estStdDevsR = m_robotContainer.reef_vision.getEstimationStdDevs();
-
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              estR.estimatedPose.toPose2d(), estR.timestampSeconds, estStdDevsR);
-        });
 
     var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
     feederEst.ifPresent(
@@ -51,6 +42,16 @@ public class Robot extends TimedRobot {
               estF.estimatedPose.toPose2d(), estF.timestampSeconds, estStdDevsF);
         });
 
+
+    var reefEst = m_robotContainer.reef_vision.getEstimatedGlobalPose();
+    reefEst.ifPresent(
+        estR -> {
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevsR = m_robotContainer.reef_vision.getEstimationStdDevs();
+
+          m_robotContainer.drivetrain.addVisionMeasurement(
+              estR.estimatedPose.toPose2d(), estR.timestampSeconds, estStdDevsR);
+        });
   }
 
   @Override
