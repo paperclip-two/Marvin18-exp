@@ -4,7 +4,6 @@
 
 package frc.robot.commands.drivetrain.planner;
 
-import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
