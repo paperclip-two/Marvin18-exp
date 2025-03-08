@@ -184,7 +184,7 @@ public class RobotContainer {
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     // Pilot.rightTrigger().whileFalse(m_coral.runIntake(-0.2));
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
-    Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand(-1));
+    Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
 
     // Pilot.rightTrigger().toggleOnTrue(new Alignment(drivetrain, mReef));
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
@@ -231,7 +231,7 @@ public class RobotContainer {
 
     // Face Button Controls Height selection
 
-    Copilot.a().onTrue(m_elevator.zeroElevatorCommand(-1)); // Save for height selection
+    Copilot.a().onTrue(m_elevator.zeroElevatorCommand()); // Save for height selection
     Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for
                                                                                                              // height
                                                                                                              // selection
