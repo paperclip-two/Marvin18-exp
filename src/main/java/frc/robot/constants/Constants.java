@@ -148,20 +148,6 @@ public final class Constants {
 
     }
 
-    public static class VisionConstants {
-        public static final String CORAL_CAM_NAME = "feeder_cam";
-        public static final String REEF_CAM_NAME = "reef_cam";
-        public static final Transform3d CORAL_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
-        // Record actual transform in a comment here (readable by a human)
-        public static final Transform3d REEF_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
-        // Record actual transform in a comment here (readable by a human)
-        public static final Transform3d LIMELIGHT_TRANSFORM = new Transform3d(null, null, null, null);// Find later
-
-        public static final double REEF_APRILTAG_HEIGHT = 6.875; // feet? figure out units
-        public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875;
-        public static final double CORAL_APRILTAG_HEIGHT = 53.25;
-
-    }
 
     public static class FieldConstants {
         // tune this
