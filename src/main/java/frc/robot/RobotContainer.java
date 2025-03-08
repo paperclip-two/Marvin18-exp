@@ -201,7 +201,7 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))));
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain));
+    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral));
 
     Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(0.5).andThen(
       new DriveCoralScorePose(drivetrain, new Transform2d(.45, .07, Rotation2d.fromDegrees(90)))));
