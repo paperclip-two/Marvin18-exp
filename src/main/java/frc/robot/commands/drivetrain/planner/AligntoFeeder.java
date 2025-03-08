@@ -21,6 +21,8 @@ import static edu.wpi.first.units.Units.Meters;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.Constants.VisionFiducials;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -31,8 +33,8 @@ public class AligntoFeeder extends Command {
       List.of(VisionFiducials.RED_LEFT_FEEDER_TAG, VisionFiducials.BLUE_LEFT_FEEDER_TAG));
   private List<Pose2d> rightFeeders = getPoseList(
       List.of(VisionFiducials.RED_RIGHT_FEEDER_TAG, VisionFiducials.BLUE_RIGHT_FEEDER_TAG));
-  private static Transform2d offset = new Transform2d(.45, Inches.of(10.5).in(Meters), Rotation2d.fromDegrees(-90));
-  private static Transform2d slotSpacing = new Transform2d(0, Inches.of(8).in(Meters), Rotation2d.fromDegrees(0));
+  private static Transform2d offset = new Transform2d(DynamicConstants.AlignTransforms.feederX, Inches.of(DynamicConstants.AlignTransforms.feederMagnitude).in(Meters), Rotation2d.fromDegrees(-90));
+  private static Transform2d slotSpacing = new Transform2d(DynamicConstants.AlignTransforms.slotSpacingX, Inches.of(DynamicConstants.AlignTransforms.slotSpacingMagnitude).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
   private Coral m_coral;
   private PlannerSetpointGenerator plannerSetpointGenerator;
