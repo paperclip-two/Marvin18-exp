@@ -157,7 +157,7 @@ public class RobotContainer {
     Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
 
 
-    Copilot.start().whileTrue(m_elevator.climbingCommand(-4));
+    Copilot.start().whileTrue(m_elevator.climbingCommand());
     Copilot.back().whileTrue(m_elevator.setServoCommand(0));
 
     // Make sure to use copilot's left stick for reef side selection

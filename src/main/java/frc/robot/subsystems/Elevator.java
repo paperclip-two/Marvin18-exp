@@ -41,6 +41,7 @@ import frc.robot.constants.Constants;
 // import frc.robot.constants.DynamicConstants;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
+import frc.robot.constants.DynamicConstants;
 import edu.wpi.first.wpilibj.RobotController;
 
 public class Elevator extends SubsystemBase {
@@ -273,10 +274,10 @@ public class Elevator extends SubsystemBase {
     });
   }
 
-  public Command climbingCommand(double voltage) {
+  public Command climbingCommand() {
     return runEnd(() -> {
       ratchetLock(1);
-      master.setControl(voltageRequest.withOutput(voltage));
+      master.setControl(voltageRequest.withOutput(DynamicConstants.ElevatorSetpoints.elevClimbVoltage));
     }, () -> {
       stopMotor();
     }).until(
