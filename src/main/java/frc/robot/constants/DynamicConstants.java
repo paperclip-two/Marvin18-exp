@@ -33,6 +33,31 @@ public final class DynamicConstants {
         public static double elevTestPos = 1;
     }
 
+    public static class AutoTagSetpoints {
+        public static double NTALFwd_Bkwd = .45;
+        public static double NTALLeft_Right = .08;
+        
+        public static double NTACFwd_Bkwd = 1;
+        public static double NTACLeft_Right = 0;
+
+        public static double NTARFwd_Bkwd = .45;
+        public static double NTARLeft_Right = .45;
+
+        public static double AutoTagSetpointsDegrees = 90;
+    }
+
+    public static class AlignTransforms {
+        public static double RightX = .45;
+        public static double RightY = .45;
+        public static double RightRot = 90;
+        public static double LeftX = .45;
+        public static double LeftY = .07;
+        public static double LeftRot = 90;
+        public static double CentX = 1;
+        public static double CentY = 0;
+        public static double CentRot = 90;  
+        }
+
     public static class Algae {
         public static double intakePercent = .5;
         public static double outtakePercent = -.5;
@@ -59,7 +84,7 @@ public final class DynamicConstants {
         entries = new HashMap<>();
 
         //add all .class values of the static classes above
-        Class<?>[] subsystems = {ElevatorSetpoints.class, TestVoltages.class, Algae.class};
+        Class<?>[] subsystems = {ElevatorSetpoints.class, TestVoltages.class, Algae.class, AutoTagSetpoints.class, AlignTransforms.class};
         
         for(Class<?> subsystem : subsystems) {
             Field[] fields = subsystem.getDeclaredFields();

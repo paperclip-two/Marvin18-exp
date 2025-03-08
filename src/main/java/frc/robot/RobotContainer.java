@@ -128,11 +128,11 @@ public class RobotContainer {
   public RobotContainer() {
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
-        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .08, Rotation2d.fromDegrees(90))));
+        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AutoTagSetpoints.NTALFwd_Bkwd, DynamicConstants.AutoTagSetpoints.NTALLeft_Right, Rotation2d.fromDegrees(DynamicConstants.AutoTagSetpoints.AutoTagSetpointsDegrees))));
     NamedCommands.registerCommand("Nearest Tag Align Center",
-        new DriveCoralScorePose(drivetrain, new Transform2d(1, .0, Rotation2d.fromDegrees(90))));
+        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AutoTagSetpoints.NTACFwd_Bkwd, DynamicConstants.AutoTagSetpoints.NTACLeft_Right, Rotation2d.fromDegrees(DynamicConstants.AutoTagSetpoints.AutoTagSetpointsDegrees))));
     NamedCommands.registerCommand("Nearest Tag Align Right",
-        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .45, Rotation2d.fromDegrees(90))));
+        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AutoTagSetpoints.NTARFwd_Bkwd, DynamicConstants.AutoTagSetpoints.NTARLeft_Right, Rotation2d.fromDegrees(DynamicConstants.AutoTagSetpoints.AutoTagSetpointsDegrees))));
     NamedCommands.registerCommand("Integrated Alignment Left", 
     new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(1).
     andThen(
@@ -200,15 +200,12 @@ public class RobotContainer {
 
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-    Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))));
+    Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
     Pilot.a().whileTrue(new AligntoFeeder(drivetrain, new ArrayList<Transform2d>(List.of(new Transform2d(.65, 0, Rotation2d.fromDegrees(-90)), new Transform2d(.45, -.2, Rotation2d.fromDegrees(-90)),
     new Transform2d(.45, .2, Rotation2d.fromDegrees(-90))))));
+    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.LEftX, DynamicConstants.AlignTransforms.LeftY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot))));
+    Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.RightX, DynamicConstants.AlignTransforms.RightY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
 
-    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(0.5).andThen(
-      new DriveCoralScorePose(drivetrain, new Transform2d(.45, .07, Rotation2d.fromDegrees(90)))));
-
-    Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(0.5).andThen(
-      new DriveCoralScorePose(drivetrain, new Transform2d(.45, .45, Rotation2d.fromDegrees(90)))));
 
    // Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
 
