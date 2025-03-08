@@ -273,7 +273,7 @@ public class Elevator extends SubsystemBase {
     });
   }
 
-  public Command climbingCommand(double voltage, double position) {
+  public Command climbingCommand(double voltage) {
     return runEnd(() -> {
       ratchetLock(1);
       master.setControl(voltageRequest.withOutput(voltage));
