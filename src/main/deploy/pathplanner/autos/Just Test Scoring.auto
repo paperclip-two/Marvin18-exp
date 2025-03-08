@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SMID-A"
+            "pathName": "sMID-F"
           }
         },
         {
@@ -19,13 +19,67 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator Setpoint L2"
+            "name": "Elevator Setpoint L4"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F-U2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Passive Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "U2-E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Nearest Tag Align Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator Setpoint L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BACK_Up_E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
           }
         }
       ]
