@@ -4,6 +4,7 @@
 
 package frc.robot.commands.drivetrain.planner;
 
+import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -12,12 +13,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 // import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.measure.Time;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 // import static edu.wpi.first.units.Units.Newton;
+import static edu.wpi.first.units.Units.Second;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,8 @@ public class AligntoFeeder extends Command {
   private static Transform2d slotSpacing = new Transform2d(0.0, Inches.of(8).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
   private Coral m_coral;
-  private PlannerSetpointGenerator plannerSetpointGenerator;
   private List<Pose2d> feederPoses;
+  private Command drive; 
 
   /** Creates a new DriveCoralScorePose. */
 
@@ -86,25 +89,26 @@ public class AligntoFeeder extends Command {
   @Override
   public void initialize() {
     Pose2d goalPose = dt.getState().Pose.nearest(feederPoses);
-    plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
+    drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(5, Second), false);
+    drive.schedule();
   }
 
   @Override
   public void execute() {
     // No need to call generateCommand here, as the command is already scheduled in
     // initialize()
-    plannerSetpointGenerator.schedule();
+
   }
 
   @Override
   public boolean isFinished() {
-    return plannerSetpointGenerator.isFinished() || m_coral.hasCoral();
+    return drive.isFinished() || m_coral.hasCoral();
   }
 
   @Override
   public void end(boolean interrupted) {
     if (interrupted) {
-      plannerSetpointGenerator.cancel();
+      drive.cancel();
     }
   }
 }
