@@ -129,11 +129,11 @@ public class RobotContainer {
   public RobotContainer() {
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
-        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))).withTimeout(.4));
+        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))));
     NamedCommands.registerCommand("Nearest Tag Align Center",
-        new DriveCoralScorePose(drivetrain, new Transform2d(1, .0, Rotation2d.fromDegrees(90))).withTimeout(.1));
+        new DriveCoralScorePose(drivetrain, new Transform2d(1, .0, Rotation2d.fromDegrees(90))));
     NamedCommands.registerCommand("Nearest Tag Align Right",
-        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))).withTimeout(.4));
+        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
     NamedCommands.registerCommand("Integrated Alignment Left", 
     new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(1).
     andThen(
@@ -144,10 +144,10 @@ public class RobotContainer {
     andThen(
     new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))).withTimeout(1)));
 
-    NamedCommands.registerCommand("Elevator Setpoint L1", new SetpointEnum(m_elevator, ELEV.L1));
-    NamedCommands.registerCommand("Elevator Setpoint L2", new SetpointEnum(m_elevator, ELEV.L2));
+    NamedCommands.registerCommand("Elevator Setpoint L1", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1));
+    NamedCommands.registerCommand("Elevator Setpoint L2", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2));
     NamedCommands.registerCommand("Elevator Setpoint L3", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
-    NamedCommands.registerCommand("Elevator Setpoint L4", new SetpointEnum(m_elevator, ELEV.L4));
+    NamedCommands.registerCommand("Elevator Setpoint L4", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4));
     NamedCommands.registerCommand("Elevator Setpoint Algae Ground", new SetpointEnum(m_elevator, ELEV.ALGAE_GROUND));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor", new SetpointEnum(m_elevator, ELEV.ALGAE_PROCESSOR));
     NamedCommands.registerCommand("Elevator Setpoint Algae Top", new SetpointEnum(m_elevator, ELEV.ALGAE_TOP));

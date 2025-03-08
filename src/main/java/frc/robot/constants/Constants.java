@@ -118,19 +118,19 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                2.4,
+                2.8,
                 0,
                 0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                2.4,
+                2.8,
                 0,
                 0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
                 AUTO_DRIVE_PID,
                 AUTO_STEER_PID);
 
-        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(0.8);
-        public static final Distance kPositionTolerance = Inches.of(0.2);
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1.5);
+        public static final Distance kPositionTolerance = Inches.of(0.5);
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);

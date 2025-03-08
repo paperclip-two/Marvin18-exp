@@ -11,15 +11,21 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "Nearest Tag Align Right"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Nearest Tag Align Center"
+            "name": "Elevator Setpoint L2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]
