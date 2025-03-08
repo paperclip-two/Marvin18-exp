@@ -51,14 +51,13 @@ public class DriveCoralScorePose extends Command {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
     plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
-
+    plannerSetpointGenerator.schedule();
   }
 
   @Override
   public void execute() {
     // No need to call generateCommand here, as the command is already scheduled in
     // initialize()
-    plannerSetpointGenerator.schedule();
   }
 
   @Override
