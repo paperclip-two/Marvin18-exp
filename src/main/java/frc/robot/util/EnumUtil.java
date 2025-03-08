@@ -120,6 +120,11 @@ public enum ELEV {
     CLIMB
 }
 
+public enum CORAL_HAVE {
+    YES,
+    NO
+}
+
 
 
 public static double getEnumSetpoint(ELEV level) {

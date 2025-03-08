@@ -220,11 +220,11 @@ public final class Constants {
         public static final String feederCameraName = "feeder_cam";
 
         public static final Transform3d feederRobotToCam = new Transform3d(Inches.of(1.48),
-        Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
-        Degrees.of(0), Degrees.of(-90)));
+        Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(0),
+        Degrees.of(-30), Degrees.of(-90)));
 
         public static final Transform3d reefRobotToCam = new Transform3d(Inches.of(.35), Inches.of(9.71), Inches.of(20.48),
-        new Rotation3d(Degrees.of(-10), Degrees.of(0), Degrees.of(90)));
+        new Rotation3d(Degrees.of(0), Degrees.of(10), Degrees.of(90)));
 
 
 
