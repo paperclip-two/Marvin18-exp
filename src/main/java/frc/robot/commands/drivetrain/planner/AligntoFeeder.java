@@ -10,32 +10,45 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Coral;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Newton;
 
 import java.util.ArrayList;
 import java.util.List;
+import frc.robot.constants.Constants.VisionFiducials;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AligntoFeeder extends Command {
   /** Creates a new AligntoFeeder. */
-  private static AprilTagFieldLayout fieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-  private List<Pose2d> tagPoses = new ArrayList<>();
-  private List<Pose2d> slotPoses = new ArrayList<>();
+  private static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  private List<Pose2d> leftFeeders = getPoseList(
+      List.of(VisionFiducials.RED_LEFT_FEEDER_TAG, VisionFiducials.BLUE_LEFT_FEEDER_TAG));
+  private List<Pose2d> rightFeeders = getPoseList(
+      List.of(VisionFiducials.RED_RIGHT_FEEDER_TAG, VisionFiducials.BLUE_RIGHT_FEEDER_TAG));
+  private static Transform2d offset = new Transform2d(.45, Inches.of(10.5).in(Meters), Rotation2d.fromDegrees(-90));
+  private static Transform2d slotSpacing = new Transform2d(0, Inches.of(8).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
-  private Pose2d goalPose;
-  private List<Transform2d> trans;
+  private Coral m_coral;
   private PlannerSetpointGenerator plannerSetpointGenerator;
+  private List<Pose2d> feederPoses;
 
   /** Creates a new DriveCoralScorePose. */
 
-  public AligntoFeeder(CommandSwerveDrivetrain drivetrain, List<Transform2d> transforms) {
-    tagPoses = getPoseList(List.of(1, 2, 12, 13));
-    slotPoses = createLoadingSlots(tagPoses, transforms);
+
+  public AligntoFeeder(CommandSwerveDrivetrain drivetrain, Coral coral) {
     dt = drivetrain;
-    trans = transforms;
+    m_coral = coral;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
+    feederPoses = createLoadingSlots(leftFeeders, 0, 0);
+    feederPoses.addAll(createLoadingSlots(rightFeeders, 0, 0));
   }
 
   public List<Pose2d> getPoseList(List<Integer> tagIntegers) {
@@ -48,14 +61,20 @@ public class AligntoFeeder extends Command {
     return tags;
   }
 
-  public List<Pose2d> createLoadingSlots(List<Pose2d> tagPoses, List<Transform2d> transform2ds) {
+  public List<Pose2d> createLoadingSlots(List<Pose2d> tagPoses, int leftSlots, int rightSlots) {
     List<Pose2d> loadingSlots = new ArrayList<>();
     for (int i = 0; i < tagPoses.size(); i++) {
-      Pose2d tagPose = tagPoses.get(i);
-      for (int j = 0; j < transform2ds.size(); j++) {
-        Transform2d transform = transform2ds.get(j);
-        Pose2d loadingSlot = tagPose.plus(transform);
-        loadingSlots.add(loadingSlot);
+      Pose2d originPose = tagPoses.get(i).transformBy(offset);
+      Pose2d tagPose = originPose;
+      loadingSlots.add(tagPose);
+      for (int l = 0; l < leftSlots; l++) {
+        tagPose = tagPose.transformBy(slotSpacing.inverse());
+        loadingSlots.add(tagPose);
+      }
+      tagPose = originPose;
+      for (int r = 0; r < rightSlots; r++) {
+        tagPose = tagPose.transformBy(slotSpacing);
+        loadingSlots.add(tagPose);
       }
     }
     return loadingSlots;
@@ -64,7 +83,7 @@ public class AligntoFeeder extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    goalPose = dt.getState().Pose.nearest(slotPoses);
+    Pose2d goalPose = dt.getState().Pose.nearest(feederPoses);
     plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
   }
 
@@ -77,7 +96,7 @@ public class AligntoFeeder extends Command {
 
   @Override
   public boolean isFinished() {
-    return plannerSetpointGenerator.isFinished();
+    return plannerSetpointGenerator.isFinished() || m_coral.hasCoral();
   }
 
   @Override

@@ -200,11 +200,16 @@ public class RobotContainer {
 
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+<<<<<<< HEAD
     Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
     Pilot.a().whileTrue(new AligntoFeeder(drivetrain, new ArrayList<Transform2d>(List.of(new Transform2d(.65, 0, Rotation2d.fromDegrees(-90)), new Transform2d(.45, -.2, Rotation2d.fromDegrees(-90)),
     new Transform2d(.45, .2, Rotation2d.fromDegrees(-90))))));
     Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.LEftX, DynamicConstants.AlignTransforms.LeftY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot))));
     Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.RightX, DynamicConstants.AlignTransforms.RightY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
+=======
+    Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))));
+    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral));
+>>>>>>> 942b62d814d2db1c6e61ac763be46495927ba669
 
 
    // Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
