@@ -266,10 +266,14 @@ public class Elevator extends SubsystemBase {
         () -> getLimit());
   }
 
-  public Command zeroElevatorCommand(double rotations) {
+  public Command zeroElevatorCommand() {
     return runEnd(() -> {
       ratchetLock(0);
-      setRotations(rotations);
+      if(getPositionNormal() > 0.5) {
+      setRotations(0.0);}
+      else  {
+        runVoltageRequest(-3);
+      }
     }, () -> {
       stopMotor();
     }).until(
