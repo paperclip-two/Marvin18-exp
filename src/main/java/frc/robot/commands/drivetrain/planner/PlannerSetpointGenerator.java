@@ -24,8 +24,6 @@ public class PlannerSetpointGenerator extends Command {
     
     public CommandSwerveDrivetrain mSwerve;
     public final Pose2d goalPose;
-    private int currentID;
-    private Pose2d poseToDrive;
     private boolean flipIt;
 
     private PPHolonomicDriveController mDriveController = Constants.AutoConstants.kDriveController;

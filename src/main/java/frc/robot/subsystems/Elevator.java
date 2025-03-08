@@ -54,7 +54,6 @@ public class Elevator extends SubsystemBase {
   // VelocityUnit.combine(Units.Volt.getBaseUnit(), 1.0));
   Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(0.3, VelocityUnit.combine(Volt, Second));
 
-  private boolean softLimitEnabled;
   private DigitalInput climbLimit;
   private double mostRecentTarget; // in rotations, converted using position coefficient.
 

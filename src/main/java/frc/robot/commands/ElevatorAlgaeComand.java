@@ -13,13 +13,11 @@ import edu.wpi.first.wpilibj.Timer;
 public class ElevatorAlgaeComand extends Command {
   private final Elevator m_elevator;
   private final Algae m_algae;
-  private final Timer m_time;
 
   /** Creates a new ElevatorAlgaeComand. */
-  public ElevatorAlgaeComand(Elevator elevator, Algae algae, Timer time) {
+  public ElevatorAlgaeComand(Elevator elevator, Algae algae) {
     m_elevator = elevator;
     m_algae = algae;
-    m_time = time;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_elevator, m_algae);
   }

@@ -41,7 +41,6 @@ public class EnumModes extends SubsystemBase {
 
     // in another one... do xboxController.x().whileTrue(new TagAssistedAlign(AlignMode.getSide()))
     // just pass in the current side in align mode
-    // TODO: push current alignmode to SmartDashboard and also implement enum switch for elevator
  * 
 */
 }
