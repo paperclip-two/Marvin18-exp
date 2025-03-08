@@ -3,7 +3,57 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid-A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Nearest Tag Align Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator Setpoint L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Zero Elevator"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        }
+      ]
     }
   },
   "resetOdom": true,

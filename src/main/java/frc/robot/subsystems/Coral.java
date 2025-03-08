@@ -44,6 +44,14 @@ public class Coral extends SubsystemBase {
    return integ >=5;
 }
 
+public Command coralCheck() {
+  return runEnd(() -> {
+    coral.set(TalonSRXControlMode.PercentOutput, -0.2);
+  }, () -> {
+    coral.set(TalonSRXControlMode.PercentOutput, -0.2);
+  }).until(() -> hasCoral());
+}
+
 public Command runIntake(double percentOut) {
     return runEnd(() -> {
      coral.set(TalonSRXControlMode.PercentOutput, percentOut);

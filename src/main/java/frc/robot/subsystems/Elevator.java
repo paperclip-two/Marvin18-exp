@@ -94,8 +94,8 @@ public class Elevator extends SubsystemBase {
     // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
     masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    masterConfig.CurrentLimits.SupplyCurrentLimit = 20;
-    masterConfig.CurrentLimits.StatorCurrentLimit = 60;
+    masterConfig.CurrentLimits.SupplyCurrentLimit = 30;
+    masterConfig.CurrentLimits.StatorCurrentLimit = 80;
     masterConfig.Feedback.SensorToMechanismRatio = 12;
     masterConfig.Voltage.PeakForwardVoltage = 16;
     masterConfig.Voltage.PeakReverseVoltage = -16;
@@ -105,7 +105,7 @@ public class Elevator extends SubsystemBase {
     masterConfig.Slot0.kD = 2;
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;
-    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 8;
+    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
     masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
     masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
