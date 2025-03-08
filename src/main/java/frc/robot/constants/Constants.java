@@ -26,7 +26,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
-import frc.robot.subsystems.PhotonVision;
 
 public final class Constants {
     public static class AltSwerveConstants {

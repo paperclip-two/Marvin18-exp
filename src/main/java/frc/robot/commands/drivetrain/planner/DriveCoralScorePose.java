@@ -17,7 +17,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.ArrayList;
 import java.util.List;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCoralScorePose extends Command {
   private static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
   private List<Pose2d> tagPoses = new ArrayList<>();
