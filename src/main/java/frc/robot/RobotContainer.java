@@ -20,6 +20,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
@@ -220,19 +221,14 @@ public class RobotContainer {
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
   }
 
-  public Command configureBindingsCommand() {
+  public Command configureBindingsCommand()  {
     return new Command() {
       @Override
-      public void execute() {
+      public void initialize() {
         configureBindings();
       }
-
-      @Override
-      public boolean isFinished() {
-        return false;
-      }
     };
-  }
+    }
 
   public Command getAutonomousCommand() {
   //  m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
