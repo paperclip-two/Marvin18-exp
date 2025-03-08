@@ -153,13 +153,13 @@ public class RobotContainer {
 
     // POV Controls
     Pilot.povLeft()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(-0.04 * MaxSpeed).withVelocityY(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
     Pilot.povRight()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(0.04 * MaxSpeed).withVelocityY(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
     Pilot.povUp()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(0.04 * MaxSpeed).withVelocityX(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
     Pilot.povDown()
-        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.04 * MaxSpeed).withVelocityX(0)));
+        .whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
 
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
