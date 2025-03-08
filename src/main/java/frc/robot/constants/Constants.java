@@ -118,13 +118,22 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                2.8,
+                3.6,
                 0,
                 0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                2.8,
+                3.6,
                 0,
                 0);
+
+        public static final PIDConstants ALIGN_DRIVE_PID = new PIDConstants(
+                    2.8,
+                    0,
+                    0);
+        public static final PIDConstants ALIGN_STEER_PID = new PIDConstants(
+                    2.8,
+                    0,
+                    0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
                 AUTO_DRIVE_PID,
                 AUTO_STEER_PID);

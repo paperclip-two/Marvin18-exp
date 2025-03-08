@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator Setpoint L4"
+            "name": "Elevator Setpoint L2"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator Setpoint L4"
+            "name": "Elevator Setpoint L2"
           }
         },
         {
@@ -73,7 +73,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BACK_Up_E"
+            "pathName": "E-U2"
           }
         },
         {
