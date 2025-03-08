@@ -18,7 +18,7 @@ import java.util.List;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveCoralScorePose extends Command {
-  private static AprilTagFieldLayout fieldLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+  private static AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
   private List<Pose2d> tagPoses = new ArrayList<>();
   private CommandSwerveDrivetrain dt;
   private Pose2d goalPose;
