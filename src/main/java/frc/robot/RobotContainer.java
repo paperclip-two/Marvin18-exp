@@ -220,6 +220,20 @@ public class RobotContainer {
     // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
   }
 
+  public Command configureBindingsCommand() {
+    return new Command() {
+      @Override
+      public void execute() {
+        configureBindings();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return false;
+      }
+    };
+  }
+
   public Command getAutonomousCommand() {
   //  m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     return autoChooser.getSelected();
