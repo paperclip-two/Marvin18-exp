@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.AlignToTag;
-import frc.robot.commands.drivetrain.FieldCentricPIDMove;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.drivetrain.planner.NearestAlign;
@@ -129,11 +128,11 @@ public class RobotContainer {
   public RobotContainer() {
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
-        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))).withTimeout(.4));
+        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .08, Rotation2d.fromDegrees(90))));
     NamedCommands.registerCommand("Nearest Tag Align Center",
-        new DriveCoralScorePose(drivetrain, new Transform2d(1, .0, Rotation2d.fromDegrees(90))).withTimeout(.1));
+        new DriveCoralScorePose(drivetrain, new Transform2d(1, .0, Rotation2d.fromDegrees(90))));
     NamedCommands.registerCommand("Nearest Tag Align Right",
-        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))).withTimeout(.4));
+        new DriveCoralScorePose(drivetrain, new Transform2d(.45, .45, Rotation2d.fromDegrees(90))));
     NamedCommands.registerCommand("Integrated Alignment Left", 
     new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(1).
     andThen(
@@ -144,15 +143,15 @@ public class RobotContainer {
     andThen(
     new DriveCoralScorePose(drivetrain, new Transform2d(.45, .05, Rotation2d.fromDegrees(90))).withTimeout(1)));
 
-    NamedCommands.registerCommand("Elevator Setpoint L1", new SetpointEnum(m_elevator, ELEV.L1));
-    NamedCommands.registerCommand("Elevator Setpoint L2", new SetpointEnum(m_elevator, ELEV.L2));
+    NamedCommands.registerCommand("Elevator Setpoint L1", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1));
+    NamedCommands.registerCommand("Elevator Setpoint L2", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2));
     NamedCommands.registerCommand("Elevator Setpoint L3", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
-    NamedCommands.registerCommand("Elevator Setpoint L4", new SetpointEnum(m_elevator, ELEV.L4));
+    NamedCommands.registerCommand("Elevator Setpoint L4", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4));
     NamedCommands.registerCommand("Elevator Setpoint Algae Ground", new SetpointEnum(m_elevator, ELEV.ALGAE_GROUND));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor", new SetpointEnum(m_elevator, ELEV.ALGAE_PROCESSOR));
     NamedCommands.registerCommand("Elevator Setpoint Algae Top", new SetpointEnum(m_elevator, ELEV.ALGAE_TOP));
     NamedCommands.registerCommand("Elevator Reset w/o Limit", new SetpointEnum(m_elevator, ELEV.LOAD));
-    NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand(-4).withTimeout(1.5)); // ensure that the robot stops running elevator down if limit isn't read.
+    NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand().withTimeout(2)); // ensure that the robot stops running elevator down if limit isn't read.
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
     NamedCommands.registerCommand("Passive Intake", m_coral.runIntake(-0.2).until(() -> m_coral.hasCoral()));
 
@@ -202,7 +201,7 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))));
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, new ArrayList<Transform2d>(List.of(new Transform2d(.45, 0, Rotation2d.fromDegrees(-90)), new Transform2d(.45, -.2, Rotation2d.fromDegrees(-90)),
+    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, new ArrayList<Transform2d>(List.of(new Transform2d(.65, 0, Rotation2d.fromDegrees(-90)), new Transform2d(.45, -.2, Rotation2d.fromDegrees(-90)),
     new Transform2d(.45, .2, Rotation2d.fromDegrees(-90))))));
 
     Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(1, 0, Rotation2d.fromDegrees(90))).withTimeout(0.5).andThen(
@@ -314,7 +313,7 @@ public class RobotContainer {
     // test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
     // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
     // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));;
-    test.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
+   // test.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
 
     // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
     // test.x().whileTrue(m_algae.intake());
