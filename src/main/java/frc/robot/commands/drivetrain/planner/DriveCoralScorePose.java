@@ -7,12 +7,13 @@ package frc.robot.commands.drivetrain.planner;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-// import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.measure.Time;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 //import frc.robot.constants.Constants.VisionFiducials;
+
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class DriveCoralScorePose extends Command {
   private CommandSwerveDrivetrain dt;
   private Pose2d goalPose;
   private Transform2d trans;
-  private PlannerSetpointGenerator plannerSetpointGenerator;
+  private Command drive;
 
   /** Creates a new DriveCoralScorePose. */
 
@@ -50,8 +51,8 @@ public class DriveCoralScorePose extends Command {
   public void initialize() {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
-    plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
-    plannerSetpointGenerator.schedule();
+    drive =  PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(5, Seconds), false);
+    drive.schedule();
   }
 
   @Override
@@ -62,13 +63,13 @@ public class DriveCoralScorePose extends Command {
 
   @Override
   public boolean isFinished() {
-    return plannerSetpointGenerator.isFinished();
+    return drive.isFinished();
   }
 
   @Override
   public void end(boolean interrupted) {
     if (interrupted) {
-      plannerSetpointGenerator.cancel();
+      drive.cancel();
     }
   }
 }
