@@ -1,7 +1,7 @@
 package frc.robot.util;
 import java.util.List;
 
-import edu.wpi.first.apriltag.AprilTag;
+// import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.constants.DynamicConstants;
 
 import java.util.ArrayList;
-import java.util.List;
+// import java.util.List;
 
 public class EnumUtil {
     AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);

@@ -10,38 +10,38 @@ import static edu.wpi.first.units.Units.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.ArrayList;
-import java.util.List;
+// import java.util.ArrayList;
+// import java.util.List;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
+// import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
+// import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+// import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
+// import edu.wpi.first.math.geometry.Transform3d;
+// import edu.wpi.first.units.Units;
+// import edu.wpi.first.units.measure.Angle;
+// import edu.wpi.first.units.measure.AngularAcceleration;
+// import edu.wpi.first.units.measure.AngularVelocity;
+// import edu.wpi.first.units.measure.LinearAcceleration;
+// import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
-import frc.robot.commands.drivetrain.AlignToTag;
+// import frc.robot.commands.drivetrain.AlignToTag;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
-import frc.robot.commands.drivetrain.planner.NearestAlign;
-import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
-import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
+// import frc.robot.commands.drivetrain.planner.NearestAlign;
+// import frc.robot.commands.drivetrain.planner.PlannerSetpointGenerator;
+// import frc.robot.commands.drivetrain.planner.TagAssistedAlign;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.commands.elevator.SetpointEnum;
 import frc.robot.constants.Constants;
@@ -57,12 +57,12 @@ import frc.robot.subsystems.LED.LEDColor;
 import frc.robot.subsystems.LED.LEDSection;
 import frc.robot.subsystems.LED.Rolling;
 import frc.robot.subsystems.LED.State;
-import frc.robot.subsystems.PathfindingSubsystem;
-import frc.robot.subsystems.PhotonVision;
-import frc.robot.testing.ElevatorSysid;
-import frc.robot.util.EnumUtil;
+// import frc.robot.subsystems.PathfindingSubsystem;
+// import frc.robot.subsystems.PhotonVision;
+// import frc.robot.testing.ElevatorSysid;
+// import frc.robot.util.EnumUtil;
 import frc.robot.util.EnumUtil.ELEV;
-import frc.robot.util.EnumUtil.SIDE;
+// import frc.robot.util.EnumUtil.SIDE;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -102,28 +102,9 @@ public class RobotContainer {
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
-  // public final PlannerSetpointGenerator testpoint = new
-  // PlannerSetpointGenerator(drivetrain, new Pose2d(),);
 
-  // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
-  // PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15),
-  // Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0),
-  // Degrees.of(90))));
-
-  // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
-  // PoseStrategy.LOWEST_AMBIGUITY,
-  // new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09),
-  // new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
-  // // public final PhotonVision mCoral = new PhotonVision(drivetrain,
-  // "feeder_cam",
-  // // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
-  // // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
-  // // Degrees.of(0), Degrees.of(-93))));
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
-  // public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam",
-  // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
-  // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
-  // Degrees.of(0), Degrees.of(-93))));
+
 
   public RobotContainer() {
 
@@ -217,15 +198,12 @@ public class RobotContainer {
     Copilot.povDown().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
     Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
-    // Copilot.leftBumper().onTrue(); // Save for feeder selection
-    // Copilot.rightBumper().onTrue(); // Save for feeder selection
-    // Copilot.leftTrigger().onTrue(); // Save for reef selection
-    // Copilot.rightTrigger().onTrue(); // Save for reef selection
-
     Copilot.start().whileTrue(m_elevator.climbingCommand(-4, 0.5));
     Copilot.back().whileTrue(m_elevator.setServoCommand(0));
 
-    // Make sure to use copilot's left stick for reef side selection
+    Copilot.leftStick().whileTrue(m_elevator.runVoltageJoystickCommand(deadband(-Copilot.getLeftY(), 0.05)));
+
+ 
 
     // Face Button Controls Height selection
 
@@ -240,17 +218,7 @@ public class RobotContainer {
                                                                                                              // height
                                                                                                              // selection
 
-    // Copilot.leftTrigger().whileTrue(
-    // AutoBuilder.pathfindToPose(
-    // new Pose2d(14.08, 2.24, Rotation2d.fromDegrees(30)),
-    // new PathConstraints(
-    // 1.0, 1.0,
-    // edu.wpi.first.math.util.Units.degreesToRadians(360),
-    // edu.wpi.first.math.util.Units.degreesToRadians(540)
-    // ),
-    // 0
-    // )
-    // );
+
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
