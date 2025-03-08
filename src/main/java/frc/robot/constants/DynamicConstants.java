@@ -45,7 +45,7 @@ public final class DynamicConstants {
     }
 
     public static class IRThresholds {
-        public static double IRthreshold = 1.5;
+        public static double IRthreshold = 1.75;
     }
 
 
