@@ -20,6 +20,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
+<<<<<<< Updated upstream
+=======
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+>>>>>>> Stashed changes
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
@@ -42,6 +47,7 @@ import frc.robot.subsystems.LED.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.ElevatorAlign;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -66,6 +72,7 @@ public class RobotContainer {
   private final CommandXboxController test = new CommandXboxController(2);
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final SendableChooser<Command> autoChooser;
+  private Integer elevatorSetpoint = 0;
 
   public final Timer m_timer = new Timer();
 
@@ -103,11 +110,11 @@ public class RobotContainer {
   public RobotContainer() {
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
-        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.LeftX, DynamicConstants.AlignTransforms.LeftY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot))));
+        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.LeftXL1, DynamicConstants.AlignTransforms.LeftYL1, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot))));
     NamedCommands.registerCommand("Nearest Tag Align Center",
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
     NamedCommands.registerCommand("Nearest Tag Align Right",
-        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.RightX, DynamicConstants.AlignTransforms.RightY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
+        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.RightXL1, DynamicConstants.AlignTransforms.RightYL1, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
     NamedCommands.registerCommand("Elevator Setpoint L1", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1));
     NamedCommands.registerCommand("Elevator Setpoint L2", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2));
     NamedCommands.registerCommand("Elevator Setpoint L3", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
@@ -166,9 +173,10 @@ public class RobotContainer {
     
     Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral));
     Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
-    Pilot.x().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.LeftX, DynamicConstants.AlignTransforms.LeftY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot))));
-    Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.RightX, DynamicConstants.AlignTransforms.RightY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
-
+ 
+    
+    Pilot.x().whileTrue(new ElevatorAlign(0, drivetrain, m_elevator));
+    Pilot.b().whileTrue(new ElevatorAlign(1, drivetrain, m_elevator));
 
    // Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
 
@@ -191,15 +199,9 @@ public class RobotContainer {
     // Face Button Controls Height selection
 
     Copilot.a().onTrue(m_elevator.zeroElevatorCommand()); // Save for height selection
-    Copilot.b().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3)); // Save for
-                                                                                                             // height
-                                                                                                             // selection
-    Copilot.x().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2)); // Save for
-                                                                                                             // height
-                                                                                                             // selection
-    Copilot.y().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4)); // Save for
-                                                                                                             // height
-                                                                                                             // selection
+    Copilot.b().onTrue(m_elevator.setLevel(2));
+    Copilot.x().onTrue(m_elevator.setLevel(3));
+    Copilot.y().onTrue(m_elevator.setLevel(4));
 
     // Copilot.leftTrigger().whileTrue(
     // AutoBuilder.pathfindToPose(
@@ -310,6 +312,10 @@ public class RobotContainer {
     } else {
       return 0.0;
     }
+  }
+
+  private InstantCommand switchElevatorLevel(int level) {
+    return new InstantCommand(() -> elevatorSetpoint = level); 
   }
 
   private Map<LEDSection, State> getRightTriggerColors() {

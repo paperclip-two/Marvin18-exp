@@ -68,6 +68,7 @@ public class Elevator extends SubsystemBase {
   public Angle currentElevatorRightPos;
   public Angle currentElevatorLeftPos;
   public Distance elevatorRotationsInInchesMulti;
+  public Integer selectedLevel;
 
   public Elevator() {
 
@@ -231,6 +232,11 @@ public class Elevator extends SubsystemBase {
         () -> isNear(rotations));
   }
 
+  public Command setLevel(int level) {
+    return runOnce(() -> {
+      selectedLevel = level;
+    });
+  }
 
   public Command runVoltageJoystickCommand(double percentage) {
     double minimumVoltage = 0.5;
