@@ -20,11 +20,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
-<<<<<<< Updated upstream
-=======
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
->>>>>>> Stashed changes
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
@@ -47,7 +43,7 @@ import frc.robot.subsystems.LED.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ElevatorAlign;
+import frc.robot.commands.PoseSelector;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -72,7 +68,6 @@ public class RobotContainer {
   private final CommandXboxController test = new CommandXboxController(2);
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final SendableChooser<Command> autoChooser;
-  private Integer elevatorSetpoint = 0;
 
   public final Timer m_timer = new Timer();
 
@@ -175,8 +170,8 @@ public class RobotContainer {
     Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
  
     
-    Pilot.x().whileTrue(new ElevatorAlign(0, drivetrain, m_elevator));
-    Pilot.b().whileTrue(new ElevatorAlign(1, drivetrain, m_elevator));
+    Pilot.x().whileTrue(new PoseSelector(drivetrain, m_elevator));
+    Pilot.b().whileTrue(m_elevator.goToSelectedPointCommand());
 
    // Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
 
@@ -186,8 +181,8 @@ public class RobotContainer {
     Copilot.povDown().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
     Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
-    // Copilot.leftBumper().onTrue(); // Save for feeder selection
-    // Copilot.rightBumper().onTrue(); // Save for feeder selection
+    Copilot.leftBumper().onTrue(drivetrain.setSide(0));
+    Copilot.rightBumper().onTrue(drivetrain.setSide(1));
     // Copilot.leftTrigger().onTrue(); // Save for reef selection
     // Copilot.rightTrigger().onTrue(); // Save for reef selection
 
@@ -312,10 +307,6 @@ public class RobotContainer {
     } else {
       return 0.0;
     }
-  }
-
-  private InstantCommand switchElevatorLevel(int level) {
-    return new InstantCommand(() -> elevatorSetpoint = level); 
   }
 
   private Map<LEDSection, State> getRightTriggerColors() {
