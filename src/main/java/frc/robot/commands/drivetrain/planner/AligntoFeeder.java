@@ -12,15 +12,19 @@ import edu.wpi.first.math.geometry.Pose2d;
 // import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.measure.Time;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 // import static edu.wpi.first.units.Units.Newton;
+import static edu.wpi.first.units.Units.Second;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.Constants.VisionFiducials;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -31,12 +35,12 @@ public class AligntoFeeder extends Command {
       List.of(VisionFiducials.RED_LEFT_FEEDER_TAG, VisionFiducials.BLUE_LEFT_FEEDER_TAG));
   private List<Pose2d> rightFeeders = getPoseList(
       List.of(VisionFiducials.RED_RIGHT_FEEDER_TAG, VisionFiducials.BLUE_RIGHT_FEEDER_TAG));
-  private static Transform2d offset = new Transform2d(.45, Inches.of(10.5).in(Meters), Rotation2d.fromDegrees(-90));
-  private static Transform2d slotSpacing = new Transform2d(0, Inches.of(8).in(Meters), Rotation2d.fromDegrees(0));
+  private static Transform2d offset = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, Rotation2d.fromDegrees(-90));
+  private static Transform2d slotSpacing = new Transform2d(0.0, Inches.of(8).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
   private Coral m_coral;
-  private PlannerSetpointGenerator plannerSetpointGenerator;
   private List<Pose2d> feederPoses;
+  private Command drive; 
 
   /** Creates a new DriveCoralScorePose. */
 
@@ -84,25 +88,26 @@ public class AligntoFeeder extends Command {
   @Override
   public void initialize() {
     Pose2d goalPose = dt.getState().Pose.nearest(feederPoses);
-    plannerSetpointGenerator = new PlannerSetpointGenerator(dt, goalPose, false);
+    drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(5, Second), false);
+    drive.schedule();
   }
 
   @Override
   public void execute() {
     // No need to call generateCommand here, as the command is already scheduled in
     // initialize()
-    plannerSetpointGenerator.schedule();
+
   }
 
   @Override
   public boolean isFinished() {
-    return plannerSetpointGenerator.isFinished() || m_coral.hasCoral();
+    return drive.isFinished();
   }
 
   @Override
   public void end(boolean interrupted) {
     if (interrupted) {
-      plannerSetpointGenerator.cancel();
+      drive.cancel();
     }
   }
 }

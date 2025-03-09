@@ -7,11 +7,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "sMID-F"
+            "pathName": "Mid-A"
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -25,14 +25,14 @@
                 "data": {
                   "name": "Elevator Setpoint L4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
           }
         },
         {
@@ -44,23 +44,36 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F-U2"
+            "pathName": "A-U1"
           }
         },
         {
-          "type": "wait",
+          "type": "race",
           "data": {
-            "waitTime": 1.0
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "U2-E"
+            "pathName": "U1-C"
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -74,6 +87,12 @@
                 "data": {
                   "name": "Elevator Setpoint L4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
               }
             ]
           }
@@ -81,35 +100,48 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Zero Elevator"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "E-U2"
+            "pathName": "C-U1"
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "U2-E"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Right"
+                  "name": "Feeder Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "U1-C"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Nearest Tag Align Left"
                 }
               },
               {
@@ -117,6 +149,12 @@
                 "data": {
                   "name": "Elevator Setpoint L4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
               }
             ]
           }
@@ -124,7 +162,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Zero Elevator"
           }
         }
       ]

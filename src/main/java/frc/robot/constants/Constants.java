@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -114,11 +115,11 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                3.6,
+                3.0,
                 0,
                 0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                3.6,
+                3.0,
                 0,
                 0);
 
@@ -135,7 +136,7 @@ public final class Constants {
                 AUTO_STEER_PID);
 
         public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2);
-        public static final Distance kPositionTolerance = Inches.of(.90);
+        public static final Distance kPositionTolerance = Inches.of(.5);
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);
@@ -145,20 +146,6 @@ public final class Constants {
 
     }
 
-    public static class VisionConstants {
-        public static final String CORAL_CAM_NAME = "feeder_cam";
-        public static final String REEF_CAM_NAME = "reef_cam";
-        public static final Transform3d CORAL_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
-        // Record actual transform in a comment here (readable by a human)
-        public static final Transform3d REEF_CAM_TRANSFORM = new Transform3d(null, null, null, null); // find
-        // Record actual transform in a comment here (readable by a human)
-        public static final Transform3d LIMELIGHT_TRANSFORM = new Transform3d(null, null, null, null);// Find later
-
-        public static final double REEF_APRILTAG_HEIGHT = 6.875; // feet? figure out units
-        public static final double PROCCESSOR_APRILTAG_HEIGHT = 45.875;
-        public static final double CORAL_APRILTAG_HEIGHT = 53.25;
-
-    }
 
     public static class FieldConstants {
         // tune this

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
@@ -27,7 +28,7 @@ public class PlannerSetpointGenerator extends Command {
     private boolean flipIt;
 
     private PPHolonomicDriveController mDriveController = Constants.AutoConstants.kDriveController;
-
+    private HolonomicDriveController hdrive;
     private final Trigger endTrigger;
     private final Trigger endTriggerDebounced;
     private final SwerveRequest.ApplyRobotSpeeds mChassisSpeed;
@@ -40,6 +41,7 @@ public class PlannerSetpointGenerator extends Command {
         this.mSwerve = mSwerve;
         this.goalPose = goalPose;
         flipIt = shouldFlip;
+        hdrive = mSwerve.getDrivePathController();
         mChassisSpeed = new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
         endTrigger = new Trigger(

@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotContainer;
 
 public final class DynamicConstants {
     /*
@@ -29,6 +31,7 @@ public final class DynamicConstants {
         public static double elevAlgaeTee = 2.2;
         public static double elevAlgaeGround = 1;
         public static double elevClimb = 0;
+        public static double elevClimbVoltage = -4;
 
         public static double elevTestPos = 1;
     }
@@ -47,6 +50,7 @@ public final class DynamicConstants {
     }
 
     public static class AlignTransforms {
+
         public static double RightXL1 = .45;
         public static double RightYL1 = .45;
         public static double RightYL2 = .45;
@@ -64,11 +68,20 @@ public final class DynamicConstants {
         public static double LeftYL3 = .07;
         public static double LeftYL4 = .07;
         public static double LeftXL4 = .45;
+
         public static double LeftRot = 90;
         public static double CentX = 1;
         public static double CentY = 0;
         public static double CentRot = 90;  
+        public static double feederX = .45;
+        public static double feederY = 0.2667;
+
         }
+
+    public static class Drive {
+        public static final double forwardBackward = 0.04;
+        public static final double leftRight = 0.04;
+    }   
 
     public static class Algae {
         public static double intakePercent = .5;

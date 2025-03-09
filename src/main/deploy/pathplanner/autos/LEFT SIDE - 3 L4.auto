@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "sMID-F"
+            "pathName": "S1-F"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator Setpoint L2"
+            "name": "Elevator Setpoint L4"
           }
         },
         {
@@ -41,9 +41,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Passive Intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -61,7 +74,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Elevator Setpoint L2"
+            "name": "Elevator Setpoint L4"
           }
         },
         {
@@ -71,15 +84,58 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "E-U2"
           }
         },
         {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "U2-E"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Zero Elevator"
+            "name": "Nearest Tag Align Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator Setpoint L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]
