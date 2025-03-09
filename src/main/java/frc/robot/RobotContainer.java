@@ -161,8 +161,8 @@ public class RobotContainer {
     // Face Button Controls Height selection
 
     Copilot.a().onTrue(m_elevator.zeroElevatorCommand()); // Save for height selection
-    Copilot.b().onTrue(m_elevator.setLevel(2));
-    Copilot.x().onTrue(m_elevator.setLevel(3));
+    Copilot.b().onTrue(m_elevator.setLevel(3));
+    Copilot.x().onTrue(m_elevator.setLevel(2));
     Copilot.y().onTrue(m_elevator.setLevel(4));
 
 
