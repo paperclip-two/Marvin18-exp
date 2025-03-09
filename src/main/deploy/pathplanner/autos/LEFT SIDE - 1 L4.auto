@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S6-B"
+            "pathName": "S1-F"
           }
         },
         {
@@ -17,7 +17,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -31,14 +31,14 @@
                 "data": {
                   "name": "Elevator Setpoint L4"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Score"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {

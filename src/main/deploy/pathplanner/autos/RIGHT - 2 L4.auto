@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S1-F"
+            "pathName": "S6-B"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -44,32 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F-U2"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Feeder Align"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Passive Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "U2-E"
+            "pathName": "B-U1"
           }
         },
         {
@@ -79,43 +60,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Left"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Zero Elevator"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "E-U2"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
                   "name": "Feeder Align"
                 }
               },
@@ -131,7 +75,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "U2-E"
+            "pathName": "U1-C"
           }
         },
         {
@@ -168,7 +112,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

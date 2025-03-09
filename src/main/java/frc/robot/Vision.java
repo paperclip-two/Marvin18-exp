@@ -60,7 +60,7 @@ public class Vision {
 
         photonEstimator =
                 new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotTransform3d);
-        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
 
         // ----- Simulation
         if (Robot.isSimulation()) {
@@ -158,7 +158,7 @@ public class Vision {
                 // Increase std devs based on (average) distance
                 if (numTags == 1 && avgDist > 4)
                     estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-                else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+                else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 5));
                 curStdDevs = estStdDevs;
             }
         }

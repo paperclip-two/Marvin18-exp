@@ -17,7 +17,7 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -31,14 +31,14 @@
                 "data": {
                   "name": "Elevator Setpoint L4"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Score"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         },
         {
@@ -50,7 +50,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

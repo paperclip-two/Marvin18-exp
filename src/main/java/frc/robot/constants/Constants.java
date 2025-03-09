@@ -136,11 +136,11 @@ public final class Constants {
                 AUTO_STEER_PID);
 
         public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(2);
-        public static final Distance kPositionTolerance = Inches.of(.5);
+        public static final Distance kPositionTolerance = Inches.of(0.5);
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.1);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.04);
-        public static final PathConstraints kPathConstraints = new PathConstraints(1.00, 0.5, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final PathConstraints kPathConstraints = new PathConstraints(2.00, 1.0, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
         public static final PathConstraints kSlowPathConstraints = new PathConstraints(0.3, 0.1, 1/5 * Math.PI, 0.2 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
 
@@ -227,7 +227,7 @@ public final class Constants {
         // The standard deviations of our vision estimated poses, which affect
         // correction rate
         // (Fake values. Experiment and determine estimation noise on an actual robot.)
-        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(1, 1, 2);
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(1, 1, 2);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
 }
