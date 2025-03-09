@@ -39,14 +39,13 @@ public class Robot extends TimedRobot {
 
     var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
     feederEst.ifPresent(
-        estF -> {
+       estF -> {
           // Change our trust in the measurement based on the tags we can see
-          var estStdDevsF = m_robotContainer.feeder_vision.getEstimationStdDevs();
+         var estStdDevsF = m_robotContainer.feeder_vision.getEstimationStdDevs();
 
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              estF.estimatedPose.toPose2d(), estF.timestampSeconds, estStdDevsF);
-        });
-
+        m_robotContainer.drivetrain.addVisionMeasurement(
+            estF.estimatedPose.toPose2d(), estF.timestampSeconds, estStdDevsF);
+       });
 
     var reefEst = m_robotContainer.reef_vision.getEstimatedGlobalPose();
     reefEst.ifPresent(

@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
@@ -54,12 +60,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Feeder Align"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Passive Intake"
                 }
               }
@@ -70,6 +70,12 @@
           "type": "path",
           "data": {
             "pathName": "U1-C"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -116,12 +122,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Feeder Align"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Passive Intake"
                 }
               }
@@ -132,6 +132,12 @@
           "type": "path",
           "data": {
             "pathName": "U1-C"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -168,7 +174,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
