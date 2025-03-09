@@ -11,15 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Nearest Tag Align Right"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator Setpoint L4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Nearest Tag Align Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L2"
+                }
+              }
+            ]
           }
         },
         {
@@ -62,74 +69,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "U2-E"
+            "pathName": "U2-F"
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Nearest Tag Align Left"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator Setpoint L4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Zero Elevator"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "E-U2"
-          }
-        },
-        {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Feeder Align"
+                  "name": "Nearest Tag Align Right"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Passive Intake"
+                  "name": "Elevator Setpoint L2"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "U2-E"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Nearest Tag Align Right"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Elevator Setpoint L4"
           }
         },
         {

@@ -324,7 +324,7 @@ public class Elevator extends SubsystemBase {
   public Command zeroElevatorCommand() {
     return runEnd(() -> {
       ratchetLock(0);
-      if(getPositionNormal() > 0.5) {
+      if(getPositionNormal() > 2) {
       setRotations(0.0);}
       else  {
         runVoltageRequest(-3);

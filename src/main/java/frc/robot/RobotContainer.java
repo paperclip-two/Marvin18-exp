@@ -112,7 +112,7 @@ public class RobotContainer {
     configureBindings();
     configureLEDTriggers();
     autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("auto chooser", autoChooser);
+    SmartDashboard.putData("AutoChooser", autoChooser);
   }
 
   public void configureBindings() {

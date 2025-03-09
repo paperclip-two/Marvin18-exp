@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -37,16 +39,15 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     DynamicConstants.periodic();
 
-    var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
-    feederEst.ifPresent(
-        estF -> {
+   // var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
+  // feederEst.ifPresent(
+  //     estF -> {
           // Change our trust in the measurement based on the tags we can see
-          var estStdDevsF = m_robotContainer.feeder_vision.getEstimationStdDevs();
+   //     var estStdDevsF = m_robotContainer.feeder_vision.getEstimationStdDevs();
 
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              estF.estimatedPose.toPose2d(), estF.timestampSeconds, estStdDevsF);
-        });
-
+     //  m_robotContainer.drivetrain.addVisionMeasurement(
+     //      estF.estimatedPose.toPose2d(), estF.timestampSeconds, estStdDevsF);
+     // });
 
     var reefEst = m_robotContainer.reef_vision.getEstimatedGlobalPose();
     reefEst.ifPresent(
@@ -56,7 +57,11 @@ public class Robot extends TimedRobot {
 
           m_robotContainer.drivetrain.addVisionMeasurement(
               estR.estimatedPose.toPose2d(), estR.timestampSeconds, estStdDevsR);
+              Logger.recordOutput(
+                "Reef Pose", estR.estimatedPose);
         });
+
+    
   }
 
   @Override
