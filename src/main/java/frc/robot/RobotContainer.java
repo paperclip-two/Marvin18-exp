@@ -90,6 +90,7 @@ public class RobotContainer {
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
     NamedCommands.registerCommand("Nearest Tag Align Right",
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.RightX, DynamicConstants.AlignTransforms.RightY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
+    NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral));
     NamedCommands.registerCommand("Elevator Setpoint L1", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1));
     NamedCommands.registerCommand("Elevator Setpoint L2", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL2));
     NamedCommands.registerCommand("Elevator Setpoint L3", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
@@ -99,7 +100,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Elevator Setpoint Algae Top", m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop));
     NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand().withTimeout(2)); // ensure that the robot stops running elevator down if limit isn't read.
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
-    NamedCommands.registerCommand("Passive Intake", m_coral.runIntake(-0.2).until(() -> m_coral.hasCoral()));
+    NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
 
     configureBindings();
     configureLEDTriggers();
@@ -180,32 +181,6 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    /*
-     * Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(()-> 3));
-     * Pilot.povRight().whileTrue(m_coralArm.setMotionMagicPosition(() ->
-     * DynamicConstants.ArmSetpoints.armTestPos));
-     * Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
-     * Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
-     * Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(0.8));
-     * Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
-     * Copilot.povUp().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 3,
-     * 0.3));
-     * Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
-     * Copilot.leftTrigger().whileTrue(m_elevator.runVoltage(-2));
-     * Copilot.leftBumper().whileTrue(m_elevator.SafeHopperReturn(m_coralArm).
-     * alongWith(m_coralArm.setTest(0, m_elevator)));
-     * Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-     * Copilot.x().whileTrue(m_coralArm.runVoltage(-1));
-     */
-    // Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
-    // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
-
-    // Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    // Pilot.b().whileTrue(drivetrain.applyRequest(() ->
-    // point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(),
-    // -Pilot.getLeftX()))
-    // ));
-
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log
 
@@ -222,13 +197,21 @@ public class RobotContainer {
   }
 
   public Command configureBindingsCommand()  {
+    double currTimeSeconds = Timer.getFPGATimestamp();
     return new Command() {
       @Override
       public void initialize() {
         configureBindings();
       }
+
+      @Override
+      public boolean isFinished() {
+        return (Timer.getFPGATimestamp() - currTimeSeconds > .5);
+      }
     };
     }
+
+
 
   public Command getAutonomousCommand() {
   //  m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
@@ -240,20 +223,7 @@ public class RobotContainer {
   }
 
   public void configureTestBindings() {
-    // Elevator Test Bindings
-    // test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
-    // test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
-    // test.leftTrigger().whileTrue(m_elevator.runVoltage(1));
-    // test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
-    // test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-    // test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));;
-   // test.a().whileTrue(new FieldCentricPIDMove(drivetrain, new Pose2d(2, 3, new Rotation2d(0))));
 
-    // test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
-    // test.x().whileTrue(m_algae.intake());
-    test.y().whileTrue(m_algae.outtake());
-    // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
-    // test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
     test.leftTrigger().whileTrue(m_algae.intake());
 
@@ -264,7 +234,11 @@ public class RobotContainer {
     test.povUp().whileTrue(m_elevator.setServoCommand(1));
     // test.povRight().whileTrue(m_elevator.setServo(45));
 
-    test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
+    test.leftBumper().whileTrue(m_elevator.testVoltageCommand(-2));
+    test.rightBumper().whileTrue(m_elevator.testVoltageCommand(2));
+    test.a().whileTrue(m_coral.runIntake(0.5));
+    test.b().whileTrue(m_coral.runIntake(-0.5));
+
     // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));
 
   }

@@ -26,7 +26,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DynamicConstants.init();
     PathfindingCommand.warmupCommand().schedule();
+    m_robotContainer.m_elevator.setServoCommand(0).schedule();
+
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
+    
   }
 
   @Override

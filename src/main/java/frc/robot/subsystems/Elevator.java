@@ -84,6 +84,11 @@ public class Elevator extends SubsystemBase {
     currentElevatorLeftPos = Rotations.of(0); // Follower
     currentElevatorRightPos = Rotations.of(0); // Master
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
+    
+
+    motionRequest.EnableFOC = true;
+    voltageRequest.EnableFOC = true;
+    positionVoltageRequest.EnableFOC = true;
 
     masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -256,6 +261,14 @@ public class Elevator extends SubsystemBase {
       runVoltageRequest(voltage);
     }, () -> {
       stopMotorHold();
+    });
+  }
+
+  public Command testVoltageCommand(double voltage) {
+    return runEnd(() -> {
+      runVoltageRequest(voltage);
+    }, () -> {
+      master.set(0);
     });
   }
 

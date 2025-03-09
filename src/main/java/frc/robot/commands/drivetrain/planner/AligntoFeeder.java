@@ -101,7 +101,7 @@ public class AligntoFeeder extends Command {
 
   @Override
   public boolean isFinished() {
-    return drive.isFinished() || m_coral.hasCoral();
+    return drive.isFinished();
   }
 
   @Override

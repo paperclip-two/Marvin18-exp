@@ -29,28 +29,34 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F-U2"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Zero Elevator"
+                  "name": "Feeder Align"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "F-U2"
+                  "name": "Passive Intake"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Passive Intake"
           }
         },
         {
@@ -62,7 +68,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Nearest Tag Align Right"
+            "name": "Nearest Tag Align Left"
           }
         },
         {
@@ -78,28 +84,34 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E-U2"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Zero Elevator"
+                  "name": "Feeder Align"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "E-U2"
+                  "name": "Passive Intake"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Passive Intake"
           }
         },
         {
@@ -111,7 +123,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Nearest Tag Align Left"
+            "name": "Nearest Tag Align Right"
           }
         },
         {
