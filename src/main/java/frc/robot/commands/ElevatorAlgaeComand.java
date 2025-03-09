@@ -37,7 +37,7 @@ public class ElevatorAlgaeComand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_elevator.advanceRotations(.25);
-    Timer.delay(1);
+    Timer.delay(0.25);
     m_algae.setPercentage(.5);
   }
 
