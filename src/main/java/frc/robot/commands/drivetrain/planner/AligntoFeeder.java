@@ -88,7 +88,7 @@ public class AligntoFeeder extends Command {
   @Override
   public void initialize() {
     Pose2d goalPose = dt.getState().Pose.nearest(feederPoses);
-    drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(5, Second), false);
+    drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(2, Second), false);
     drive.schedule();
   }
 

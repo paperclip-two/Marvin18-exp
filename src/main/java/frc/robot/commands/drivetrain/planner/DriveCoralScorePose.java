@@ -51,7 +51,7 @@ public class DriveCoralScorePose extends Command {
   public void initialize() {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
-    drive =  PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(3, Seconds), false);
+    drive =  PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(2, Seconds), false);
     drive.schedule();
   }
 

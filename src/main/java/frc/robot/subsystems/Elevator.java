@@ -289,7 +289,7 @@ public class Elevator extends SubsystemBase {
 
   public Command climbingCommand() {
     return runEnd(() -> {
-      ratchetLock(1);
+      ratchetLock(0.5);
       master.setControl(voltageRequest.withOutput(DynamicConstants.ElevatorSetpoints.elevClimbVoltage));
     }, () -> {
       stopMotor();
