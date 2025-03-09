@@ -30,6 +30,7 @@ import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.elevator.ElevatorSetpoint;
+import frc.robot.commands.PoseSelector;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -81,8 +82,8 @@ public class RobotContainer {
   public final Coral m_coral = new Coral();
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
+  private PoseSelector poseSelector = new PoseSelector(drivetrain, m_elevator);
 
-]
   
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
 
@@ -148,7 +149,7 @@ public class RobotContainer {
     Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral));
     Pilot.y().whileTrue(new DriveCoralScorePose(
       drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
-    Pilot.x().whileTrue(new PoseSelector(drivetrain, m_elevator));
+    Pilot.x().whileTrue(poseSelector);
     Pilot.b().whileTrue(m_elevator.goToSelectedPointCommand());
 
     /// Copilot

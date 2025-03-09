@@ -7,15 +7,20 @@ package frc.robot.commands;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.constants.DynamicConstants.AlignTransforms;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PoseSelector extends InstantCommand {
+public class PoseSelector extends Command {
   Elevator elevator;
   CommandSwerveDrivetrain dt;
   DriveCoralScorePose drivePose;
@@ -56,6 +61,7 @@ public class PoseSelector extends InstantCommand {
     R4 = new DriveCoralScorePose(dt,
         new Transform2d(AlignTransforms.RightXL4, AlignTransforms.RightYL4,
             Rotation2d.fromDegrees(AlignTransforms.RightRot)));
+    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(dt);
   }
@@ -64,25 +70,25 @@ public class PoseSelector extends InstantCommand {
   @Override
   public void initialize() {
     if (elevator.selectedLevel == 1) {
-      if (dt.side == 0) {
+      if (dt.selectedSide == 0) {
         drivePose = L1;
       } else {
         drivePose = R1;
       }
     } else if (elevator.selectedLevel == 2) {
-      if (dt.side == 0) {
+      if (dt.selectedSide == 0) {
         drivePose = L2;
       } else {
         drivePose = R2;
       }
     } else if (elevator.selectedLevel == 3) {
-      if (dt.side == 0) {
+      if (dt.selectedSide == 0) {
         drivePose = L3;
       } else {
         drivePose = R3;
       }
     } else if (elevator.selectedLevel == 4) {
-      if (dt.side == 0) {
+      if (dt.selectedSide == 0) {
         drivePose = L4;
       } else {
         drivePose = R4;
@@ -93,4 +99,14 @@ public class PoseSelector extends InstantCommand {
     drivePose.schedule();
   }
 
+@Override
+public void end(boolean interrupted) {
+  drivePose.cancel();
+   dt.setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds()));
 }
+
+
+@Override
+public boolean isFinished() {
+  return drivePose.isFinished();
+}}
