@@ -79,28 +79,7 @@ public class RobotContainer {
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
-  // public final PlannerSetpointGenerator testpoint = new
-  // PlannerSetpointGenerator(drivetrain, new Pose2d(),);
-
-  // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
-  // PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15),
-  // Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0),
-  // Degrees.of(90))));
-
-  // public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam",
-  // PoseStrategy.LOWEST_AMBIGUITY,
-  // new Transform3d(Inches.of(1.53), Inches.of(9.5), Inches.of(15.09),
-  // new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
-  // // public final PhotonVision mCoral = new PhotonVision(drivetrain,
-  // "feeder_cam",
-  // // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
-  // // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
-  // // Degrees.of(0), Degrees.of(-93))));
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
-  // public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam",
-  // PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48),
-  // Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30),
-  // Degrees.of(0), Degrees.of(-93))));
 
   public RobotContainer() {
 
@@ -133,15 +112,9 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.5 * MaxSpeed) // Drive
-                                                                                                             // forward
-                                                                                                             // with
-                                                                                                             // negative
-                                                                                                             // Y
-                                                                                                             // (forward)
+        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.5 * MaxSpeed) \
             .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.5 * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with
-                                                                                    // negative X (left)
+            .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
     // Bumper and Trigger Controls
     Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
@@ -167,13 +140,10 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     
     Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral));
-    Pilot.y().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
- 
-    
+    Pilot.y().whileTrue(new DriveCoralScorePose(
+      drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
     Pilot.x().whileTrue(new PoseSelector(drivetrain, m_elevator));
     Pilot.b().whileTrue(m_elevator.goToSelectedPointCommand());
-
-   // Pilot.b().whileTrue(new DriveCoralScorePose(drivetrain, new Transform2d(.45, .42, Rotation2d.fromDegrees(90))));
 
     /// Copilot
     /// Elevator and drive controls
@@ -183,13 +153,10 @@ public class RobotContainer {
     Copilot.povRight().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
     Copilot.leftBumper().onTrue(drivetrain.setSide(0));
     Copilot.rightBumper().onTrue(drivetrain.setSide(1));
-    // Copilot.leftTrigger().onTrue(); // Save for reef selection
-    // Copilot.rightTrigger().onTrue(); // Save for reef selection
+
 
     Copilot.start().whileTrue(m_elevator.climbingCommand(-4, 0.5));
     Copilot.back().whileTrue(m_elevator.setServoCommand(0));
-
-    // Make sure to use copilot's left stick for reef side selection
 
     // Face Button Controls Height selection
 
@@ -198,60 +165,11 @@ public class RobotContainer {
     Copilot.x().onTrue(m_elevator.setLevel(3));
     Copilot.y().onTrue(m_elevator.setLevel(4));
 
-    // Copilot.leftTrigger().whileTrue(
-    // AutoBuilder.pathfindToPose(
-    // new Pose2d(14.08, 2.24, Rotation2d.fromDegrees(30)),
-    // new PathConstraints(
-    // 1.0, 1.0,
-    // edu.wpi.first.math.util.Units.degreesToRadians(360),
-    // edu.wpi.first.math.util.Units.degreesToRadians(540)
-    // ),
-    // 0
-    // )
-    // );
+
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    /*
-     * Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(()-> 3));
-     * Pilot.povRight().whileTrue(m_coralArm.setMotionMagicPosition(() ->
-     * DynamicConstants.ArmSetpoints.armTestPos));
-     * Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
-     * Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
-     * Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(0.8));
-     * Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
-     * Copilot.povUp().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 3,
-     * 0.3));
-     * Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
-     * Copilot.leftTrigger().whileTrue(m_elevator.runVoltage(-2));
-     * Copilot.leftBumper().whileTrue(m_elevator.SafeHopperReturn(m_coralArm).
-     * alongWith(m_coralArm.setTest(0, m_elevator)));
-     * Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-     * Copilot.x().whileTrue(m_coralArm.runVoltage(-1));
-     */
-    // Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
-    // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
-
-    // Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    // Pilot.b().whileTrue(drivetrain.applyRequest(() ->
-    // point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(),
-    // -Pilot.getLeftX()))
-    // ));
-
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log
-
-    Pilot.back().and(Pilot.y()).whileTrue(m_elevator.sysIdDynamic(Direction.kForward));
-    Pilot.back().and(Pilot.x()).whileTrue(m_elevator.sysIdDynamic(Direction.kReverse));
-    Pilot.start().and(Pilot.y()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
-    Pilot.start().and(Pilot.x()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
-
-    // reset the field-centric heading on left bumper press
-
-    drivetrain.registerTelemetry(logger::telemeterize);
-
-    // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
-  }
+  
 
   public Command getAutonomousCommand() {
   //  m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
