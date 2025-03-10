@@ -29,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
+import frc.robot.commands.drivetrain.planner.PoseSelector;
 import frc.robot.commands.elevator.ElevatorSetpoint;
-import frc.robot.commands.PoseSelector;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -47,7 +47,6 @@ import frc.robot.subsystems.LED.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.PoseSelector;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
