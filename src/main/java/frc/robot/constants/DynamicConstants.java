@@ -12,18 +12,21 @@ import frc.robot.RobotContainer;
 
 public final class DynamicConstants {
     /*
-     * Add static classes below for Shuffleboard dynamic contants. Each class represents 
-     * a subsystem and will have its own tab. These constants are stored on the RIO through 
-     * NetworkTables json and should be saved to the driver station computer after changes.
+     * Add static classes below for Shuffleboard dynamic contants. Each class
+     * represents
+     * a subsystem and will have its own tab. These constants are stored on the RIO
+     * through
+     * NetworkTables json and should be saved to the driver station computer after
+     * changes.
      * 
-     * WARNING: Dynamic constants from the RIO may be read after initialization. Ensure functionality 
+     * WARNING: Dynamic constants from the RIO may be read after initialization.
+     * Ensure functionality
      * of any constants that are only read on startup.
      */
 
-
     public static class ElevatorSetpoints {
-        public static double elevL4 = 8.29;
-        public static double elevL3 = 4.52;
+        public static double elevL4 = 8.28;
+        public static double elevL3 = 4.47;
         public static double elevL2 = 2.04;
         public static double elevL1 = 0;
         public static double elevAlgaeTop = 7.72;
@@ -39,7 +42,7 @@ public final class DynamicConstants {
     public static class AutoTagSetpoints {
         public static double NTALFwd_Bkwd = .45;
         public static double NTALLeft_Right = .08;
-        
+
         public static double NTACFwd_Bkwd = 1;
         public static double NTACLeft_Right = 0;
 
@@ -51,42 +54,51 @@ public final class DynamicConstants {
 
     public static class AlignTransforms {
 
-        public static double RightXL1 = .44;
-        public static double RightYL1 = .43;
-        public static double RightXL2 = .44;
-        public static double RightYL2 = .43;
-        public static double RightXL3 = .44;
-        public static double RightYL3 = .42;
+        public static double RightXL1 = .41;
+        public static double RightYL1 = .46;
+        
+        public static double RightXL2 = .41;
+        public static double RightYL2 = .46;
+        
+        public static double RightXL3 = .41;
+        public static double RightYL3 = .46;
+
         public static double RightXL4 = .45;
-        public static double RightYL4 = .45;
+        public static double RightYL4 = .53;
+        
         public static double RightRot = 90;
-        public static double LeftXL1 = .44;
-        public static double LeftYL1 = .05;
-        public static double LeftXL2 = .44;
-        public static double LeftYL2 = .05;
-        public static double LeftXL3 = .44;
-        public static double LeftYL3 = .05;
-        public static double LeftYL4 = .07;
+        
+        public static double LeftXL1 = .41;
+        public static double LeftYL1 = .09;
+        
+        public static double LeftXL2 = .41;
+        public static double LeftYL2 = .09;
+        
+        public static double LeftXL3 = .41;
+        public static double LeftYL3 = .09;
+        
+        public static double LeftYL4 = .12;
         public static double LeftXL4 = .45;
 
         public static double LeftRot = 90;
+        
         public static double CentX = 1;
         public static double CentY = 0;
-        public static double CentRot = 90;  
-        public static double feederX = .44;
-        public static double feederY = 0.2667;
+        public static double CentRot = 90;
+        public static double feederX = .43;
+        public static double feederY = 0.24;
 
-        }
+    }
 
     public static class Drive {
         public static final double forwardBackward = 0.04;
         public static final double leftRight = 0.04;
-    }   
+    }
 
     public static class Algae {
         public static double intakePercent = .5;
         public static double outtakePercent = -.5;
-    } 
+    }
 
     public static class TestVoltages {
         public static double bucketTestOut = 0;
@@ -98,47 +110,50 @@ public final class DynamicConstants {
         public static double IRthreshold = 1.75;
     }
 
-
     private static HashMap<Field, SimpleWidget> entries;
 
     /*
-     * Initializes all the Shuffleboard tabs and widgets by pulling their fields from the provided classes
+     * Initializes all the Shuffleboard tabs and widgets by pulling their fields
+     * from the provided classes
      */
     public static void init() {
         ShuffleboardTab subsystemIOTab;// = Shuffleboard.getTab("SubsystemIO");
         entries = new HashMap<>();
 
-        //add all .class values of the static classes above
-        Class<?>[] subsystems = {ElevatorSetpoints.class, TestVoltages.class, Algae.class, AutoTagSetpoints.class, AlignTransforms.class};
-        
-        for(Class<?> subsystem : subsystems) {
+        // add all .class values of the static classes above
+        Class<?>[] subsystems = { ElevatorSetpoints.class, TestVoltages.class, Algae.class, AutoTagSetpoints.class,
+                AlignTransforms.class };
+
+        for (Class<?> subsystem : subsystems) {
             Field[] fields = subsystem.getDeclaredFields();
             subsystemIOTab = Shuffleboard.getTab(subsystem.getSimpleName());
             for (Field field : fields) {
                 if (java.lang.reflect.Modifier.isStatic(field.getModifiers()) && field.getType() == double.class) {
                     field.setAccessible(true);
                     double value = 0;
-                    try{
+                    try {
                         value = field.getDouble(null);
-                    }
-                    catch(IllegalAccessException a){
+                    } catch (IllegalAccessException a) {
                         System.out.println("Access Exception when reading subsystem IO");
                     }
-                    entries.put(field, subsystemIOTab.addPersistent(subsystem.getSimpleName() + ": " + field.getName(), "double", value).withSize(2, 1));
+                    entries.put(field,
+                            subsystemIOTab
+                                    .addPersistent(subsystem.getSimpleName() + ": " + field.getName(), "double", value)
+                                    .withSize(2, 1));
                 }
             }
         }
     }
 
     /*
-     * Must be periodically called. Updates the constants values from the Shuffleboard
+     * Must be periodically called. Updates the constants values from the
+     * Shuffleboard
      */
-    public static void periodic(){
-        for(Entry<Field, SimpleWidget> entry : entries.entrySet()){
-            try{
+    public static void periodic() {
+        for (Entry<Field, SimpleWidget> entry : entries.entrySet()) {
+            try {
                 entry.getKey().setDouble(null, entry.getValue().getEntry().getDouble(0));
-            }
-            catch(IllegalAccessException a){
+            } catch (IllegalAccessException a) {
                 System.out.println("Access Exception when writing subsystem IO");
             }
         }

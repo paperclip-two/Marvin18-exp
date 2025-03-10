@@ -103,8 +103,8 @@ public class Elevator extends SubsystemBase {
     masterConfig.Voltage.PeakForwardVoltage = 16;
     masterConfig.Voltage.PeakReverseVoltage = -16;
 
-    masterConfig.Slot0.kP = 12;
-    masterConfig.Slot0.kI = 4;
+    masterConfig.Slot0.kP = 18;
+    masterConfig.Slot0.kI = 2;
     masterConfig.Slot0.kD = 2;
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;

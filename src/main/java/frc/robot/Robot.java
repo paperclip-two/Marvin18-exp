@@ -26,8 +26,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    DynamicConstants.init();
-    DynamicConstants.periodic();
+   // DynamicConstants.init();
+   // DynamicConstants.periodic();
     PathfindingCommand.warmupCommand().schedule();
     m_robotContainer.m_elevator.setServoCommand(0).schedule();
 
@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    DynamicConstants.periodic();
+  //  DynamicConstants.periodic();
 
    // var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
   // feederEst.ifPresent(
