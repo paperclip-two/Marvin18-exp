@@ -25,13 +25,16 @@ public class DriveCoralScorePose extends Command {
   private Pose2d goalPose;
   private Transform2d trans;
   private Command drive;
+  private int time;
 
   /** Creates a new DriveCoralScorePose. */
 
-  public DriveCoralScorePose(CommandSwerveDrivetrain drivetrain, Transform2d transform) {
+  public DriveCoralScorePose(CommandSwerveDrivetrain drivetrain, Transform2d transform, int timeout) {
     tagPoses = getPoseList(List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20 ,21, 22));
     dt = drivetrain;
     trans = transform;
+    time = timeout;
+    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -51,7 +54,7 @@ public class DriveCoralScorePose extends Command {
   public void initialize() {
     goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
-    drive =  PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(2, Seconds), false);
+    drive =  PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(time, Seconds), false);
     drive.schedule();
   }
 

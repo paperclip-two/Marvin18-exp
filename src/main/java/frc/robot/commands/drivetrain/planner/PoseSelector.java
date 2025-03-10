@@ -55,10 +55,10 @@ public class PoseSelector extends Command {
         new Transform2d(AlignTransforms.RightXL2, AlignTransforms.RightYL2,
             Rotation2d.fromDegrees(AlignTransforms.RightRot)));
     R3 = new SelectPose(dt,
-        new Transform2d(.45, 0,
+        new Transform2d(AlignTransforms.RightXL3, AlignTransforms.RightYL3,
             Rotation2d.fromDegrees(AlignTransforms.RightRot)));
     R4 = new SelectPose(dt,
-        new Transform2d(.45, 0.44,
+        new Transform2d(AlignTransforms.RightXL4, AlignTransforms.RightYL4,
             Rotation2d.fromDegrees(AlignTransforms.RightRot)));
 
     // Use addRequirements() here to declare subsystem dependencies.

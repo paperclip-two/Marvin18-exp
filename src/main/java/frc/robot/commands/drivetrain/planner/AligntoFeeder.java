@@ -41,13 +41,15 @@ public class AligntoFeeder extends Command {
   private Coral m_coral;
   private List<Pose2d> feederPoses;
   private Command drive; 
+  private int time;
 
   /** Creates a new DriveCoralScorePose. */
 
 
-  public AligntoFeeder(CommandSwerveDrivetrain drivetrain, Coral coral) {
+  public AligntoFeeder(CommandSwerveDrivetrain drivetrain, Coral coral, int timeout) {
     dt = drivetrain;
     m_coral = coral;
+    time = timeout;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -88,7 +90,7 @@ public class AligntoFeeder extends Command {
   @Override
   public void initialize() {
     Pose2d goalPose = dt.getState().Pose.nearest(feederPoses);
-    drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(2, Second), false);
+    drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(time, Second), false);
     drive.schedule();
   }
 

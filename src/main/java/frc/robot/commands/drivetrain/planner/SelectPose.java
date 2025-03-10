@@ -44,7 +44,7 @@ public class SelectPose {
     public Command returnPlannerSetpoint() {
         goalPose = dt.getState().Pose.nearest(tagPoses).plus(trans);
 
-        drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(3, Seconds), false);
+        drive = PlannerSetpointGenerator.generateCommand(dt, goalPose, Time.ofBaseUnits(10, Seconds), false);
         return drive;
     }
 
