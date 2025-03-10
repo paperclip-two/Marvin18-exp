@@ -22,7 +22,7 @@ public final class DynamicConstants {
 
 
     public static class ElevatorSetpoints {
-        public static double elevL4 = 8.35;
+        public static double elevL4 = 8.29;
         public static double elevL3 = 4.52;
         public static double elevL2 = 2.04;
         public static double elevL1 = 0;
@@ -60,12 +60,12 @@ public final class DynamicConstants {
         public static double RightYL4 = .45;
         public static double RightXL4 = .45;
         public static double RightRot = 90;
-        public static double LeftXL1 = .45;
-        public static double LeftYL1 = .07;
-        public static double LeftXL2 = .45;
-        public static double LeftYL2 = .07;
-        public static double LeftXL3 = .45;
-        public static double LeftYL3 = .07;
+        public static double LeftXL1 = .42;
+        public static double LeftYL1 = .05;
+        public static double LeftXL2 = .42;
+        public static double LeftYL2 = .05;
+        public static double LeftXL3 = .42;
+        public static double LeftYL3 = .05;
         public static double LeftYL4 = .07;
         public static double LeftXL4 = .45;
 
@@ -73,7 +73,7 @@ public final class DynamicConstants {
         public static double CentX = 1;
         public static double CentY = 0;
         public static double CentRot = 90;  
-        public static double feederX = .45;
+        public static double feederX = .44;
         public static double feederY = 0.2667;
 
         }
