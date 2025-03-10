@@ -172,11 +172,12 @@ public class RobotContainer {
     Pilot.y().whileTrue(new DriveCoralScorePose(
         drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
             Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
-    Pilot.x().whileTrue(poseSelector);
-    Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
-// Alternative bindings
-    // Pilot.x().whileTrue(leftSideSelector);
-    // Pilot.b().whileTrue(rightSideSelector);
+    // Alternative bindings
+    // Pilot.x().whileTrue(poseSelector);
+    // Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
+
+    Pilot.x().whileTrue(leftSideSelector);
+    Pilot.b().whileTrue(rightSideSelector);
 
     /// Copilot
     /// Elevator and drive controls

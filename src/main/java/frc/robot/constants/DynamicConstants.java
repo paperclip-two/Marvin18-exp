@@ -51,20 +51,20 @@ public final class DynamicConstants {
 
     public static class AlignTransforms {
 
-        public static double RightXL1 = .45;
-        public static double RightYL1 = .45;
-        public static double RightYL2 = .45;
-        public static double RightXL2 = .45;
-        public static double RightXL3 = .45;
-        public static double RightYL3 = .45;
-        public static double RightYL4 = .45;
+        public static double RightXL1 = .44;
+        public static double RightYL1 = .43;
+        public static double RightXL2 = .44;
+        public static double RightYL2 = .43;
+        public static double RightXL3 = .44;
+        public static double RightYL3 = .42;
         public static double RightXL4 = .45;
+        public static double RightYL4 = .45;
         public static double RightRot = 90;
-        public static double LeftXL1 = .42;
+        public static double LeftXL1 = .44;
         public static double LeftYL1 = .05;
-        public static double LeftXL2 = .42;
+        public static double LeftXL2 = .44;
         public static double LeftYL2 = .05;
-        public static double LeftXL3 = .42;
+        public static double LeftXL3 = .44;
         public static double LeftYL3 = .05;
         public static double LeftYL4 = .07;
         public static double LeftXL4 = .45;
