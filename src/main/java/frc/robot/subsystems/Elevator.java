@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
   public Angle currentElevatorRightPos;
   public Angle currentElevatorLeftPos;
   public Distance elevatorRotationsInInchesMulti;
-  public Integer selectedLevel = 2;
+  public Integer selectedLevel = 4;
 
   public Elevator() {
 
