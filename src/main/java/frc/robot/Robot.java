@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DynamicConstants.init();
+    DynamicConstants.periodic();
     PathfindingCommand.warmupCommand().schedule();
     m_robotContainer.m_elevator.setServoCommand(0).schedule();
 
