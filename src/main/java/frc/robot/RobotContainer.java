@@ -91,14 +91,14 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
-            new Transform2d(DynamicConstants.AlignTransforms.LeftXL1, DynamicConstants.AlignTransforms.LeftYL1,
+            new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4,
                 Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot))));
     NamedCommands.registerCommand("Nearest Tag Align Center",
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX,
             DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot))));
     NamedCommands.registerCommand("Nearest Tag Align Right",
         new DriveCoralScorePose(drivetrain,
-            new Transform2d(DynamicConstants.AlignTransforms.RightXL1, DynamicConstants.AlignTransforms.RightYL1,
+            new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
                 Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot))));
 
     NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral));
