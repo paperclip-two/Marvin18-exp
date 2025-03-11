@@ -122,9 +122,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Feeder Align"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "U1-C"
           }
         }
       ]
