@@ -81,7 +81,6 @@ public class RobotContainer {
   public final Coral m_coral = new Coral();
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
-  private PoseSelector poseSelector = new PoseSelector(drivetrain, m_elevator);
   private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
 
@@ -95,7 +94,7 @@ public class RobotContainer {
                 Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot)), 2.5));
     NamedCommands.registerCommand("Nearest Tag Align Center",
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX,
-            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 1));
+            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 0.5));
     NamedCommands.registerCommand("Nearest Tag Align Right",
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
