@@ -92,14 +92,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot)), 3));
+                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot)), 2.5));
     NamedCommands.registerCommand("Nearest Tag Align Center",
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX,
-            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 2));
+            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 1));
     NamedCommands.registerCommand("Nearest Tag Align Right",
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 3));
+                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 2.5));
 
     NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral, 5));
     NamedCommands.registerCommand("Elevator Setpoint L1",
@@ -168,7 +168,7 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 5));
+    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 10));
     Pilot.y().whileTrue(new DriveCoralScorePose(
         drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
             Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));

@@ -25,11 +25,11 @@ public class DriveCoralScorePose extends Command {
   private Pose2d goalPose;
   private Transform2d trans;
   private Command drive;
-  private int time;
+  private double time;
 
   /** Creates a new DriveCoralScorePose. */
 
-  public DriveCoralScorePose(CommandSwerveDrivetrain drivetrain, Transform2d transform, int timeout) {
+  public DriveCoralScorePose(CommandSwerveDrivetrain drivetrain, Transform2d transform, double timeout) {
     tagPoses = getPoseList(List.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20 ,21, 22));
     dt = drivetrain;
     trans = transform;
