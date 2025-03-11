@@ -36,7 +36,8 @@ public class AligntoFeeder extends Command {
   private List<Pose2d> rightFeeders = getPoseList(
       List.of(VisionFiducials.RED_RIGHT_FEEDER_TAG, VisionFiducials.BLUE_RIGHT_FEEDER_TAG));
   private static Transform2d offset = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, Rotation2d.fromDegrees(-90));
-  private static Transform2d slotSpacing = new Transform2d(0.0, Inches.of(16).in(Meters), Rotation2d.fromDegrees(0));
+  private static Transform2d slotSpacing_pos = new Transform2d(0.0, Inches.of(16).in(Meters), Rotation2d.fromDegrees(0));
+  private static Transform2d slotSpacingneg = new Transform2d(0.0, Inches.of(16).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
   private Coral m_coral;
   private List<Pose2d> feederPoses;
@@ -53,8 +54,8 @@ public class AligntoFeeder extends Command {
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
-    feederPoses = createLoadingSlots(leftFeeders, 1, 1);
-    feederPoses.addAll(createLoadingSlots(rightFeeders, 1, 1));
+    feederPoses = createLoadingSlots(leftFeeders, 0, 0);
+    feederPoses.addAll(createLoadingSlots(rightFeeders, 0, 0));
   }
 
   public List<Pose2d> getPoseList(List<Integer> tagIntegers) {
@@ -74,12 +75,12 @@ public class AligntoFeeder extends Command {
       Pose2d tagPose = originPose;
       loadingSlots.add(tagPose);
       for (int l = 0; l < leftSlots; l++) {
-        tagPose = tagPose.transformBy(slotSpacing.inverse());
+        tagPose = tagPose.transformBy(slotSpacingneg);
         loadingSlots.add(tagPose);
       }
       tagPose = originPose;
       for (int r = 0; r < rightSlots; r++) {
-        tagPose = tagPose.transformBy(slotSpacing);
+        tagPose = tagPose.transformBy(slotSpacing_pos);
         loadingSlots.add(tagPose);
       }
     }
