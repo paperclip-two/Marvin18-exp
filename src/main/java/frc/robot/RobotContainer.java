@@ -87,6 +87,7 @@ public class RobotContainer {
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
 
   public RobotContainer() {
+    configureBindings();
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
@@ -123,7 +124,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
 
-    configureBindings();
     configureLEDTriggers();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("AutoChooser", autoChooser);
@@ -233,7 +233,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
+   // m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     return autoChooser.getSelected();
     // return new Command() {
     //
