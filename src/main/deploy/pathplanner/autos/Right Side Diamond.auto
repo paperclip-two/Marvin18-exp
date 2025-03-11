@@ -130,51 +130,8 @@
                 "data": {
                   "name": "Feeder Align"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Passive Intake"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "U1-B"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Nearest Tag Align Left"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Zero Elevator"
           }
         }
       ]
