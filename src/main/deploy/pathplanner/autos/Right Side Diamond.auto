@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Right"
+                  "name": "Nearest Tag Align Left"
                 }
               },
               {
@@ -91,7 +91,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Left"
+                  "name": "Nearest Tag Align Right"
                 }
               },
               {
