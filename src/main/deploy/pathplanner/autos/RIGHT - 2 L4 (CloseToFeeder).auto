@@ -30,12 +30,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Nearest Tag Align Center"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -95,12 +89,6 @@
           "type": "path",
           "data": {
             "pathName": "U1-C"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Nearest Tag Align Center"
           }
         },
         {
