@@ -69,16 +69,16 @@ public final class DynamicConstants {
         public static double RightRot = 90;
         
         public static double LeftXL1 = .41;
-        public static double LeftYL1 = .09;
+        public static double LeftYL1 = .115;
         
         public static double LeftXL2 = .41;
-        public static double LeftYL2 = .09;
+        public static double LeftYL2 = .115;
         
         public static double LeftXL3 = .41;
-        public static double LeftYL3 = .09;
+        public static double LeftYL3 = .115;
         
         public static double LeftXL4 = .45;
-        public static double LeftYL4 = .12;
+        public static double LeftYL4 = .13;
 
 
         public static double LeftRot = 90;

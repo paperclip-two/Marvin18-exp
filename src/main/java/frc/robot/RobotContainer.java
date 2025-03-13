@@ -100,6 +100,8 @@ public class RobotContainer {
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
                 Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 2));
+    NamedCommands.registerCommand("Deploy Algae",
+                m_algae.intakeWithStop().withTimeout(0.6));
 
     NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral, 5));
     NamedCommands.registerCommand("Elevator Setpoint L1",

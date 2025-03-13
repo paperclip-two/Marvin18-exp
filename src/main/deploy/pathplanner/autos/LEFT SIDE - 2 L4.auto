@@ -11,9 +11,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "S1-F"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Algae"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1-F"
+                }
+              }
+            ]
           }
         },
         {
