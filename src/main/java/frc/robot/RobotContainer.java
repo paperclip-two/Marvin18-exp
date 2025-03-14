@@ -111,7 +111,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Elevator Setpoint L3",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
     NamedCommands.registerCommand("Elevator Setpoint L4",
-        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4));
+        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4).withTimeout(2));
     NamedCommands.registerCommand("Elevator Setpoint Algae Ground",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor",
@@ -137,12 +137,12 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.5 * MaxSpeed) // Drive
+        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed) // Drive
                                                                                                              // forward
                                                                                                              // with
                                                                                                              // negative
                                                                                                              // Y (up)
-            .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.5 * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
         ));
@@ -201,6 +201,10 @@ public class RobotContainer {
     Copilot.b().onTrue(m_elevator.setLevel(3));
     Copilot.x().onTrue(m_elevator.setLevel(2));
     Copilot.y().onTrue(m_elevator.setLevel(4));
+
+
+    Copilot.leftStick().onTrue(m_elevator.advanceRotationsCommand(-0.1));
+    Copilot.rightStick().onTrue(m_elevator.advanceRotationsCommand(0.1));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
