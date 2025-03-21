@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.constants.Constants;
 import frc.robot.util.Records;
@@ -23,6 +24,8 @@ import frc.robot.util.Records.timestampedPose;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.ConstrainedSolvepnpParams;
@@ -79,7 +82,7 @@ public final class VisionManager {
     public VisionMeasurement getUnreadTrigMeasurements(Camera cameraToUpdate, timestampedPose pose, VisionMeasurement measure) {
 
         cameraToUpdate.addReferenceHeading(pose);
-        return cameraToUpdate.refreshTrigSolve(measure);
+        return cameraToUpdate.refreshTrigSolve();
         
     }
 
@@ -105,8 +108,8 @@ public final class VisionManager {
 
 
         /**
-         * Adds reference poses to be utilized by the Photon pose estimator.
-         * @param tmp Robot pose estimate to feed.
+         * Adds reference heading to be utilized by the Photon pose estimator.
+         * @param tmp Robot heading estimate to feed.
          */
         private void addReferenceHeading(timestampedPose tmp) {
             precisionEstimator.addHeadingData(tmp.timestamp(),tmp.visionPose().getRotation());
@@ -119,7 +122,12 @@ public final class VisionManager {
          * @param measurements A list of vision measurements to add to.
          * @param targets A list of targets to add to.
          */
-        private VisionMeasurement refreshTrigSolve(VisionMeasurement measurement) {
+        private VisionMeasurement refreshTrigSolve() {
+            double xystd = 1;
+            double angstd = 1;
+            Optional <EstimatedRobotPose> est;
+            Pose2d reportedEstimate = new Pose2d();
+            double reportedEstimateTimestamp = 0; // default to 0 if no estimate. This ensures no override.
             for (PhotonPipelineResult result : camera.getAllUnreadResults()) {
                 // If we are disabled, use Constrained SolvePNP to estimate the robot's heading.
                 precisionEstimator.setPrimaryStrategy(
@@ -127,12 +135,12 @@ public final class VisionManager {
                 );
 
                 // Get an estimate from the PhotonPoseEstimator.
-                var estimate = precisionEstimator.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
-                if (estimate.isEmpty() || estimate.get().targetsUsed.isEmpty()) continue;
+                est = precisionEstimator.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
+                if (est.isEmpty() || est.get().targetsUsed.isEmpty()) continue;
 
                 // Get the target AprilTag, and reject the measurement if the
                 // tag is not configured to be utilized by the pose estimator.
-                var target = estimate.get().targetsUsed.get(0);
+                var target = est.get().targetsUsed.get(0);
                 int id = target.fiducialId;
                 if (!useTag(id)) continue;
 
@@ -145,19 +153,26 @@ public final class VisionManager {
 
                 // Calculate the pose estimation weights for X/Y location. As
                 // distance increases, the tag is trusted exponentially less.
-                double xyStd = 0.1 * distance * distance;
+                xystd = 0.1 * distance * distance;
 
                 // Calculate the angular pose estimation weight. If we're solving via trig, reject
                 // the heading estimate to ensure the pose estimator doesn't "poison" itself with
                 // essentially duplicate data. Otherwise, weight the estimate similar to X/Y.
-                double angStd = !precisionEstimator.getPrimaryStrategy().equals(PNP_DISTANCE_TRIG_SOLVE)
+                angstd = !precisionEstimator.getPrimaryStrategy().equals(PNP_DISTANCE_TRIG_SOLVE)
                     ? 0.12 * distance * distance
                     : 1e5;
 
-                
-
+                if (est.isPresent()) {
+                    reportedEstimate = est.get().estimatedPose.toPose2d();
+                    reportedEstimateTimestamp = est.get().timestampSeconds;
+                }
             }
-            return new VisionMeasurement(null, 0, null);
+
+            return new VisionMeasurement(
+            reportedEstimate, 
+            reportedEstimateTimestamp, 
+            VecBuilder.fill(xystd, xystd, angstd)
+            );
         }
 
         /**
