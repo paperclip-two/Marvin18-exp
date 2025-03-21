@@ -20,6 +20,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -35,6 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -51,6 +53,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     public int selectedSide = 1;
+
+    public SwerveDrivePoseEstimator alignmentPoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().Pose.getRotation(), getState().ModulePositions, new Pose2d());
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -282,6 +286,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
+        alignmentPoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getState().Pose.getRotation(), getState().ModulePositions);
+
     }
 
     private void startSimThread() {
@@ -396,17 +402,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
     }
 
-    public Command driveToPose() {
-        return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)),
-                new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond),
-                        LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond),
-                        AngularVelocity.ofBaseUnits(360, DegreesPerSecond),
-                        AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
-    }
-
     public double getSpeedAsDouble() {
         ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
         return Math.sqrt(fieldVelocity.vxMetersPerSecond * fieldVelocity.vxMetersPerSecond
                 + fieldVelocity.vyMetersPerSecond * fieldVelocity.vyMetersPerSecond);
+    }
+
+
+    public void addAlignmentVisionMeasurement(Pose2d pose, double latencySeconds) {
+        alignmentPoseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp() - latencySeconds);
+    }
+    
+    public void addVisionMeasurementTimestamp(Pose2d pose, double timestamp) {
+        alignmentPoseEstimator.addVisionMeasurement(new Pose2d(pose.getTranslation(), getState().Pose.getRotation()), timestamp);
+    }
+
+    public void setVisionMeasurementStdDevs(Matrix<N3, N1> mat) {
+        alignmentPoseEstimator.setVisionMeasurementStdDevs(mat);
+    }
+    public Pose2d getPose() {
+        return alignmentPoseEstimator.getEstimatedPosition();
+    }
+    public void setPose(Pose2d pose, Rotation2d rotation) {
+        alignmentPoseEstimator.resetPosition(rotation, getState().ModulePositions, pose);
     }
 }
